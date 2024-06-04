@@ -1,0 +1,5 @@
+config:
+
+naming:
+  FunctionNaming:
+    ignoreAnnotated: ['Composable']
