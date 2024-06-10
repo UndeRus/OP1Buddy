@@ -122,7 +122,7 @@ fun SyncScreen(modifier: Modifier = Modifier, viewModel: OP1SyncViewModel = view
                         })
                 }
 
-                1 -> RestoreScreen()
+                1 -> RestoreScreenTodo()
                 2 -> {
                     val uiState by viewModel.stateFlow.collectAsState()
                     val isLoading by remember {

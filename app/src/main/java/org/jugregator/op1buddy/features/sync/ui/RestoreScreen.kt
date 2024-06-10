@@ -1,8 +1,10 @@
 package org.jugregator.op1buddy.features.sync.ui
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
@@ -19,6 +21,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import org.jugregator.op1buddy.features.sync.TAPES_COUNT
+
+@Composable
+fun RestoreScreenTodo(modifier: Modifier = Modifier) {
+    Box(modifier = modifier.fillMaxSize()) {
+        Text(
+            text = "In construction...",
+            style = MaterialTheme.typography.titleLarge,
+            modifier = Modifier.align(Alignment.Center)
+        )
+    }
+}
 
 @Composable
 fun RestoreScreen() {
