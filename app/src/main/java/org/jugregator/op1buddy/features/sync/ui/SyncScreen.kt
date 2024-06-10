@@ -11,6 +11,7 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.filled.Send
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
@@ -29,6 +30,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -44,7 +46,7 @@ import org.jugregator.op1buddy.ui.theme.AppTheme
 @Composable
 fun SyncScreen(modifier: Modifier = Modifier, viewModel: OP1SyncViewModel = viewModel()) {
     val pagerState = rememberPagerState(pageCount = {
-        2
+        3
     })
 
     val scope = rememberCoroutineScope()
@@ -71,7 +73,21 @@ fun SyncScreen(modifier: Modifier = Modifier, viewModel: OP1SyncViewModel = view
                     Icon(Icons.Default.Send, contentDescription = null)
                 }
             )
+            Tab(
+                selected = pagerState.currentPage == 2,
+                onClick = { scope.launch { pagerState.animateScrollToPage(2) } },
+                text = {
+                    Text(
+                        text = "Export"
+                    )
+                },
+                icon = {
+                    Icon(Icons.Default.Share, contentDescription = null)
+                }
+            )
         })
+
+        val context = LocalContext.current
 
         HorizontalPager(state = pagerState) { page ->
             when (page) {
@@ -80,143 +96,43 @@ fun SyncScreen(modifier: Modifier = Modifier, viewModel: OP1SyncViewModel = view
                     val isLoading by remember {
                         derivedStateOf { uiState.nowCopying }
                     }
-                    var backupInfo by remember {
-                        mutableStateOf(BackupInfo())
+
+                    val backupInfo by remember {
+                        derivedStateOf {
+                            uiState.backupInfo
+                        }
                     }
 
                     val deviceConnected by remember {
                         derivedStateOf { uiState.connected }
                     }
 
+                    val progress by remember {
+                        derivedStateOf { uiState.progress }
+                    }
+
                     BackupScreen(
                         isLoading,
+                        progress,
                         onBackupClick = { viewModel.backupDevice() },
                         backupInfo = backupInfo,
                         connectedState = deviceConnected,
                         onBackupSelectionChanged = {
-                            backupInfo = it
-                            viewModel.updateBackupInfo(backupInfo)
+                            viewModel.updateBackupInfo(it)
                         })
                 }
 
                 1 -> RestoreScreen()
+                2 -> {
+                    val uiState by viewModel.stateFlow.collectAsState()
+                    val isLoading by remember {
+                        derivedStateOf { uiState.nowCopying }
+                    }
+                    ExportScreen(isCopying = isLoading, onBackupDirSelected = { uri ->
+                        viewModel.onBackupDirSelected(context, uri)
+                    })
+                }
             }
-        }
-    }
-}
-
-@Composable
-fun BackupScreen(
-    isLoading: Boolean,
-    connectedState: OP1ConnectionState,
-    onBackupClick: () -> Unit,
-    backupInfo: BackupInfo,
-    onBackupSelectionChanged: (BackupInfo) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    when (connectedState) {
-        OP1ConnectionState.Disconnected -> {
-            DeviceNotConnectedScreen()
-            return
-        }
-        OP1ConnectionState.Connecting -> {
-            DeviceConnectingScreen()
-            return
-        }
-        else -> {}
-    }
-
-    Column(modifier = modifier) {
-        Text(
-            text = "Choose what to backup",
-            style = MaterialTheme.typography.titleLarge,
-            modifier = Modifier.padding(10.dp)
-        )
-        for (tapeIndex in 0..<TAPES_COUNT) {
-            TapeRow(tapeIndex, backupInfo.tapes[tapeIndex].second, { selected ->
-                val newBackupInfo = backupInfo.copy()
-                newBackupInfo.tapes[tapeIndex] = backupInfo.tapes[tapeIndex].copy(second = selected)
-                onBackupSelectionChanged(backupInfo.copy(tapes = newBackupInfo.tapes))
-            })
-        }
-
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Checkbox(checked = backupInfo.synths, onCheckedChange = { checked ->
-                onBackupSelectionChanged(backupInfo.copy(synths = checked))
-            })
-            Text(text = "Synths")
-        }
-
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Checkbox(checked = backupInfo.drumkits, onCheckedChange = { checked ->
-                onBackupSelectionChanged(backupInfo.copy(drumkits = checked))
-            })
-            Text(text = "Drumkits")
-        }
-        Spacer(modifier = Modifier.weight(1.0f)) // fill height with spacer
-
-        if (isLoading) {
-            LinearProgressIndicator(
-                modifier = Modifier.fillMaxWidth(),
-            )
-        }
-        Button(
-            onClick = onBackupClick,
-            modifier = Modifier.fillMaxWidth(),
-            enabled = !isLoading && connectedState == OP1ConnectionState.Connected
-        ) {
-            Text(text = "Backup")
-        }
-    }
-}
-
-@Composable
-fun TapeRow(numberOfTape: Int, checked: Boolean, onCheckedChanged: (Boolean) -> Unit, modifier: Modifier = Modifier) {
-    Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
-        Checkbox(checked = checked, onCheckedChange = onCheckedChanged)
-        Text(text = "Tape ${numberOfTape + 1}")
-    }
-}
-
-@Composable
-fun RestoreScreen() {
-    Column {
-
-        Text(
-            text = "Choose what to restore",
-            style = MaterialTheme.typography.titleLarge,
-            modifier = Modifier.padding(10.dp)
-        )
-        for (tapeIndex in 1..TAPES_COUNT) {
-            TapeRow(tapeIndex, false, {})
-        }
-
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Checkbox(checked = false, onCheckedChange = {})
-            Text(text = "Synths")
-        }
-
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Checkbox(checked = false, onCheckedChange = {})
-            Text(text = "Drumkits")
-        }
-        Spacer(modifier = Modifier.weight(1.0f)) // fill height with spacer
-
-        val isLoading by remember {
-            mutableStateOf(true)
-        }
-
-        if (isLoading) {
-            Text(
-                text = "Don't close your app it can broke your filesystem",
-                style = TextStyle.Default.copy(color = MaterialTheme.colorScheme.error)
-            )
-            LinearProgressIndicator(
-                modifier = Modifier.fillMaxWidth(),
-            )
-        }
-        Button(onClick = { /*TODO*/ }, modifier = Modifier.fillMaxWidth(), enabled = !isLoading) {
-            Text(text = "Restore")
         }
     }
 }
