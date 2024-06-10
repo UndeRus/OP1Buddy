@@ -12,7 +12,7 @@ import org.jugregator.op1buddy.ui.theme.AppTheme
 fun DeviceNotConnectedScreen(modifier: Modifier = Modifier) {
     Column(modifier = modifier) {
         Text(text = "Device is not connected", style = MaterialTheme.typography.displayLarge)
-        Text(text = "Join it with USB cable and accept permission", style = MaterialTheme.typography.displayLarge)
+        Text(text = "Join it in DISK mode with USB cable and accept permission", style = MaterialTheme.typography.displayLarge)
     }
 }
 
