@@ -20,7 +20,7 @@ import java.io.IOException
 private const val ACTION_USB_PERMISSION = "org.jugregator.op1buddy.USB_PERMISSION"
 private const val TAG = "LibAUMSDemo"
 
-class LibAUMSDemo(
+class AumsUsbController(
     private val context: Context,
     val connectedCallback: (FileSystem) -> Unit,
     val disconnectedCallback: () -> Unit,
@@ -195,12 +195,6 @@ private fun processOP1FS(currentFs: FileSystem): OP1State {
                 stateBuilder.addTrack(tapeFile)
             }
         }
-//
-//        val tape1 = tapeDirFiles.find { it.name == "track_1.aif" }
-//        val tape2 = tapeDirFiles.find { it.name == "track_2.aif" }
-//        val tape3 = tapeDirFiles.find { it.name == "track_3.aif" }
-//        val tape4 = tapeDirFiles.find { it.name == "track_4.aif" }
-//        println("$tape1 $tape2 $tape3 $tape4")
     } else {
         //TODO: no tape found
         println("No tapes found")
@@ -245,14 +239,6 @@ private fun processOP1FS(currentFs: FileSystem): OP1State {
                     stateBuilder.addSynth(synthFile)
                 }
             }
-
-            /*
-            if (userSynths.size == 8) {
-                println("Synths correct")
-            } else {
-                println("Wrong synth count")
-            }
-            */
         } else {
             println("Synths not found")
             error("No synths found")
@@ -301,22 +287,10 @@ private fun processOP1FS(currentFs: FileSystem): OP1State {
                     stateBuilder.addDrum(drumFile)
                 }
             }
-
-            /*
-            var userSynths = userDrumDir.listFiles().filter { it.name.endsWith(".aif") }
-            if (userSynths.size == 8) {
-                println("Synths correct")
-            } else {
-                println("Wrong synth count")
-            }
-
-            */
         } else {
-//            println("Synths not found")
             error("No drums found")
         }
     } else {
-//        println("Synths dir not found")
         error("No drums dir found")
     }
 
@@ -332,11 +306,7 @@ private fun processOP1FS(currentFs: FileSystem): OP1State {
                 stateBuilder.addAlbum(albumFile)
             }
         }
-//
-//        val sideA = albumFiles.find { it.name == "side_a.aif" }
-//        val sideB = albumFiles.find { it.name == "side_b.aif" }
     } else {
-//        println("Albums dir not found")
         error("Albums dir not found")
     }
 

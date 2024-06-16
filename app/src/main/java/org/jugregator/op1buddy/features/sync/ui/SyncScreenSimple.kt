@@ -8,11 +8,11 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import org.jugregator.op1buddy.features.sync.SyncScreenStateDeprecated
+import org.jugregator.op1buddy.features.sync.DeviceState
 
 @Composable
 fun SyncScreenSimple(
-    state: SyncScreenStateDeprecated,
+    state: DeviceState,
     onBackupClick: () -> Unit,
     onRestoreClick: () -> Unit,
     modifier: Modifier = Modifier
