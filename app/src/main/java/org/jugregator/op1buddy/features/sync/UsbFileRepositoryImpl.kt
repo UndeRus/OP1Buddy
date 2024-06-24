@@ -1,8 +1,10 @@
 package org.jugregator.op1buddy.features.sync
 
+import kotlinx.coroutines.yield
 import me.jahnen.libaums.core.fs.FileSystem
 import me.jahnen.libaums.core.fs.UsbFile
 import me.jahnen.libaums.core.fs.UsbFileStreamFactory
+import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 import java.io.File
 import java.io.IOException
@@ -47,5 +49,29 @@ class UsbFileRepositoryImpl : UsbFileRepository {
                 onProgress((currentLength.toFloat() / fullLength.toFloat()))
             }
         }
+    }
+
+    override fun copyFileToUsb(targetUsbFile: UsbFile, fs: FileSystem, sourceFile: File, onProgress: (Long) -> Unit) {
+        val fileSize = sourceFile.length()
+        val output = UsbFileStreamFactory.createBufferedOutputStream(targetUsbFile, fs)
+        val input = BufferedInputStream(sourceFile.inputStream())
+
+        val buffer = ByteArray(fs.chunkSize)
+        var fullSize = 0L
+        var resultSize = input.read(buffer)
+
+        var percent = 0
+        var newPercent: Int
+
+        while (resultSize != -1) {
+            output.write(buffer, 0, resultSize)
+
+            onProgress(resultSize.toLong())
+
+            fullSize += resultSize
+            resultSize = input.read(buffer)
+        }
+        output.close()
+        input.close()
     }
 }

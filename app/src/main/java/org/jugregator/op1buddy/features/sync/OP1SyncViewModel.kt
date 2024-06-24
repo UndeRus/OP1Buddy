@@ -83,6 +83,7 @@ class OP1SyncViewModel(
     @OptIn(ExperimentalCoroutinesApi::class, DelicateCoroutinesApi::class)
     private val singleThreadContext = newSingleThreadContext("usb access")
 
+    @Deprecated("Use UsbFileRepository::copyFileToUsb")
     fun copyFileToUsb(targetUsbFile: UsbFile, fs: FileSystem, sourceFile: File) {
         viewModelScope.launch {
             _stateFlow.update { it.copy(nowCopying = true) }

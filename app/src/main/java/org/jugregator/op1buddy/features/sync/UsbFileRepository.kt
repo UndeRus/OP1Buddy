@@ -12,4 +12,6 @@ interface UsbFileRepository {
         targetFiles: List<File>,
         onProgress: (Float) -> Unit
     )
+
+    fun copyFileToUsb(targetUsbFile: UsbFile, fs: FileSystem, sourceFile: File, onProgress: (Long) -> Unit)
 }

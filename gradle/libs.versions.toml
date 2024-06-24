@@ -15,6 +15,9 @@ libusbcommunication = "0.3.0"
 javafs = "0.1.4"
 fat32lib = "0.6.5"
 documentfile = "1.0.1"
+koin-bom = "3.5.6"
+navigation = "2.8.0-beta03"
+kotlin-serialization = "1.6.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -39,8 +42,15 @@ fat32lib = {group = "de.waldheinz", name = "fat32-lib", version.ref = "fat32lib"
 libaumsjavafs = { group = "me.jahnen.libaums", name = "javafs", version.ref = "javafs"}
 libaumsusbcomm = { group = "me.jahnen.libaums", name = "libusbcommunication", version.ref = "libusbcommunication"}
 androidx-documentfile = { group = "androidx.documentfile", name = "documentfile", version.ref = "documentfile" }
+koin-bom = { module = "io.insert-koin:koin-bom", version.ref = "koin-bom" }
+koin-core = { module = "io.insert-koin:koin-core" }
+koin-android = { module = "io.insert-koin:koin-android" }
+koin-android-compose = { module = "io.insert-koin:koin-core" }
+navigation-compose = {group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation"}
+kotlinx-serialization = {group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlin-serialization" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+serialization = {id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin"}
 
