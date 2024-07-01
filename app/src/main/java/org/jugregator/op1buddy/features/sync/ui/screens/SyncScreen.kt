@@ -1,4 +1,4 @@
-package org.jugregator.op1buddy.features.sync.ui
+package org.jugregator.op1buddy.features.sync.ui.screens
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column

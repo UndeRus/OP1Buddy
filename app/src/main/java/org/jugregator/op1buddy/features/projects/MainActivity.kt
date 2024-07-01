@@ -37,7 +37,7 @@ import androidx.navigation.toRoute
 import kotlinx.serialization.Serializable
 import org.jugregator.op1buddy.Project
 import org.jugregator.op1buddy.features.sync.OP1SyncViewModel
-import org.jugregator.op1buddy.features.sync.ui.SyncScreen
+import org.jugregator.op1buddy.features.sync.ui.screens.SyncScreen
 import org.jugregator.op1buddy.ui.theme.AppTheme
 import org.koin.androidx.viewmodel.ext.android.viewModel
 

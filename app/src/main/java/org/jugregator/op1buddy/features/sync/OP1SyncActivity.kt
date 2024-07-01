@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
-import org.jugregator.op1buddy.features.sync.ui.SyncScreen
+import org.jugregator.op1buddy.features.sync.ui.screens.SyncScreen
 import org.jugregator.op1buddy.ui.theme.AppTheme
 import org.koin.androidx.viewmodel.ext.android.viewModel
 

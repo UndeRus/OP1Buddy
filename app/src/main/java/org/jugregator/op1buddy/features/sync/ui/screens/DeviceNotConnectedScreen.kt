@@ -1,8 +1,7 @@
-package org.jugregator.op1buddy.features.sync.ui
+package org.jugregator.op1buddy.features.sync.ui.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll

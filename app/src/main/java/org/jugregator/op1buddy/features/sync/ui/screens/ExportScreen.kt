@@ -1,4 +1,4 @@
-package org.jugregator.op1buddy.features.sync.ui
+package org.jugregator.op1buddy.features.sync.ui.screens
 
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult

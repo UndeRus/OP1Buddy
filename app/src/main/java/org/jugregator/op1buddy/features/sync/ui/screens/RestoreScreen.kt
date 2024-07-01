@@ -1,4 +1,4 @@
-package org.jugregator.op1buddy.features.sync.ui
+package org.jugregator.op1buddy.features.sync.ui.screens
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import org.jugregator.op1buddy.features.sync.TAPES_COUNT
+import org.jugregator.op1buddy.features.sync.ui.views.TapeRow
 
 @Composable
 fun RestoreScreenTodo(modifier: Modifier = Modifier) {
