@@ -1,6 +1,5 @@
 package org.jugregator.op1buddy.features.sync
 
-import kotlinx.coroutines.yield
 import me.jahnen.libaums.core.fs.FileSystem
 import me.jahnen.libaums.core.fs.UsbFile
 import me.jahnen.libaums.core.fs.UsbFileStreamFactory
@@ -53,34 +52,40 @@ class UsbFileRepositoryImpl : UsbFileRepository {
 
     override fun copyFileToUsb(targetUsbFile: UsbFile, fs: FileSystem, sourceFile: File, onProgress: (Long) -> Unit) {
         val fileSize = sourceFile.length()
-        val output = UsbFileStreamFactory.createBufferedOutputStream(targetUsbFile, fs)
+        val outputStream = UsbFileStreamFactory.createBufferedOutputStream(targetUsbFile, fs)
         val input = BufferedInputStream(sourceFile.inputStream())
 
         val buffer = ByteArray(fs.chunkSize)
         var fullSize = 0L
         var resultSize = input.read(buffer)
 
-        var percent = 0
-        var newPercent: Int
-
         while (resultSize != -1) {
-            output.write(buffer, 0, resultSize)
-
-            onProgress(resultSize.toLong())
-
+            outputStream.write(buffer, 0, resultSize)
             fullSize += resultSize
+            onProgress(resultSize.toLong())
             resultSize = input.read(buffer)
         }
-        output.close()
+        outputStream.close()
         input.close()
     }
 
     override fun copyMultipleFilesToUsb(
-        targetUsbFile: UsbFile,
+        targetUsbFiles: List<UsbFile>,
         fs: FileSystem,
         sourceFiles: List<File>,
-        onProgress: (Long) -> Unit
+        onProgress: (Float) -> Unit
     ) {
-        TODO("Not yet implemented")
+        if (targetUsbFiles.size != sourceFiles.size) {
+            error("targetUsbFiles anmd sourceFiles must be same length")
+        }
+
+        val fullLength = sourceFiles.sumOf { it.length() }
+        var currentLength = 0L
+        for ((file, usbFile) in sourceFiles.zip(targetUsbFiles)) {
+            copyFileToUsb(usbFile, fs, file) { progress ->
+                currentLength += progress
+                onProgress((currentLength.toFloat() / fullLength.toFloat()))
+            }
+        }
     }
 }

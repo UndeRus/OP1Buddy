@@ -5,14 +5,31 @@ import me.jahnen.libaums.core.fs.UsbFile
 import java.io.File
 
 interface UsbFileRepository {
-    fun copyFileFromUsb(sourceUsbFile: UsbFile, fs: FileSystem, targetFile: File, onProgress: (Long) -> Unit)
+    fun copyFileFromUsb(
+        sourceUsbFile: UsbFile,
+        fs: FileSystem,
+        targetFile: File,
+        onProgress: (Long) -> Unit,
+    )
+
     fun copyMultipleFilesFromUsb(
         usbFiles: List<UsbFile>,
         fs: FileSystem,
         targetFiles: List<File>,
-        onProgress: (Float) -> Unit
+        onProgress: (Float) -> Unit,
     )
 
-    fun copyFileToUsb(targetUsbFile: UsbFile, fs: FileSystem, sourceFile: File, onProgress: (Long) -> Unit)
-    fun copyMultipleFilesToUsb(targetUsbFile: UsbFile, fs: FileSystem, sourceFiles: List<File>, onProgress: (Long) -> Unit)
+    fun copyFileToUsb(
+        targetUsbFile: UsbFile,
+        fs: FileSystem,
+        sourceFile: File,
+        onProgress: (Long) -> Unit,
+    )
+
+    fun copyMultipleFilesToUsb(
+        targetUsbFiles: List<UsbFile>,
+        fs: FileSystem,
+        sourceFiles: List<File>,
+        onProgress: (Float) -> Unit
+    )
 }

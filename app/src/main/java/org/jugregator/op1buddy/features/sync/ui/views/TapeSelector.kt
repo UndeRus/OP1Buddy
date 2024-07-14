@@ -31,16 +31,38 @@ import androidx.compose.ui.unit.dp
 import org.jugregator.op1buddy.R
 
 @Composable
-fun TapeSelector(index: Int, selected: Boolean, onSelected: (Boolean) -> Unit, modifier: Modifier = Modifier) {
+fun TapeSelector(
+    index: Int,
+    selected: Boolean,
+    onSelected: (Boolean) -> Unit,
+    enabled: Boolean = true,
+    modifier: Modifier = Modifier
+) {
     val animationDurationMillis = 1000
     val background: Color by animateColorAsState(
-        targetValue = if (selected) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.surface,
+        targetValue = if (enabled) {
+            if (selected) {
+                MaterialTheme.colorScheme.secondary
+            } else {
+                MaterialTheme.colorScheme.surface
+            }
+        } else {
+            MaterialTheme.colorScheme.surface.copy(alpha = 0.38f)
+        },
         animationSpec = tween(animationDurationMillis),
         label = "backgroundAnimation",
     )
 
     val color: Color by animateColorAsState(
-        targetValue = if (selected) MaterialTheme.colorScheme.onSecondary else MaterialTheme.colorScheme.onSurface,
+        targetValue = if (enabled) {
+            if (selected) {
+                MaterialTheme.colorScheme.onSecondary
+            } else {
+                MaterialTheme.colorScheme.onSurface
+            }
+        } else MaterialTheme.colorScheme.onSurface.copy(
+            alpha = 0.38f
+        ),
         animationSpec = tween(animationDurationMillis),
         label = "foregroundAnimation",
     )
@@ -55,7 +77,7 @@ fun TapeSelector(index: Int, selected: Boolean, onSelected: (Boolean) -> Unit, m
         modifier = modifier
             .background(background, shape = RoundedCornerShape(16.dp))
             .clip(RoundedCornerShape(16.dp))
-            .clickable { onSelected.invoke(!selected) }
+            .clickable(enabled = enabled, onClick = { onSelected.invoke(!selected) })
             .padding(16.dp)
     ) {
         Text(
@@ -85,6 +107,7 @@ fun TapeSelectorPreview() {
     MaterialTheme {
         Column {
             TapeSelector(index = 0, selected = enabled, { enabled = !enabled })
+            TapeSelector(index = 1, selected = false, enabled = false, onSelected = { })
 
         }
     }

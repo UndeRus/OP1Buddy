@@ -5,6 +5,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -25,17 +26,38 @@ import androidx.compose.ui.unit.dp
 import org.jugregator.op1buddy.R
 
 @Composable
-fun SynthSelector(selected: Boolean, onSelected: (Boolean) -> Unit, modifier: Modifier = Modifier) {
+fun SynthSelector(
+    selected: Boolean,
+    onSelected: (Boolean) -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true
+) {
     val animationDurationMillis = 1000
 
     val background: Color by animateColorAsState(
-        targetValue = if (selected) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.surface,
+        targetValue = if (enabled) {
+            if (selected) {
+                MaterialTheme.colorScheme.secondary
+            } else {
+                MaterialTheme.colorScheme.surface
+            }
+        } else {
+            MaterialTheme.colorScheme.surface.copy(alpha = 0.38f)
+        },
         animationSpec = tween(animationDurationMillis),
         label = "backgroundAnimation",
     )
 
     val color: Color by animateColorAsState(
-        targetValue = if (selected) MaterialTheme.colorScheme.onSecondary else MaterialTheme.colorScheme.onSurface,
+        targetValue = if (enabled) {
+            if (selected) {
+                MaterialTheme.colorScheme.onSecondary
+            } else {
+                MaterialTheme.colorScheme.onSurface
+            }
+        } else MaterialTheme.colorScheme.onSurface.copy(
+            alpha = 0.38f
+        ),
         animationSpec = tween(animationDurationMillis),
         label = "foregroundAnimation",
     )
@@ -44,7 +66,7 @@ fun SynthSelector(selected: Boolean, onSelected: (Boolean) -> Unit, modifier: Mo
         modifier = modifier
             .background(background, shape = RoundedCornerShape(16.dp))
             .clip(RoundedCornerShape(16.dp))
-            .clickable { onSelected.invoke(!selected) }
+            .clickable(enabled = enabled, onClick = { onSelected.invoke(!selected) })
             .padding(16.dp)
     ) {
         Image(
@@ -63,6 +85,9 @@ fun SynthButtonPreview() {
         mutableStateOf(false)
     }
     MaterialTheme {
-        SynthSelector(selected = selected, onSelected = { selected = !selected })
+        Column {
+            SynthSelector(selected = selected, onSelected = { selected = !selected })
+            SynthSelector(selected = false, enabled = false, onSelected = {  })
+        }
     }
 }

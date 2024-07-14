@@ -9,26 +9,24 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.jugregator.op1buddy.features.sync.BackupInfo
+import org.jugregator.op1buddy.features.sync.BackupScreenState
+import org.jugregator.op1buddy.features.sync.OP1ConnectionState
 import org.jugregator.op1buddy.features.sync.RestoreScreenState
-import org.jugregator.op1buddy.features.sync.TAPES_COUNT
 import org.jugregator.op1buddy.features.sync.ui.views.DeviceCopyingProgress
 import org.jugregator.op1buddy.features.sync.ui.views.DrumSelector
 import org.jugregator.op1buddy.features.sync.ui.views.SynthSelector
-import org.jugregator.op1buddy.features.sync.ui.views.TapeRow
 import org.jugregator.op1buddy.features.sync.ui.views.TapeSelector
 import org.jugregator.op1buddy.features.sync.ui.views.UsbConnectionWrapper
 
@@ -64,6 +62,7 @@ fun RestoreScreen(
     onRestoreClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    //TODO: enable selector only if in backup
     Column(modifier = modifier) {
         Text(
             text = "Choose what to restore",
@@ -80,11 +79,14 @@ fun RestoreScreen(
             for (tapeIndex in 0..1) {
                 TapeSelector(
                     index = tapeIndex,
-                    selected = state.backupInfo.tapes[tapeIndex].second, { selected ->
+                    enabled = tapeIndex != 0,
+                    selected = state.backupInfo.tapes[tapeIndex].second,
+                    onSelected = { selected ->
                         val newBackupInfo = state.backupInfo.copy()
                         newBackupInfo.tapes[tapeIndex] = state.backupInfo.tapes[tapeIndex].copy(second = selected)
                         onRestoreSelectionChanged(state.backupInfo.copy(tapes = newBackupInfo.tapes))
-                    })
+                    }
+                )
             }
         }
 
@@ -117,12 +119,33 @@ fun RestoreScreen(
                 onRestoreSelectionChanged(state.backupInfo.copy(synths = checked))
             })
 
-            DrumSelector(selected = state.backupInfo.drumkits, onSelected = { checked ->
+            DrumSelector(selected = state.backupInfo.drumkits, enabled = false, onSelected = { checked ->
                 onRestoreSelectionChanged(state.backupInfo.copy(drumkits = checked))
             })
         }
 
         Spacer(modifier = Modifier.weight(1.0f))
 
+    }
+}
+
+@Preview
+@Composable
+fun RestoreScreenPreview() {
+    MaterialTheme {
+        var backupInfo = BackupInfo()
+        var (tape1, selected) = backupInfo.tapes[0]
+        //tape1.first =
+        tape1 = tape1.copy(enabled = false)
+        backupInfo.tapes[0] = (tape1 to selected)
+        val state = RestoreScreenState(connected = OP1ConnectionState.Connected, backupInfo = backupInfo)
+        var restoreState by remember {
+            mutableStateOf(state)
+        }
+
+
+        RestoreScreen(state = restoreState, onRestoreClick = { /*TODO*/ }, onRestoreSelectionChanged = {
+            restoreState = restoreState.copy(backupInfo = it)
+        })
     }
 }

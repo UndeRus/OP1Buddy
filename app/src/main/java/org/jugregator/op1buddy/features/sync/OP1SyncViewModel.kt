@@ -35,12 +35,13 @@ import java.util.zip.ZipEntry
 import java.util.zip.ZipException
 import java.util.zip.ZipOutputStream
 
-private const val BUFFER_SIZE = 512
+
 const val TAPES_COUNT = 4
 
 
 class OP1SyncViewModel(
     private val usbFileRepository: UsbFileRepository,
+    private val backupRepository: BackupRepository,
 ) : ViewModel() {
     private lateinit var backupDir: File
     private var deviceState = DeviceState()
@@ -190,44 +191,17 @@ class OP1SyncViewModel(
 
     }
 
-    fun createBackup(filesDir: File, outputZipFileOutputStream: OutputStream) {
+    private fun createBackupExport(filesDir: File, outputZipFileOutputStream: OutputStream) {
         _backupStateFlow.update { it.copy(nowCopying = true) }
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                try {
-                    val files = (filesDir.listFiles() ?: arrayOf<File>()).map { it.name }
-
-                    var origin: BufferedInputStream? = null
-
-                    val out = ZipOutputStream(BufferedOutputStream(outputZipFileOutputStream))
-
-                    val data = ByteArray(BUFFER_SIZE)
-                    for (filename in files) {
-                        val file = File(filesDir, filename)
-                        val fi = FileInputStream(file)
-                        origin = BufferedInputStream(fi, BUFFER_SIZE)
-
-                        val entry = ZipEntry(filename.substring(filename.lastIndexOf("/") + 1))
-                        out.putNextEntry(entry)
-
-                        var count = origin.read(data, 0, BUFFER_SIZE)
-
-                        while (count != -1) {
-                            out.write(data, 0, count)
-                            count = origin.read(data, 0, BUFFER_SIZE)
-                        }
-                        origin.close()
-                    }
-                    out.close()
-                } catch (e: IOException) {
-                    e.printStackTrace()
-                } catch (e: ZipException) {
-                    e.printStackTrace()
-                }
+                backupRepository.compressBackup(filesDir, outputZipFileOutputStream)
             }
         }
         _backupStateFlow.update { it.copy(nowCopying = false) }
     }
+
+
 
     override fun onCleared() {
         super.onCleared()
@@ -239,7 +213,7 @@ class OP1SyncViewModel(
         _backupStateFlow.update { it.copy(backupInfo = backupInfo) }
     }
 
-    fun onBackupDirSelected(context: Context, rootDir: Uri) {
+    fun onBackupExportDirSelected(context: Context, rootDir: Uri) {
         val contentResolver = context.contentResolver
         val takeFlags: Int = Intent.FLAG_GRANT_READ_URI_PERMISSION or
             Intent.FLAG_GRANT_WRITE_URI_PERMISSION
@@ -255,7 +229,7 @@ class OP1SyncViewModel(
         val writer = contentResolver.openOutputStream(selectedFile.uri, "wt")
 
         writer?.let { outputStream ->
-            createBackup(backupDir, outputStream)
+            createBackupExport(backupDir, outputStream)
         }
     }
 
@@ -268,7 +242,8 @@ class OP1SyncViewModel(
                 extras: CreationExtras
             ): T {
                 return OP1SyncViewModel(
-                    UsbFileRepositoryImpl()
+                    UsbFileRepositoryImpl(),
+                    BackupRepositoryImpl(),
                 ) as T
             }
         }
@@ -323,10 +298,10 @@ data class BackupInfo(
 )
 
 sealed class OP1Resource {
-    class Tape(val index: Int) : OP1Resource()
-    class Synth(val index: Int) : OP1Resource()
-    class Drumkit(val index: Int) : OP1Resource()
-    class Album(val side: AlbumSide) : OP1Resource()
+    data class Tape(val index: Int, val enabled: Boolean = true) : OP1Resource()
+    data class Synth(val index: Int) : OP1Resource()
+    data class Drumkit(val index: Int) : OP1Resource()
+    data class Album(val side: AlbumSide) : OP1Resource()
 }
 
 enum class AlbumSide(index: Int) {
