@@ -17,7 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun BackupProgress(progress: Float, modifier: Modifier = Modifier) {
+fun DeviceCopyingProgress(progress: Float, modifier: Modifier = Modifier) {
     val progressPercent = (progress * 100).toInt()
     Box(modifier = modifier.fillMaxSize()) {
         Column(modifier = Modifier.align(Alignment.Center)) {
@@ -50,6 +50,6 @@ fun BackupProgress(progress: Float, modifier: Modifier = Modifier) {
 @Composable
 fun BackupScreenProgressPreview() {
     MaterialTheme {
-        BackupProgress(progress = 0.5f)
+        DeviceCopyingProgress(progress = 0.5f)
     }
 }

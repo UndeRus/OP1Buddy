@@ -21,10 +21,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.newSingleThreadContext
 import kotlinx.coroutines.withContext
-import kotlinx.coroutines.yield
 import me.jahnen.libaums.core.fs.FileSystem
 import me.jahnen.libaums.core.fs.UsbFile
-import me.jahnen.libaums.core.fs.UsbFileStreamFactory
 import org.jugregator.op1buddy.AumsUsbController
 import org.jugregator.op1buddy.OP1State
 import java.io.BufferedInputStream
@@ -47,8 +45,11 @@ class OP1SyncViewModel(
     private lateinit var backupDir: File
     private var deviceState = DeviceState()
 
-    private val _stateFlow = MutableStateFlow(BackupScreenState())
-    val stateFlow: StateFlow<BackupScreenState> = _stateFlow
+    private val _backupStateFlow = MutableStateFlow(BackupScreenState())
+    val backupStateFlow: StateFlow<BackupScreenState> = _backupStateFlow
+
+    private val _restoreStateFlow = MutableStateFlow(RestoreScreenState())
+    val restoreStateFlow: StateFlow<RestoreScreenState> = _restoreStateFlow
 
     lateinit var aums: AumsUsbController
 
@@ -57,19 +58,23 @@ class OP1SyncViewModel(
             context,
             connectedCallback = { fs ->
                 deviceState = deviceState.copy(fs = fs, error = null)
-                _stateFlow.update { it.copy(connected = OP1ConnectionState.Connecting) }
+                _backupStateFlow.update { it.copy(connected = OP1ConnectionState.Connecting) }
+                _restoreStateFlow.update { it.copy(connected = OP1ConnectionState.Connecting) }
             },
             disconnectedCallback = {
                 deviceState = deviceState.copy(fs = null, error = null, fsState = null)
-                _stateFlow.update { it.copy(connected = OP1ConnectionState.Disconnected) }
+                _backupStateFlow.update { it.copy(connected = OP1ConnectionState.Disconnected) }
+                _restoreStateFlow.update { it.copy(connected = OP1ConnectionState.Disconnected) }
             },
             errorCallback = { error ->
                 deviceState = deviceState.copy(error = error)
-                _stateFlow.update { it.copy(connected = OP1ConnectionState.Connecting, error = error) }
+                _backupStateFlow.update { it.copy(connected = OP1ConnectionState.Connecting, error = error) }
+                _restoreStateFlow.update { it.copy(connected = OP1ConnectionState.Connecting, error = error) }
             },
             fsInitCallback = { state ->
                 deviceState = deviceState.copy(error = null, fsState = state)
-                _stateFlow.update { it.copy(connected = OP1ConnectionState.Connected) }
+                _backupStateFlow.update { it.copy(connected = OP1ConnectionState.Connected) }
+                _restoreStateFlow.update { it.copy(connected = OP1ConnectionState.Connected) }
             }
         )
         aums.initReceiver()
@@ -83,6 +88,7 @@ class OP1SyncViewModel(
     @OptIn(ExperimentalCoroutinesApi::class, DelicateCoroutinesApi::class)
     private val singleThreadContext = newSingleThreadContext("usb access")
 
+    /*
     @Deprecated("Use UsbFileRepository::copyFileToUsb")
     fun copyFileToUsb(targetUsbFile: UsbFile, fs: FileSystem, sourceFile: File) {
         viewModelScope.launch {
@@ -119,12 +125,13 @@ class OP1SyncViewModel(
             _stateFlow.update { it.copy(nowCopying = false) }
         }
     }
+    */
 
     fun backupDevice() {
         // Clear previous backup
         clearBackupDir()
 
-        val backupInfo = stateFlow.value.backupInfo
+        val backupInfo = backupStateFlow.value.backupInfo
         val fsState = deviceState.fsState
         val fs = deviceState.fs
 
@@ -162,11 +169,11 @@ class OP1SyncViewModel(
 
             viewModelScope.launch {
                 withContext(singleThreadContext) {
-                    _stateFlow.update { it.copy(nowCopying = true) }
+                    _backupStateFlow.update { it.copy(nowCopying = true) }
                     usbFileRepository.copyMultipleFilesFromUsb(backupUsbFiles, fs, backupTargetFiles) { progress ->
-                        _stateFlow.update { it.copy(progress = progress) }
+                        _backupStateFlow.update { it.copy(progress = progress) }
                     }
-                    _stateFlow.update { it.copy(nowCopying = false, backupInfo = BackupInfo()) }
+                    _backupStateFlow.update { it.copy(nowCopying = false, backupInfo = BackupInfo()) }
                 }
             }
         }
@@ -179,16 +186,12 @@ class OP1SyncViewModel(
         }
     }
 
-    fun restoreDevice() {
-
-    }
-
     fun chooseNewBackupFile() {
 
     }
 
     fun createBackup(filesDir: File, outputZipFileOutputStream: OutputStream) {
-        _stateFlow.update { it.copy(nowCopying = true) }
+        _backupStateFlow.update { it.copy(nowCopying = true) }
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 try {
@@ -223,7 +226,7 @@ class OP1SyncViewModel(
                 }
             }
         }
-        _stateFlow.update { it.copy(nowCopying = false) }
+        _backupStateFlow.update { it.copy(nowCopying = false) }
     }
 
     override fun onCleared() {
@@ -233,7 +236,7 @@ class OP1SyncViewModel(
     }
 
     fun updateBackupInfo(backupInfo: BackupInfo) {
-        _stateFlow.update { it.copy(backupInfo = backupInfo) }
+        _backupStateFlow.update { it.copy(backupInfo = backupInfo) }
     }
 
     fun onBackupDirSelected(context: Context, rootDir: Uri) {

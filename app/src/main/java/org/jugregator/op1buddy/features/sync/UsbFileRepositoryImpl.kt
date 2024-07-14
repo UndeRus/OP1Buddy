@@ -74,4 +74,13 @@ class UsbFileRepositoryImpl : UsbFileRepository {
         output.close()
         input.close()
     }
+
+    override fun copyMultipleFilesToUsb(
+        targetUsbFile: UsbFile,
+        fs: FileSystem,
+        sourceFiles: List<File>,
+        onProgress: (Long) -> Unit
+    ) {
+        TODO("Not yet implemented")
+    }
 }

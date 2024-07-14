@@ -78,7 +78,7 @@ fun SyncScreen(modifier: Modifier = Modifier, viewModel: OP1SyncViewModel = view
         HorizontalPager(state = pagerState) { page ->
             when (page) {
                 0 -> {
-                    val uiState by viewModel.stateFlow.collectAsState()
+                    val uiState by viewModel.backupStateFlow.collectAsState()
                     BackupScreen(
                         state = uiState,
                         onBackupClick = { viewModel.backupDevice() },
@@ -89,7 +89,7 @@ fun SyncScreen(modifier: Modifier = Modifier, viewModel: OP1SyncViewModel = view
 
                 1 -> RestoreScreenTodo()
                 2 -> {
-                    val uiState by viewModel.stateFlow.collectAsState()
+                    val uiState by viewModel.backupStateFlow.collectAsState()
                     val isLoading by remember {
                         derivedStateOf { uiState.nowCopying }
                     }
