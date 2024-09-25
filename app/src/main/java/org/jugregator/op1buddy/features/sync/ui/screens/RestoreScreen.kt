@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,6 +27,7 @@ import org.jugregator.op1buddy.features.sync.OP1ConnectionState
 import org.jugregator.op1buddy.features.sync.RestoreScreenState
 import org.jugregator.op1buddy.features.sync.ui.views.DeviceCopyingProgress
 import org.jugregator.op1buddy.features.sync.ui.views.DrumSelector
+import org.jugregator.op1buddy.features.sync.ui.views.RestoreReadyForCopy
 import org.jugregator.op1buddy.features.sync.ui.views.SynthSelector
 import org.jugregator.op1buddy.features.sync.ui.views.TapeSelector
 import org.jugregator.op1buddy.features.sync.ui.views.UsbConnectionWrapper
@@ -46,88 +48,23 @@ fun RestoreScreen(
     state: RestoreScreenState,
     onRestoreClick: () -> Unit,
     onRestoreSelectionChanged: (BackupInfo) -> Unit,
-    modifier: Modifier = Modifier) {
+    modifier: Modifier = Modifier
+) {
     UsbConnectionWrapper(connectedState = state.connected, content = {
         if (state.nowCopying) {
+            WakeLock()
             DeviceCopyingProgress(progress = state.progress)
         } else {
-            RestoreReadyForCopy(state, onRestoreSelectionChanged, onRestoreClick, modifier)
+            RestoreReadyForCopy(
+                state = state,
+                onRestoreSelectionChanged = onRestoreSelectionChanged,
+                onRestoreClick = onRestoreClick,
+                modifier = modifier
+            )
         }
     })
 }
 
-@Composable fun RestoreReadyForCopy(
-    state: RestoreScreenState,
-    onRestoreSelectionChanged: (BackupInfo) -> Unit,
-    onRestoreClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    //TODO: enable selector only if in backup
-    Column(modifier = modifier) {
-        Text(
-            text = "Choose what to restore",
-            style = MaterialTheme.typography.titleLarge,
-            modifier = Modifier
-                .padding(10.dp)
-                .align(Alignment.CenterHorizontally)
-        )
-
-        Row(
-            modifier = Modifier.align(Alignment.CenterHorizontally),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            for (tapeIndex in 0..1) {
-                TapeSelector(
-                    index = tapeIndex,
-                    enabled = tapeIndex != 0,
-                    selected = state.backupInfo.tapes[tapeIndex].second,
-                    onSelected = { selected ->
-                        val newBackupInfo = state.backupInfo.copy()
-                        newBackupInfo.tapes[tapeIndex] = state.backupInfo.tapes[tapeIndex].copy(second = selected)
-                        onRestoreSelectionChanged(state.backupInfo.copy(tapes = newBackupInfo.tapes))
-                    }
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Row(
-            modifier = Modifier.align(Alignment.CenterHorizontally),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            for (tapeIndex in 2..3) {
-                TapeSelector(
-                    index = tapeIndex,
-                    selected = state.backupInfo.tapes[tapeIndex].second, { selected ->
-                        val newBackupInfo = state.backupInfo.copy()
-                        newBackupInfo.tapes[tapeIndex] = state.backupInfo.tapes[tapeIndex].copy(second = selected)
-                        onRestoreSelectionChanged(state.backupInfo.copy(tapes = newBackupInfo.tapes))
-                    })
-            }
-        }
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(space = 8.dp, alignment = Alignment.CenterHorizontally),
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .fillMaxWidth()
-        ) {
-            SynthSelector(selected = state.backupInfo.synths, onSelected = { checked ->
-                onRestoreSelectionChanged(state.backupInfo.copy(synths = checked))
-            })
-
-            DrumSelector(selected = state.backupInfo.drumkits, enabled = false, onSelected = { checked ->
-                onRestoreSelectionChanged(state.backupInfo.copy(drumkits = checked))
-            })
-        }
-
-        Spacer(modifier = Modifier.weight(1.0f))
-
-    }
-}
 
 @Preview
 @Composable

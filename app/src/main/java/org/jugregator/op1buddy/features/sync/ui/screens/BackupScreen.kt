@@ -26,7 +26,12 @@ fun BackupScreen(
             WakeLock()
             DeviceCopyingProgress(state.progress, modifier)
         } else {
-            BackupReadyForCopy(state, onBackupSelectionChanged, onBackupClick, modifier)
+            BackupReadyForCopy(
+                state = state,
+                onBackupSelectionChanged = onBackupSelectionChanged,
+                onBackupClick = onBackupClick,
+                modifier = modifier
+            )
         }
     })
 

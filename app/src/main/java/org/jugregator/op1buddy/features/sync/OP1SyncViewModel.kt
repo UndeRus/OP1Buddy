@@ -25,23 +25,17 @@ import me.jahnen.libaums.core.fs.FileSystem
 import me.jahnen.libaums.core.fs.UsbFile
 import org.jugregator.op1buddy.AumsUsbController
 import org.jugregator.op1buddy.OP1State
-import java.io.BufferedInputStream
-import java.io.BufferedOutputStream
 import java.io.File
-import java.io.FileInputStream
-import java.io.IOException
 import java.io.OutputStream
-import java.util.zip.ZipEntry
-import java.util.zip.ZipException
-import java.util.zip.ZipOutputStream
-
+import java.util.Arrays
+import java.util.Collections
 
 const val TAPES_COUNT = 4
-
 
 class OP1SyncViewModel(
     private val usbFileRepository: UsbFileRepository,
     private val backupRepository: BackupRepository,
+    private val localFileRepository: LocalFileRepository,
 ) : ViewModel() {
     private lateinit var backupDir: File
     private var deviceState = DeviceState()
@@ -84,49 +78,18 @@ class OP1SyncViewModel(
         if (!backupDir.exists()) {
             backupDir.mkdirs()
         }
+
+        refreshLocalBackupInfo()
+    }
+
+    private fun refreshLocalBackupInfo() {
+        //TODO: check current dir and load restore state
+        val savedBackupInfo = localFileRepository.readBackupInfo(backupDir)
+        _restoreStateFlow.update { it.copy(backupInfo = savedBackupInfo) }
     }
 
     @OptIn(ExperimentalCoroutinesApi::class, DelicateCoroutinesApi::class)
     private val singleThreadContext = newSingleThreadContext("usb access")
-
-    /*
-    @Deprecated("Use UsbFileRepository::copyFileToUsb")
-    fun copyFileToUsb(targetUsbFile: UsbFile, fs: FileSystem, sourceFile: File) {
-        viewModelScope.launch {
-            _stateFlow.update { it.copy(nowCopying = true) }
-            withContext(Dispatchers.IO) {
-                val fileSize = sourceFile.length()
-                val output = UsbFileStreamFactory.createBufferedOutputStream(targetUsbFile, fs)
-                val input = BufferedInputStream(sourceFile.inputStream())
-
-                val buffer = ByteArray(fs.chunkSize)
-                var fullSize = 0L
-                var resultSize = input.read(buffer)
-
-                var percent = 0
-                var newPercent: Int
-
-                while (resultSize != -1) {
-                    output.write(buffer, 0, resultSize)
-
-                    fullSize += resultSize
-
-                    newPercent = ((fullSize.toFloat() / fileSize.toFloat()) * 100).toInt()
-                    resultSize = input.read(buffer)
-                    yield()
-
-                    if (newPercent != percent) {
-                        percent = newPercent
-                        deviceState = deviceState.copy(bytesWasWritePercent = percent)
-                    }
-                }
-                output.close()
-                input.close()
-            }
-            _stateFlow.update { it.copy(nowCopying = false) }
-        }
-    }
-    */
 
     fun backupDevice() {
         // Clear previous backup
@@ -175,8 +138,61 @@ class OP1SyncViewModel(
                         _backupStateFlow.update { it.copy(progress = progress) }
                     }
                     _backupStateFlow.update { it.copy(nowCopying = false, backupInfo = BackupInfo()) }
+                    refreshLocalBackupInfo()
                 }
             }
+        }
+    }
+
+    fun restoreDevice() {
+        val backupInfo = restoreStateFlow.value.backupInfo
+        val fsState = deviceState.fsState
+        val fs = deviceState.fs
+
+        val backupLocalFiles = mutableListOf<File>()
+        val backupTargetUsbFiles = mutableListOf<UsbFile>()
+
+        if (fsState != null && fs != null) {
+            if (backupInfo.synths) {
+                //copy synths
+                for ((synthIndex, synthUsbFile) in fsState.synths.withIndex()) {
+                    val localSynthFile = File(backupDir, "synth_${synthIndex + 1}.aif")
+                    backupLocalFiles.add(localSynthFile)
+                    backupTargetUsbFiles.add(synthUsbFile)
+                }
+            }
+
+            if (backupInfo.drumkits) {
+                // copy drumkits
+                for ((drumkitIndex, drumkitUsbFile) in fsState.drums.withIndex()) {
+                    val localDrumkitFile = File(backupDir, "drum_${drumkitIndex + 1}.aif")
+                    backupLocalFiles.add(localDrumkitFile)
+                    backupTargetUsbFiles.add(drumkitUsbFile)
+                }
+            }
+
+
+            for ((tape, isNeedToBackup) in backupInfo.tapes) {
+                if (isNeedToBackup) {
+                    val tapeIndex = tape.index
+                    val localTapeFile = File(backupDir, "tape_${tapeIndex + 1}.aif")
+                    val sourceUsbTapeFile = fsState.tracks[tapeIndex]
+                    backupLocalFiles.add(localTapeFile)
+                    backupTargetUsbFiles.add(sourceUsbTapeFile)
+                }
+            }
+
+            viewModelScope.launch {
+                withContext(singleThreadContext) {
+                    _restoreStateFlow.update { it.copy(nowCopying = true) }
+                    usbFileRepository.copyMultipleFilesToUsb(backupTargetUsbFiles, fs, backupLocalFiles) { progress ->
+                        _restoreStateFlow.update { it.copy(progress = progress) }
+                    }
+                    _restoreStateFlow.update { it.copy(nowCopying = false, backupInfo = BackupInfo()) }
+                    refreshLocalBackupInfo()
+                }
+            }
+
         }
     }
 
@@ -201,8 +217,6 @@ class OP1SyncViewModel(
         _backupStateFlow.update { it.copy(nowCopying = false) }
     }
 
-
-
     override fun onCleared() {
         super.onCleared()
         aums.destroyReceiver()
@@ -211,6 +225,10 @@ class OP1SyncViewModel(
 
     fun updateBackupInfo(backupInfo: BackupInfo) {
         _backupStateFlow.update { it.copy(backupInfo = backupInfo) }
+    }
+
+    fun updateRestoreInfo(restoreInfo: BackupInfo) {
+        _restoreStateFlow.update { it.copy(backupInfo = restoreInfo) }
     }
 
     fun onBackupExportDirSelected(context: Context, rootDir: Uri) {
@@ -233,6 +251,7 @@ class OP1SyncViewModel(
         }
     }
 
+    /*
     companion object {
 
         val Factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {
@@ -244,10 +263,12 @@ class OP1SyncViewModel(
                 return OP1SyncViewModel(
                     UsbFileRepositoryImpl(),
                     BackupRepositoryImpl(),
+                    LocalFileRepositoryImpl(),
                 ) as T
             }
         }
     }
+    */
 }
 
 data class DeviceState(
@@ -287,6 +308,20 @@ enum class OP1ConnectionState {
 }
 
 data class BackupInfo(
+    val tapes: SnapshotStateList<Pair<OP1Resource.Tape, Boolean>> =
+        (0..<TAPES_COUNT).map { index -> OP1Resource.Tape(index = index, enabled = true) to false }.toList()
+            .toMutableStateList(),
+    val synths: Boolean = false,
+    val synthsEnabled: Boolean = true,
+    val drumkits: Boolean = false,
+    val drumkitsEnabled: Boolean = true,
+    val albums: SnapshotStateList<Pair<OP1Resource.Album, Boolean>> = mutableStateListOf(
+        OP1Resource.Album(AlbumSide.SideA) to false,
+        OP1Resource.Album(AlbumSide.SideB) to false,
+    )
+)
+
+data class RestoreInfo(
     val tapes: SnapshotStateList<Pair<OP1Resource.Tape, Boolean>> =
         (0..<TAPES_COUNT).map { index -> OP1Resource.Tape(index) to false }.toList().toMutableStateList(),
     val synths: Boolean = false,

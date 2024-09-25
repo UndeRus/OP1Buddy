@@ -14,6 +14,7 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -88,9 +89,20 @@ fun SyncScreen(modifier: Modifier = Modifier, viewModel: OP1SyncViewModel = view
                 }
 
                 1 -> {
+                    //TODO: search how to init viewmodel correctly before compose
+                    // maybe use backup dir
+                    LaunchedEffect(Unit) {
+
+                    }
                     val uiState by viewModel.restoreStateFlow.collectAsState()
-                    RestoreScreen(state = uiState, onRestoreClick = { /*TODO*/ }, onRestoreSelectionChanged = {})
+                    RestoreScreen(
+                        state = uiState,
+                        onRestoreClick = { viewModel.restoreDevice() },
+                        onRestoreSelectionChanged = {
+                            viewModel.updateRestoreInfo(it)
+                        })
                 }
+
                 2 -> {
                     val uiState by viewModel.backupStateFlow.collectAsState()
                     val isLoading by remember {
