@@ -1,6 +1,5 @@
 package org.jugregator.op1buddy.features.sync
 
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.toMutableStateList
 import java.io.File
 

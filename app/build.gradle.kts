@@ -48,10 +48,12 @@ android {
 }
 
 dependencies {
-    implementation(libs.libaums)
     implementation(libs.fat32lib)
-//    implementation(libs.libaumsusbcomm)
-    implementation(libs.libaumsjavafs)
+    implementation(files("../libs/libaums-release.aar"))
+    implementation(files("../libs/javafs-release.aar"))
+    implementation(libs.log4j)
+    implementation(libs.android.logging.log4j)
+    implementation(libs.java.fs)
 
     implementation(libs.coroutines)
     implementation(libs.androidx.core.ktx)

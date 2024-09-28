@@ -16,15 +16,20 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        flatDir {
+            dir("libs")
+        }
     }
 }
 
 rootProject.name = "OP1Buddy"
 include(":app")
 
+/*
 includeBuild("../libaums"){
     dependencySubstitution {
         substitute( module("me.jahnen.libaums:core")).using(project(":libaums"))
         substitute( module("me.jahnen.libaums:javafs")).using(project(":javafs"))
     }
 }
+*/
