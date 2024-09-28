@@ -29,7 +29,6 @@ import kotlinx.coroutines.launch
 import org.jugregator.op1buddy.features.sync.OP1SyncViewModel
 import org.jugregator.op1buddy.ui.theme.AppTheme
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SyncScreen(modifier: Modifier = Modifier, viewModel: OP1SyncViewModel = viewModel()) {
     val pagerState = rememberPagerState(pageCount = {
@@ -89,11 +88,6 @@ fun SyncScreen(modifier: Modifier = Modifier, viewModel: OP1SyncViewModel = view
                 }
 
                 1 -> {
-                    //TODO: search how to init viewmodel correctly before compose
-                    // maybe use backup dir
-                    LaunchedEffect(Unit) {
-
-                    }
                     val uiState by viewModel.restoreStateFlow.collectAsState()
                     RestoreScreen(
                         state = uiState,
