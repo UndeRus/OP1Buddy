@@ -2,6 +2,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.serialization)
+    id("com.vk.vkompose") version "0.6.1"
+    alias(libs.plugins.baselineprofile)
 }
 
 android {
@@ -47,6 +49,10 @@ android {
     }
 }
 
+vkompose {
+    skippabilityCheck = true
+}
+
 dependencies {
     implementation(libs.fat32lib)
     implementation(files("../libs/libaums-release.aar"))
@@ -74,12 +80,14 @@ dependencies {
     implementation(libs.koin.android.compose)
     implementation(libs.navigation.compose)
     implementation(libs.kotlinx.serialization)
+    implementation(libs.androidx.profileinstaller)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
+    "baselineProfile"(project(":baselineprofile"))
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 }

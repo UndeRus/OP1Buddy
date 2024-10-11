@@ -12,14 +12,14 @@ import org.jugregator.op1buddy.features.sync.DeviceState
 
 @Composable
 fun SyncScreenSimple(
-    state: DeviceState,
+    stateProducer: () -> DeviceState,
     onBackupClick: () -> Unit,
     onRestoreClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier) {
         val fs by remember {
-            derivedStateOf { state.fs }
+            derivedStateOf { stateProducer().fs }
         }
         if (fs != null) {
             Text(text = "Device connected")
@@ -28,31 +28,31 @@ fun SyncScreenSimple(
         }
 
         val error by remember {
-            derivedStateOf { state.error }
+            derivedStateOf { stateProducer().error }
         }
 
-        if (state.error != null) {
+        if (stateProducer().error != null) {
             Text(text = "Failed to init device $error")
         }
 
         val fsState by remember {
-            derivedStateOf { state.fsState }
+            derivedStateOf { stateProducer().fsState }
         }
 
         if (fsState != null && fs != null) {
             Text(text = "Found: ${fsState?.tracks?.size} tracks, ${fsState?.albums?.size} albums, ${fsState?.synths?.size} synths, ${fsState?.drums?.size} drums")
             val nowCopying by remember {
-                derivedStateOf { state.nowCopying }
+                derivedStateOf { stateProducer().nowCopying }
             }
             Button(onClick = onBackupClick, enabled = !nowCopying) {
                 Text(text = "Try to copy from OP-1")
             }
 
-            Text(text = "Percents of file was read ${state.bytesWasReadPercent}%")
+            Text(text = "Percents of file was read ${stateProducer().bytesWasReadPercent}%")
             Button(onClick = onRestoreClick, enabled = !nowCopying) {
                 Text(text = "Try to copy to OP-1")
             }
-            Text(text = "Percents of file was wrote ${state.bytesWasWritePercent}%")
+            Text(text = "Percents of file was wrote ${stateProducer().bytesWasWritePercent}%")
 
         }
     }

@@ -33,3 +33,4 @@ includeBuild("../libaums"){
     }
 }
 */
+include(":baselineprofile")
