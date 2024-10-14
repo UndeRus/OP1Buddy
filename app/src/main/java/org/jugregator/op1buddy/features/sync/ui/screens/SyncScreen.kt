@@ -98,11 +98,11 @@ fun SyncScreen(modifier: Modifier = Modifier, viewModel: OP1SyncViewModel = view
                 }
 
                 2 -> {
-                    val uiState by viewModel.backupStateFlow.collectAsState()
+                    val uiState by viewModel.restoreStateFlow.collectAsState()
                     val isLoading by remember {
                         derivedStateOf { uiState.nowCopying }
                     }
-                    ExportScreen(isCopying = isLoading, onBackupDirSelected = { uri ->
+                    ExportScreen(state = uiState, isCopying = isLoading, onBackupDirSelected = { uri ->
                         viewModel.onBackupExportDirSelected(context, uri)
                     })
                 }
