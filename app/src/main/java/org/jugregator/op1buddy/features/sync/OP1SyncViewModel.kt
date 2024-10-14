@@ -9,9 +9,7 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.toMutableStateList
 import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.CreationExtras
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -27,8 +25,6 @@ import org.jugregator.op1buddy.AumsUsbController
 import org.jugregator.op1buddy.OP1State
 import java.io.File
 import java.io.OutputStream
-import java.util.Arrays
-import java.util.Collections
 
 const val TAPES_COUNT = 4
 
@@ -203,10 +199,6 @@ class OP1SyncViewModel(
         }
     }
 
-    fun chooseNewBackupFile() {
-
-    }
-
     private fun createBackupExport(filesDir: File, outputZipFileOutputStream: OutputStream) {
         _backupStateFlow.update { it.copy(nowCopying = true) }
         viewModelScope.launch {
@@ -246,29 +238,11 @@ class OP1SyncViewModel(
 
         val writer = contentResolver.openOutputStream(selectedFile.uri, "wt")
 
+        // TODO: check if nullable
         writer?.let { outputStream ->
             createBackupExport(backupDir, outputStream)
         }
     }
-
-    /*
-    companion object {
-
-        val Factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {
-            @Suppress("UNCHECKED_CAST")
-            override fun <T : ViewModel> create(
-                modelClass: Class<T>,
-                extras: CreationExtras
-            ): T {
-                return OP1SyncViewModel(
-                    UsbFileRepositoryImpl(),
-                    BackupRepositoryImpl(),
-                    LocalFileRepositoryImpl(),
-                ) as T
-            }
-        }
-    }
-    */
 }
 
 data class DeviceState(
@@ -320,6 +294,10 @@ data class BackupInfo(
         OP1Resource.Album(AlbumSide.SideB) to false,
     )
 )
+
+fun BackupInfo.isEmpty(): Boolean {
+    return tapes.all { !it.first.enabled } && !synthsEnabled && !drumkitsEnabled
+}
 
 data class RestoreInfo(
     val tapes: SnapshotStateList<Pair<OP1Resource.Tape, Boolean>> =
