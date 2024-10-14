@@ -4,6 +4,8 @@ plugins {
     alias(libs.plugins.serialization)
     id("com.vk.vkompose") version "0.6.1"
     alias(libs.plugins.baselineprofile)
+    id("com.google.firebase.crashlytics")
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -81,6 +83,13 @@ dependencies {
     implementation(libs.navigation.compose)
     implementation(libs.kotlinx.serialization)
     implementation(libs.androidx.profileinstaller)
+
+    // Firebase stuff
+    implementation(platform("com.google.firebase:firebase-bom:33.4.0"))
+    // Add the dependencies for the Crashlytics and Analytics libraries
+    // When using the BoM, you don't specify versions in Firebase library dependencies
+    implementation("com.google.firebase:firebase-crashlytics")
+    implementation("com.google.firebase:firebase-analytics")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

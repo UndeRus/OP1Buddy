@@ -1,7 +1,9 @@
 package org.jugregator.op1buddy.features.sync
 
 import android.os.Bundle
+import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.Button
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -21,8 +23,8 @@ class OP1SyncActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         viewModel.init(this)
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-
         enableEdgeToEdge()
+
         setContent {
             AppTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->

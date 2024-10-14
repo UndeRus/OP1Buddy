@@ -1,5 +1,7 @@
 package org.jugregator.op1buddy.features.sync
 
+import com.google.firebase.crashlytics.ktx.crashlytics
+import com.google.firebase.ktx.Firebase
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 import java.io.File
@@ -38,9 +40,11 @@ class BackupRepositoryImpl : BackupRepository {
             }
             out.close()
         } catch (e: IOException) {
-            e.printStackTrace()
+            Firebase.crashlytics.log("IOException during export backup")
+            Firebase.crashlytics.recordException(e)
         } catch (e: ZipException) {
-            e.printStackTrace()
+            Firebase.crashlytics.log("ZipException during export backup")
+            Firebase.crashlytics.recordException(e)
         }
     }
 }

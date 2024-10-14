@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "557775595292",
+    "project_id": "op1buddy",
+    "storage_bucket": "op1buddy.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:557775595292:android:c94a53f8b6f59218a6bcd9",
+        "android_client_info": {
+          "package_name": "org.jugregator.op1buddy"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC6X_Ha1VgRv0t4jUHdq9Iy9P49Ecp9i2c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
