@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">OP1Buddy</string>
     <string name="sync_screen">Sync for OP-1</string>
+    <string name="faq1_description">Connect with USB cable</string>
+    <string name="faq2_description">Power on the synthesizer</string>
+    <string name="faq3_description">Press Shift + Com</string>
+    <string name="faq4_description">Press Tape 3</string>
+    <string name="faq5_description">Confirm permission on screen</string>
 </resources>

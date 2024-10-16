@@ -25,6 +25,7 @@ uiautomator = "2.2.0"
 benchmarkMacroJunit4 = "1.2.4"
 baselineprofile = "1.2.4"
 profileinstaller = "1.3.1"
+material3Android = "1.3.0"
 
 [libraries]
 android-logging-log4j = { module = "de.mindpipe.android:android-logging-log4j", version.ref = "androidLoggingLog4j" }
@@ -44,7 +45,6 @@ androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
-androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 coroutines = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
 libaums = { group = "me.jahnen.libaums", name = "core", version.ref = "libaums"}
 fat32lib = {group = "de.waldheinz", name = "fat32-lib", version.ref = "fat32lib"}
@@ -61,6 +61,7 @@ kotlinx-serialization = {group = "org.jetbrains.kotlinx", name = "kotlinx-serial
 androidx-uiautomator = { group = "androidx.test.uiautomator", name = "uiautomator", version.ref = "uiautomator" }
 androidx-benchmark-macro-junit4 = { group = "androidx.benchmark", name = "benchmark-macro-junit4", version.ref = "benchmarkMacroJunit4" }
 androidx-profileinstaller = { group = "androidx.profileinstaller", name = "profileinstaller", version.ref = "profileinstaller" }
+androidx-material3-android = { group = "androidx.compose.material3", name = "material3-android", version.ref = "material3Android" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
