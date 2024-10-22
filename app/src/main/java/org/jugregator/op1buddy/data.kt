@@ -1,3 +1,6 @@
 package org.jugregator.op1buddy
 
-data class Project(val id: Int, val title: String)
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class Project(val id: String, val title: String, val backupDir: String)

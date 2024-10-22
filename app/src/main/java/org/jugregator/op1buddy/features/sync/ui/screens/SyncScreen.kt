@@ -14,6 +14,7 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -24,13 +25,20 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
 import org.jugregator.op1buddy.features.sync.OP1SyncViewModel
 import org.jugregator.op1buddy.ui.theme.AppTheme
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun SyncScreen(modifier: Modifier = Modifier, viewModel: OP1SyncViewModel = viewModel()) {
+fun SyncScreen(modifier: Modifier = Modifier, viewModel: OP1SyncViewModel = koinViewModel()) {
+
+    val context = LocalContext.current
+    LaunchedEffect(Unit) {
+        viewModel.init(context)
+    }
+
+
     val pagerState = rememberPagerState(pageCount = {
         3
     })

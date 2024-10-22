@@ -8,8 +8,10 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.toMutableStateList
 import androidx.documentfile.provider.DocumentFile
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -23,15 +25,19 @@ import me.jahnen.libaums.core.fs.FileSystem
 import me.jahnen.libaums.core.fs.UsbFile
 import org.jugregator.op1buddy.AumsUsbController
 import org.jugregator.op1buddy.OP1State
+import org.jugregator.op1buddy.ProjectsRepository
+import org.jugregator.op1buddy.features.projects.SyncRoute
 import java.io.File
 import java.io.OutputStream
 
 const val TAPES_COUNT = 4
 
 class OP1SyncViewModel(
+    private val savedStateHandle: SavedStateHandle,
     private val usbFileRepository: UsbFileRepository,
     private val backupRepository: BackupRepository,
     private val localFileRepository: LocalFileRepository,
+    private val projectsRepository: ProjectsRepository
 ) : ViewModel() {
     private lateinit var backupDir: File
     private var deviceState = DeviceState()
@@ -44,7 +50,11 @@ class OP1SyncViewModel(
 
     lateinit var aums: AumsUsbController
 
+
+    val params = savedStateHandle.toRoute<SyncRoute>()
+
     fun init(context: Context) {
+        println(params)
         aums = AumsUsbController(
             context,
             connectedCallback = { fs ->
@@ -70,7 +80,8 @@ class OP1SyncViewModel(
         )
         aums.initReceiver()
 
-        backupDir = File(context.filesDir, "op1backup")
+        val backupDirPath = "";
+        backupDir = File(context.filesDir, "op1backup/${backupDirPath}")
         if (!backupDir.exists()) {
             backupDir.mkdirs()
         }
