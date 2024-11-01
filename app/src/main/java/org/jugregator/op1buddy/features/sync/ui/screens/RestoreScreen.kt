@@ -42,7 +42,7 @@ fun RestoreScreen(
 @Composable
 fun RestoreScreenPreview() {
     MaterialTheme {
-        var backupInfo = BackupInfo()
+        val backupInfo = BackupInfo()
         var (tape1, selected) = backupInfo.tapes[0]
         //tape1.first =
         tape1 = tape1.copy(enabled = false)

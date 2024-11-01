@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.icons.filled.Share
@@ -88,7 +89,7 @@ fun SyncScreen(modifier: Modifier = Modifier, viewModel: OP1SyncViewModel = koin
                         )
                     },
                     icon = {
-                        Icon(Icons.Default.Send, modifier = Modifier.alpha(isBusyAlpha), contentDescription = null)
+                        Icon(Icons.AutoMirrored.Filled.Send, modifier = Modifier.alpha(isBusyAlpha), contentDescription = null)
                     }
                 )
                 Tab(
@@ -105,8 +106,6 @@ fun SyncScreen(modifier: Modifier = Modifier, viewModel: OP1SyncViewModel = koin
                     }
                 )
             })
-
-        val context = LocalContext.current
 
         HorizontalPager(state = pagerState) { page ->
             when (page) {

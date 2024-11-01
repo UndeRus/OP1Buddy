@@ -41,7 +41,7 @@ fun ProjectsScreen(
     onProjectClicked: (Project) -> Unit,
     onNewProjectClicked: () -> Unit,
 ) {
-    val state by viewModel.uiState.collectAsState();
+    val state by viewModel.uiState.collectAsState()
     Scaffold(modifier = modifier, floatingActionButton = {
         FloatingActionButton(
             onClick = { onNewProjectClicked() },
@@ -101,17 +101,4 @@ fun ProjectTitle(title: String, onClick: () -> Unit, modifier: Modifier = Modifi
             style = MaterialTheme.typography.labelLarge.copy(fontSize = 25.sp)
         )
     }
-}
-
-private fun getProjects(): List<Project> {
-    return listOf(
-        Project("1", "My long sommer jam at sunset", ""),
-        Project("2", "8-bit jam at NAMM", ""),
-        Project("3", "All In Line", ""),
-        Project("4", "A Time Of Shimmer", ""),
-        Project("5", "Investors demo at HOR", ""),
-        Project("6", "It's Time To Have Fun With Motion", ""),
-        Project("7", "Chill dream", ""),
-        Project("8", "Hurr durr herp derp", ""),
-    )
 }

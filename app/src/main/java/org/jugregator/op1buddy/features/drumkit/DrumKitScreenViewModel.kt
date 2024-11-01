@@ -51,7 +51,7 @@ class DrumKitScreenViewModel
 
     private val route = savedStateHandle.toRoute<DrumKitRoute>()
 
-    init {;
+    init {
         simplePlayer.play()
         viewModelScope.launch(Dispatchers.IO) {
             val project = projectRepository.readProject(route.projectId) ?: return@launch

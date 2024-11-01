@@ -17,7 +17,6 @@ import org.jugregator.op1buddy.features.sync.UsbFileRepositoryImpl
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
-import kotlin.math.sin
 
 val appModule = module {
     single<UsbFileRepository> { UsbFileRepositoryImpl() }

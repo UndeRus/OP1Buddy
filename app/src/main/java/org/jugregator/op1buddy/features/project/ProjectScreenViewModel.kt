@@ -25,7 +25,7 @@ class ProjectScreenViewModel(
 
     private val _mutableState =
         MutableStateFlow(ProjectUiState(projectId = route.projectId ?: UUID.randomUUID().toString()))
-    val state: StateFlow<ProjectUiState> = _mutableState;
+    val state: StateFlow<ProjectUiState> = _mutableState
 
     private var project: Project? = null
 
@@ -35,7 +35,7 @@ class ProjectScreenViewModel(
             if (projectInfo != null) {
                 _mutableState.update { it.copy(title = projectInfo.title, path = projectInfo.backupDir) }
                 project = projectInfo
-                //TODO: load dir state
+                // load dir state
                 val backupInfo = localFileRepository.readBackupInfo(projectInfo.backupDir)
                 _mutableState.update {
                     it.copy(
@@ -71,7 +71,7 @@ class ProjectScreenViewModel(
                     )
                 }
             } else {
-                //TODO: create project
+                // create project
                 val newProject = Project(
                     id = state.value.projectId,
                     title = "",

@@ -90,11 +90,6 @@ dependencies {
     implementation(libs.kotlinx.serialization)
     implementation(libs.androidx.profileinstaller)
 
-    // ExoPlayer
-    implementation("androidx.media3:media3-exoplayer:1.4.1")
-    implementation("androidx.media3:media3-exoplayer-dash:1.4.1")
-    implementation("androidx.media3:media3-ui:1.4.1")
-
     // Firebase stuff
     implementation(platform(libs.firebase.bom))
     // Add the dependencies for the Crashlytics and Analytics libraries
