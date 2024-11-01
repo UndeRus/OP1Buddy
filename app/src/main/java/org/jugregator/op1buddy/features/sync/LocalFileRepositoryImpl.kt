@@ -1,10 +1,12 @@
 package org.jugregator.op1buddy.features.sync
 
+import android.content.Context
 import androidx.compose.runtime.toMutableStateList
 import java.io.File
 
-class LocalFileRepositoryImpl : LocalFileRepository {
-    override fun readBackupInfo(backupDir: File): BackupInfo {
+class LocalFileRepositoryImpl(private val context: Context) : LocalFileRepository {
+    override fun readBackupInfo(backupDirPath: String): BackupInfo {
+        val backupDir = File(context.filesDir, "op1backup/${backupDirPath}")
         // read structure
         // tape_1.aif .. tape_4.aif
         // synth_1.aif .. synth_8.aif
@@ -12,7 +14,8 @@ class LocalFileRepositoryImpl : LocalFileRepository {
         val backupFiles = backupDir.listFiles() ?: arrayOf()
 
         var backupInfo = BackupInfo(drumkitsEnabled = false, synthsEnabled = false)
-        val disabledTapes = backupInfo.tapes.map { it.copy(first = it.first.copy(enabled = false)) }.toMutableStateList()
+        val disabledTapes =
+            backupInfo.tapes.map { it.copy(first = it.first.copy(enabled = false)) }.toMutableStateList()
         backupInfo = backupInfo.copy(tapes = disabledTapes)
 
         var drumCount = 0

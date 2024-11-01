@@ -3,6 +3,7 @@ package org.jugregator.op1buddy.features.sync
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
@@ -25,7 +26,7 @@ import me.jahnen.libaums.core.fs.FileSystem
 import me.jahnen.libaums.core.fs.UsbFile
 import org.jugregator.op1buddy.AumsUsbController
 import org.jugregator.op1buddy.OP1State
-import org.jugregator.op1buddy.ProjectsRepository
+import org.jugregator.op1buddy.data.ProjectsRepository
 import org.jugregator.op1buddy.features.projects.SyncRoute
 import java.io.File
 import java.io.OutputStream
@@ -33,12 +34,13 @@ import java.io.OutputStream
 const val TAPES_COUNT = 4
 
 class OP1SyncViewModel(
-    private val savedStateHandle: SavedStateHandle,
+    savedStateHandle: SavedStateHandle,
     private val usbFileRepository: UsbFileRepository,
     private val backupRepository: BackupRepository,
     private val localFileRepository: LocalFileRepository,
     private val projectsRepository: ProjectsRepository
 ) : ViewModel() {
+    private var backupDirPath: String = ""
     private lateinit var backupDir: File
     private var deviceState = DeviceState()
 
@@ -50,11 +52,10 @@ class OP1SyncViewModel(
 
     lateinit var aums: AumsUsbController
 
-
-    val params = savedStateHandle.toRoute<SyncRoute>()
+    private val route = savedStateHandle.toRoute<SyncRoute>()
 
     fun init(context: Context) {
-        println(params)
+        Log.w("SYNC ROUTE", route.toString())
         aums = AumsUsbController(
             context,
             connectedCallback = { fs ->
@@ -80,18 +81,23 @@ class OP1SyncViewModel(
         )
         aums.initReceiver()
 
-        val backupDirPath = "";
-        backupDir = File(context.filesDir, "op1backup/${backupDirPath}")
-        if (!backupDir.exists()) {
-            backupDir.mkdirs()
-        }
 
-        refreshLocalBackupInfo()
+        viewModelScope.launch {
+            val project = projectsRepository.readProject(route.projectId)
+            backupDirPath = project?.backupDir ?: ""
+            backupDir = File(context.filesDir, "op1backup/${backupDirPath}")
+            if (!backupDir.exists()) {
+                backupDir.mkdirs()
+            }
+
+            refreshLocalBackupInfo()
+        }
     }
 
     private fun refreshLocalBackupInfo() {
         //TODO: check current dir and load restore state
-        val savedBackupInfo = localFileRepository.readBackupInfo(backupDir)
+        Log.w("BACKUP DIR", backupDirPath)
+        val savedBackupInfo = localFileRepository.readBackupInfo(backupDirPath)
         _restoreStateFlow.update { it.copy(backupInfo = savedBackupInfo) }
     }
 
@@ -300,10 +306,6 @@ data class BackupInfo(
     val synthsEnabled: Boolean = true,
     val drumkits: Boolean = false,
     val drumkitsEnabled: Boolean = true,
-    val albums: SnapshotStateList<Pair<OP1Resource.Album, Boolean>> = mutableStateListOf(
-        OP1Resource.Album(AlbumSide.SideA) to false,
-        OP1Resource.Album(AlbumSide.SideB) to false,
-    )
 )
 
 fun BackupInfo.isEmpty(): Boolean {
@@ -315,20 +317,10 @@ data class RestoreInfo(
         (0..<TAPES_COUNT).map { index -> OP1Resource.Tape(index) to false }.toList().toMutableStateList(),
     val synths: Boolean = false,
     val drumkits: Boolean = false,
-    val albums: SnapshotStateList<Pair<OP1Resource.Album, Boolean>> = mutableStateListOf(
-        OP1Resource.Album(AlbumSide.SideA) to false,
-        OP1Resource.Album(AlbumSide.SideB) to false,
-    )
 )
 
 sealed class OP1Resource {
     data class Tape(val index: Int, val enabled: Boolean = true) : OP1Resource()
     data class Synth(val index: Int) : OP1Resource()
     data class Drumkit(val index: Int) : OP1Resource()
-    data class Album(val side: AlbumSide) : OP1Resource()
-}
-
-enum class AlbumSide(index: Int) {
-    SideA(0),
-    SideB(1)
 }

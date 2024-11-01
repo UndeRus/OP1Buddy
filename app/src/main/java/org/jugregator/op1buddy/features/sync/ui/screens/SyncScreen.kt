@@ -34,7 +34,7 @@ import org.koin.androidx.compose.koinViewModel
 fun SyncScreen(modifier: Modifier = Modifier, viewModel: OP1SyncViewModel = koinViewModel()) {
 
     val context = LocalContext.current
-    LaunchedEffect(Unit) {
+    LaunchedEffect(viewModel.backupStateFlow.collectAsState().value.backupInfo) {
         viewModel.init(context)
     }
 

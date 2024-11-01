@@ -56,6 +56,7 @@ vkompose {
 }
 
 dependencies {
+    // AAR's and deps
     implementation(libs.fat32lib)
     implementation(files("../libs/libaums-release.aar"))
     implementation(files("../libs/javafs-release.aar"))
@@ -66,29 +67,40 @@ dependencies {
     implementation(libs.coroutines)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.lifecycle.viewmodel.compose)
-    implementation(libs.androidx.activity.compose)
-    implementation(platform(libs.androidx.compose.bom))
+
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.compose.ui.google.fonts)
     implementation(libs.androidx.documentfile)
 
+    // Compose
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.activity.compose)
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.navigation.compose)
+
+    // Koin
     implementation(platform(libs.koin.bom))
     implementation(libs.koin.core)
     implementation(libs.koin.android)
-    implementation(libs.koin.android.compose)
-    implementation(libs.navigation.compose)
+    implementation(libs.insert.koin.koin.androidx.compose)
+    implementation(libs.insert.koin.koin.androidx.compose.navigation)
+
     implementation(libs.kotlinx.serialization)
     implementation(libs.androidx.profileinstaller)
 
+    // ExoPlayer
+    implementation("androidx.media3:media3-exoplayer:1.4.1")
+    implementation("androidx.media3:media3-exoplayer-dash:1.4.1")
+    implementation("androidx.media3:media3-ui:1.4.1")
+
     // Firebase stuff
-    implementation(platform("com.google.firebase:firebase-bom:33.4.0"))
+    implementation(platform(libs.firebase.bom))
     // Add the dependencies for the Crashlytics and Analytics libraries
     // When using the BoM, you don't specify versions in Firebase library dependencies
-    implementation("com.google.firebase:firebase-crashlytics")
-    implementation("com.google.firebase:firebase-analytics")
+    implementation(libs.google.firebase.crashlytics)
+    implementation(libs.google.firebase.analytics)
     implementation(libs.androidx.material3.android)
 
     testImplementation(libs.junit)

@@ -28,7 +28,7 @@ fun DeviceCopyingProgress(progress: Float, modifier: Modifier = Modifier) {
                         .align(Alignment.Center),
                     strokeWidth = 30.dp,
                     strokeCap = StrokeCap.Round,
-                    progress = progress,
+                    progress = { progress },
                 )
                 Text(
                     text = "$progressPercent%",
