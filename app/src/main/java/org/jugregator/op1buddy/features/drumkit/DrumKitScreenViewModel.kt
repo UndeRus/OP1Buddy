@@ -19,7 +19,7 @@ import org.jugregator.op1buddy.features.projects.DrumKitRoute
 class DrumKitScreenViewModel
     (
     savedStateHandle: SavedStateHandle,
-    private val projectRepository: ProjectsRepository,
+    private val projectsRepository: ProjectsRepository,
     private val drumkitRepository: DrumkitRepository,
 ) : ViewModel() {
     private val _mutableState = MutableStateFlow(DrumKitUiState())
@@ -54,7 +54,7 @@ class DrumKitScreenViewModel
     init {
         simplePlayer.play()
         viewModelScope.launch(Dispatchers.IO) {
-            val project = projectRepository.readProject(route.projectId) ?: return@launch
+            val project = projectsRepository.readProject(route.projectId) ?: return@launch
             val drumkit =
                 drumkitRepository.loadDrumKit(project.backupDir, "drum_${route.drumkitIndex + 1}.aif") ?: return@launch
             drumkit.samples.let { samples ->

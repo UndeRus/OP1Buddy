@@ -1,4 +1,4 @@
-package org.jugregator.op1buddy
+package org.jugregator.op1buddy.data.project
 
 import kotlinx.serialization.Serializable
 

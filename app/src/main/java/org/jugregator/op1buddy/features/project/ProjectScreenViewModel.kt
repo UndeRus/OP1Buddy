@@ -8,20 +8,24 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.jugregator.op1buddy.Project
 import org.jugregator.op1buddy.data.ProjectsRepository
+import org.jugregator.op1buddy.data.drumkit.DrumkitInfo
+import org.jugregator.op1buddy.data.project.LocalFileRepository
+import org.jugregator.op1buddy.data.project.Project
+import org.jugregator.op1buddy.data.project.ProjectRepository
+import org.jugregator.op1buddy.data.synth.SynthInfo
 import org.jugregator.op1buddy.features.project.ui.screens.ProjectResource
 import org.jugregator.op1buddy.features.project.ui.screens.ProjectTab
 import org.jugregator.op1buddy.features.projects.ProjectRoute
-import org.jugregator.op1buddy.features.sync.LocalFileRepository
 import java.util.UUID
 
 class ProjectScreenViewModel(
     savedStateHandle: SavedStateHandle,
     private val projectsRepository: ProjectsRepository,
     private val localFileRepository: LocalFileRepository,
+    private val projectRepository: ProjectRepository,
 ) : ViewModel() {
-    val route = savedStateHandle.toRoute<ProjectRoute>()
+    private val route = savedStateHandle.toRoute<ProjectRoute>()
 
     private val _mutableState =
         MutableStateFlow(ProjectUiState(projectId = route.projectId ?: UUID.randomUUID().toString()))
@@ -37,31 +41,17 @@ class ProjectScreenViewModel(
                 project = projectInfo
                 // load dir state
                 val backupInfo = localFileRepository.readBackupInfo(projectInfo.backupDir)
+
+                val synths = if (backupInfo.synthsEnabled) projectRepository.readSynths(projectInfo) else emptyList()
+
+                val drumkits =
+                    if (backupInfo.drumkitsEnabled) projectRepository.readDrumKits(projectInfo) else emptyList()
+
                 _mutableState.update {
                     it.copy(
-                        synths = if (backupInfo.synthsEnabled) {
-                            (0..7).map {
-                                SynthData(
-                                    id = it,
-                                    name = (it + 1).toString(),
-                                    path = "${projectInfo.backupDir}/synth_${it + 1}.aif"
-                                )
-                            }
-                        } else {
-                            listOf()
-                        },
-                        drumkits = if (backupInfo.drumkitsEnabled) {
-                            (0..7).map {
-                                DrumData(
-                                    id = it,
-                                    name = (it + 1).toString(),
-                                    path = "${projectInfo.backupDir}/drum_${it + 1}.aif"
-                                )
-                            }
-                        } else {
-                            listOf()
-                        },
-                        tapes = backupInfo.tapes.filter { it.first.enabled }.map {
+                        synths = synths,
+                        drumkits = drumkits,
+                        tapes = backupInfo.tapes.filter { tape -> tape.first.enabled }.map {
                             TapeData(
                                 id = it.first.index,
                                 name = "Tape ${it.first.index + 1}",
@@ -111,8 +101,23 @@ class ProjectScreenViewModel(
 
     fun selectTab(resource: ProjectTab) {
         val items = when (resource) {
-            ProjectTab.Synth -> state.value.synths.map { ProjectResource.Synth(it.id, it.path) }
-            ProjectTab.Drumkit -> state.value.drumkits.map { ProjectResource.Drumkit(it.id, it.path) }
+            ProjectTab.Synth -> state.value.synths.mapIndexed { index, synthInfo ->
+                ProjectResource.Synth(
+                    index = index,
+                    filename = synthInfo.filename,
+                    name = synthInfo.name,
+                    engine = synthInfo.synthEngine
+                )
+            }
+
+            ProjectTab.Drumkit -> state.value.drumkits.mapIndexed { index, drumkitInfo ->
+                ProjectResource.Drumkit(
+                    index = index,
+                    filename = drumkitInfo.filename,
+                    name = drumkitInfo.name
+                )
+            }
+
             ProjectTab.Tape -> state.value.tapes.map { ProjectResource.Tape(it.id, it.path) }
             else -> return
         }
@@ -130,23 +135,11 @@ data class ProjectUiState(
     val projectId: String = "",
     val title: String = "",
     val path: String = "",
-    val synths: List<SynthData> = listOf(),
-    val drumkits: List<DrumData> = listOf(),
+    val synths: List<SynthInfo> = listOf(),
+    val drumkits: List<DrumkitInfo> = listOf(),
     val tapes: List<TapeData> = listOf(),
     val tabOpened: ProjectTab = ProjectTab.Synth,
     val items: List<ProjectResource> = listOf()
-)
-
-data class SynthData(
-    val id: Int,
-    val name: String,
-    val path: String,
-)
-
-data class DrumData(
-    val id: Int,
-    val name: String,
-    val path: String,
 )
 
 data class TapeData(

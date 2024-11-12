@@ -15,11 +15,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import org.jugregator.op1buddy.data.synth.SynthEngine
 import org.jugregator.op1buddy.features.project.ProjectScreenViewModel
 import org.jugregator.op1buddy.features.project.ui.views.ProjectBottomBar
 import org.jugregator.op1buddy.features.project.ui.views.ProjectResourceItem
@@ -57,11 +56,10 @@ fun ProjectScreen(
             }
         }
 
-        val items by remember { derivedStateOf { uiState.items } }
-
+        //val items by remember { derivedStateOf { uiState.items } }
         val lazyColumnState = rememberLazyListState()
         LazyColumn(modifier = Modifier.weight(1f), state = lazyColumnState) {
-            items(items, key = { it.filename }) {
+            items(uiState.items, key = { it.filename }) {
                 ProjectResourceItem(it, {
                     if (it is ProjectResource.Drumkit) {
                         onDrumKitSelected(uiState.projectId, it.index)
@@ -70,8 +68,8 @@ fun ProjectScreen(
             }
         }
 
-
-        ProjectBottomBar(selectedTab = uiState.tabOpened) {
+        ProjectBottomBar(
+            selectedTab = uiState.tabOpened) {
             if (it == ProjectTab.Sync) {
                 onSyncClicked(uiState.projectId)
             } else {
@@ -82,8 +80,10 @@ fun ProjectScreen(
 }
 
 sealed class ProjectResource(val index: Int, val filename: String) {
-    class Synth(index: Int, filename: String) : ProjectResource(index, filename)
-    class Drumkit(index: Int, filename: String) : ProjectResource(index, filename)
+    class Synth(index: Int, filename: String, val name: String, val engine: SynthEngine) :
+        ProjectResource(index, filename)
+
+    class Drumkit(index: Int, filename: String, val name: String) : ProjectResource(index, filename)
     class Tape(index: Int, filename: String) : ProjectResource(index, filename)
 }
 

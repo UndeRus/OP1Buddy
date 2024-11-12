@@ -26,6 +26,7 @@ import me.jahnen.libaums.core.fs.UsbFile
 import org.jugregator.op1buddy.AumsUsbController
 import org.jugregator.op1buddy.OP1State
 import org.jugregator.op1buddy.data.ProjectsRepository
+import org.jugregator.op1buddy.data.project.LocalFileRepository
 import org.jugregator.op1buddy.features.projects.SyncRoute
 import java.io.File
 import java.io.OutputStream
@@ -49,7 +50,7 @@ class OP1SyncViewModel(
     private val _restoreStateFlow = MutableStateFlow(RestoreScreenState())
     val restoreStateFlow: StateFlow<RestoreScreenState> = _restoreStateFlow
 
-    lateinit var aums: AumsUsbController
+    private lateinit var aums: AumsUsbController
 
     private val route = savedStateHandle.toRoute<SyncRoute>()
 
@@ -270,11 +271,6 @@ data class DeviceState(
     val nowCopying: Boolean = false
 )
 
-data class SyncScreenState(
-    val backupScreenState: BackupScreenState,
-    val restoreScreenState: RestoreScreenState,
-)
-
 data class BackupScreenState(
     val connected: OP1ConnectionState = OP1ConnectionState.Disconnected,
     val error: String = "",
@@ -297,10 +293,13 @@ enum class OP1ConnectionState {
     Connected
 }
 
+typealias TapeItem = Pair<OP1Resource.Tape, Boolean>
+
 data class BackupInfo(
-    val tapes: SnapshotStateList<Pair<OP1Resource.Tape, Boolean>> =
-        (0..<TAPES_COUNT).map { index -> OP1Resource.Tape(index = index, enabled = true) to false }.toList()
-            .toMutableStateList(),
+    val tapes: SnapshotStateList<TapeItem> =
+        (0..<TAPES_COUNT).map { index ->
+            OP1Resource.Tape(index = index, enabled = true) to false
+        }.toMutableStateList(),
     val synths: Boolean = false,
     val synthsEnabled: Boolean = true,
     val drumkits: Boolean = false,

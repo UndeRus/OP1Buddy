@@ -1,16 +1,19 @@
 package org.jugregator.op1buddy
 
+import kotlinx.serialization.json.Json
 import org.jugregator.op1buddy.data.ProjectsRepository
 import org.jugregator.op1buddy.data.ProjectsRepositoryImpl
 import org.jugregator.op1buddy.features.drumkit.DrumKitScreenViewModel
 import org.jugregator.op1buddy.features.drumkit.data.DrumkitRepository
-import org.jugregator.op1buddy.features.drumkit.media.ExoPlayerProvider
+//import org.jugregator.op1buddy.features.drumkit.media.ExoPlayerProvider
 import org.jugregator.op1buddy.features.project.ProjectScreenViewModel
 import org.jugregator.op1buddy.features.projects.ProjectsScreenViewModel
 import org.jugregator.op1buddy.features.sync.BackupRepository
 import org.jugregator.op1buddy.features.sync.BackupRepositoryImpl
-import org.jugregator.op1buddy.features.sync.LocalFileRepository
-import org.jugregator.op1buddy.features.sync.LocalFileRepositoryImpl
+import org.jugregator.op1buddy.data.project.LocalFileRepository
+import org.jugregator.op1buddy.data.project.LocalFileRepositoryImpl
+import org.jugregator.op1buddy.data.project.ProjectRepository
+import org.jugregator.op1buddy.data.project.ProjectRepositoryImpl
 import org.jugregator.op1buddy.features.sync.OP1SyncViewModel
 import org.jugregator.op1buddy.features.sync.UsbFileRepository
 import org.jugregator.op1buddy.features.sync.UsbFileRepositoryImpl
@@ -28,12 +31,25 @@ val appModule = module {
     single<ProjectsRepository> { ProjectsRepositoryImpl(androidContext()) }
 
     single<DrumkitRepository> {
-        DrumkitRepository(androidContext())
+        DrumkitRepository(androidContext(), get())
     }
 
+    single<ProjectRepository> {
+        ProjectRepositoryImpl(androidContext(), get())
+    }
+
+    single<Json> {
+        Json {
+            isLenient = true
+            ignoreUnknownKeys = true
+        }
+    }
+
+    /*
     single<ExoPlayerProvider> {
         ExoPlayerProvider(androidContext())
     }
+     */
 
     viewModel {
         OP1SyncViewModel(
@@ -46,7 +62,7 @@ val appModule = module {
     }
 
     viewModel<ProjectsScreenViewModel> {
-        ProjectsScreenViewModel(savedStateHandle = get(), projectsRepository = get())
+        ProjectsScreenViewModel(projectsRepository = get())
     }
 
     viewModel<ProjectScreenViewModel> {
@@ -54,10 +70,15 @@ val appModule = module {
             savedStateHandle = get(),
             projectsRepository = get(),
             localFileRepository = get(),
+            projectRepository = get(),
         )
     }
 
     viewModel<DrumKitScreenViewModel> {
-        DrumKitScreenViewModel(get(), get(), get())
+        DrumKitScreenViewModel(
+            savedStateHandle = get(),
+            projectsRepository = get(),
+            drumkitRepository = get(),
+        )
     }
 }

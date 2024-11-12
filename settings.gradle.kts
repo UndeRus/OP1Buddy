@@ -19,6 +19,7 @@ dependencyResolutionManagement {
         flatDir {
             dir("libs")
         }
+        maven(url = "https://jitpack.io")
     }
 }
 

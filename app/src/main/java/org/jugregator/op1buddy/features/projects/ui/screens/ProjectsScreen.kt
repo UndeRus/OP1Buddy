@@ -27,7 +27,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.jugregator.op1buddy.Project
+import org.jugregator.op1buddy.data.project.Project
 import org.jugregator.op1buddy.features.projects.ProjectsScreenViewModel
 import org.jugregator.op1buddy.features.projects.ui.views.ProjectItem
 import org.jugregator.op1buddy.features.projects.ui.views.ProjectScreenTitle

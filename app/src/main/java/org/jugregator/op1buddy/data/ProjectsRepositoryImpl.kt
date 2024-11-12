@@ -8,14 +8,14 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import org.jugregator.op1buddy.Project
+import org.jugregator.op1buddy.data.project.Project
 import java.io.File
 
 /*
 class ProjectsRepositoryImpl(private val context: Context) : ProjectsRepository {
 
     private val fileName = "projects.json"
-    private val backupRootDir = File(context.filesDir, "op1backups")
+    private val backupRootDir = File(context.filesDir, "op1backup")
 
     // Helper function to get the projects file
     private fun getFile(): File = File(context.filesDir, fileName)

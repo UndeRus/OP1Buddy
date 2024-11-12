@@ -1,17 +1,15 @@
 package org.jugregator.op1buddy.features.projects
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.jugregator.op1buddy.Project
 import org.jugregator.op1buddy.data.ProjectsRepository
+import org.jugregator.op1buddy.data.project.Project
 
 class ProjectsScreenViewModel(
-    savedStateHandle: SavedStateHandle,
     private val projectsRepository: ProjectsRepository,
 ) : ViewModel() {
     private val _mutableUiState = MutableStateFlow(ProjectsScreenUiState())

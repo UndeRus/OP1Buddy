@@ -31,7 +31,6 @@ class AumsUsbController(
 
     init {
         registerFileSystem(JavaFsFileSystemCreator())
-//        registerFileSystem(BridgeFileSystemCreator())
     }
 
     fun initReceiver() {
@@ -87,15 +86,15 @@ class AumsUsbController(
     private fun setupDevice(usbDevice: UsbDevice) {
         try {
             getDevices()
-            foundDevices.filter { it.usbDevice == usbDevice }.forEach {
-                it.init()
+            foundDevices.filter { it.usbDevice == usbDevice }.forEach { device ->
+                device.init()
 //                currentFs = foundDevices[currentDevice].partitions[0].fileSystem.also {
 
-                val currentFs = it.partitions[0].fileSystem.also {
-                    Log.d(TAG, "Capacity: " + it.capacity)
-                    Log.d(TAG, "Occupied Space: " + it.occupiedSpace)
-                    Log.d(TAG, "Free Space: " + it.freeSpace)
-                    Log.d(TAG, "Chunk size: " + it.chunkSize)
+                val currentFs = device.partitions[0].fileSystem.also { fileSystem ->
+                    Log.d(TAG, "Capacity: " + fileSystem.capacity)
+                    Log.d(TAG, "Occupied Space: " + fileSystem.occupiedSpace)
+                    Log.d(TAG, "Free Space: " + fileSystem.freeSpace)
+                    Log.d(TAG, "Chunk size: " + fileSystem.chunkSize)
                 }
                 connectedCallback(currentFs)
 
@@ -252,7 +251,7 @@ private fun processOP1FS(currentFs: FileSystem): OP1State {
     if (drumDir != null) {
         val userDrumDir = drumDir.listFiles().find { it.name == "user" }
         if (userDrumDir != null) {
-            var userDrums = userDrumDir.listFiles().filter { it.name.endsWith(".aif") }
+            val userDrums = userDrumDir.listFiles().filter { it.name.endsWith(".aif") }
 
             for (drumFile in userDrums) {
                 if (drumFile.name == "1.aif") {
