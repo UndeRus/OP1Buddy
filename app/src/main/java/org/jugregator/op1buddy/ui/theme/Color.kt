@@ -1,4 +1,4 @@
-package com.example.compose
+package org.jugregator.op1buddy.ui.theme
 import androidx.compose.ui.graphics.Color
 
 val primaryLight = Color(0xFF060606)
