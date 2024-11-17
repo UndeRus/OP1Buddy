@@ -19,7 +19,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.jugregator.op1buddy.R
 import org.jugregator.op1buddy.features.project.ui.screens.ProjectResource
-import org.jugregator.op1buddy.features.projects.ui.screens.ProjectTitle
 import org.jugregator.op1buddy.data.synth.SynthEngine
 import org.jugregator.op1buddy.ui.theme.AppTheme
 
@@ -38,9 +37,8 @@ fun ProjectResourceItem(type: ProjectResource, onClick: () -> Unit, modifier: Mo
         when (type) {
             is ProjectResource.Drumkit -> DrumkitResourceItem(drumkit = type, onClick = onClick)
             is ProjectResource.Synth -> SynthResourceItem(synth = type)
-            is ProjectResource.Tape -> ProjectTitle(
-                title = "$title 0",
-                onClick = onClick,
+            is ProjectResource.Tape -> Text(
+                text = "$title 0",
                 modifier
                     .fillMaxWidth()
                     .padding(start = 16.dp)

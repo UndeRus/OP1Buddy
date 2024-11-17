@@ -22,7 +22,7 @@ val bodyFontFamily = FontFamily(
 
 val displayFontFamily = FontFamily(
     Font(
-        googleFont = GoogleFont("Inter"),
+        googleFont = GoogleFont("Inter Black 900"),
         fontProvider = provider,
     )
 )

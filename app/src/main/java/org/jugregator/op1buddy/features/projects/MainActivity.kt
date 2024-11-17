@@ -1,13 +1,23 @@
 package org.jugregator.op1buddy.features.projects
 
+import android.graphics.Color
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.windowInsetsBottomHeight
+import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.layout.windowInsetsTopHeight
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -42,43 +52,45 @@ class MainActivity : ComponentActivity() {
         setContent {
             KoinContext {
                 AppTheme {
-                    Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                        val navController = rememberNavController()
-                        NavHost(
-                            navController = navController,
-                            startDestination = ProjectsRoute,
-                            modifier = Modifier.padding(innerPadding)
-                        ) {
-                            composable<ProjectsRoute> {
-                                ProjectsScreen(onProjectClicked = { project ->
+                    val navController = rememberNavController()
+                    NavHost(
+                        navController = navController,
+                        startDestination = ProjectsRoute,
+                    ) {
+                        composable<ProjectsRoute> {
+                            ProjectsScreen(
+                                onBackClicked = {
+                                    finish()
+                                },
+                                onProjectClicked = { project ->
                                     navController.navigate(ProjectRoute(projectId = project.id))
                                 }, onNewProjectClicked = {
                                     navController.navigate(ProjectRoute(isNew = true))
                                 })
-                            }
+                        }
 
 
-                            composable<ProjectRoute> {
-                                ProjectScreen(onSyncClicked = { projectId ->
-                                    navController.navigate(SyncRoute(projectId))
-                                }, onDrumKitSelected = { projectId, drumkitId ->
-                                    navController.navigate(
-                                        DrumKitRoute(
-                                            projectId = projectId,
-                                            drumkitIndex = drumkitId
-                                        )
+                        composable<ProjectRoute> {
+                            ProjectScreen(onSyncClicked = { projectId ->
+                                navController.navigate(SyncRoute(projectId))
+                            }, onDrumKitSelected = { projectId, drumkitId ->
+                                navController.navigate(
+                                    DrumKitRoute(
+                                        projectId = projectId,
+                                        drumkitIndex = drumkitId
                                     )
-                                })
-                            }
-                            composable<SyncRoute> {
-                                SyncScreen()
-                            }
+                                )
+                            })
+                        }
+                        composable<SyncRoute> {
+                            SyncScreen()
+                        }
 
-                            composable<DrumKitRoute> {
-                                DrumKitScreen()
-                            }
+                        composable<DrumKitRoute> {
+                            DrumKitScreen()
                         }
                     }
+                    //}
                 }
             }
         }
