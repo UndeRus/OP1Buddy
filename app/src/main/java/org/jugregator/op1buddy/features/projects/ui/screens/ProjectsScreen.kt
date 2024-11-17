@@ -74,7 +74,9 @@ fun ProjectsScreen(
             )
             LazyColumn {
                 itemsIndexed(projects, key = { index, project -> project.id }) { index, project ->
-                    ProjectItem(project = project, onClick = {
+                    ProjectItem(
+                        modifier = Modifier.fillParentMaxWidth(),
+                        project = project, onClick = {
                         onProjectClicked(project)
                     })
                     if (index < projects.size) {

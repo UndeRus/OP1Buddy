@@ -71,7 +71,11 @@ class MainActivity : ComponentActivity() {
 
 
                         composable<ProjectRoute> {
-                            ProjectScreen(onSyncClicked = { projectId ->
+                            ProjectScreen(
+                                onBackClicked = {
+                                    navController.navigateUp()
+                                },
+                                onSyncClicked = { projectId ->
                                 navController.navigate(SyncRoute(projectId))
                             }, onDrumKitSelected = { projectId, drumkitId ->
                                 navController.navigate(
