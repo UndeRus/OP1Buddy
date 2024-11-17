@@ -54,6 +54,7 @@ class MainActivity : ComponentActivity() {
                 AppTheme {
                     val navController = rememberNavController()
                     NavHost(
+                        modifier = Modifier.windowInsetsPadding(WindowInsets.systemBars),
                         navController = navController,
                         startDestination = ProjectsRoute,
                     ) {

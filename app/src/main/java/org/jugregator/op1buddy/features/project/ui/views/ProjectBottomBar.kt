@@ -116,8 +116,8 @@ fun BottomBarButton(modifier: Modifier = Modifier, @DrawableRes icon: Int, selec
 
     Column(modifier = modifier
         .offset { IntOffset(x = 0.dp.roundToPx(), y = animatedOffset.roundToPx()) }
-        .border(2.dp, animatedColorBorder, RoundedCornerShape(16.dp, 16.dp, 0.dp, 0.dp))
-        .clip(RoundedCornerShape(16.dp, 16.dp, 0.dp, 0.dp))
+        .border(2.dp, animatedColorBorder, RoundedCornerShape(8.dp, 8.dp, 0.dp, 0.dp))
+        .clip(RoundedCornerShape(8.dp, 8.dp, 0.dp, 0.dp))
         .background(animatedColorBg)
         .clickable {
             onClick()
