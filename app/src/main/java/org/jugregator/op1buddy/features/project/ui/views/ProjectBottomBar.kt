@@ -1,8 +1,10 @@
 package org.jugregator.op1buddy.features.project.ui.views
 
 import androidx.annotation.DrawableRes
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -96,12 +98,27 @@ fun Modifier.selected(condition: Boolean): Modifier {
 @Composable
 fun BottomBarButton(modifier: Modifier = Modifier, @DrawableRes icon: Int, selected: Boolean, onClick: () -> Unit) {
 
-    val animatedOffset by animateDpAsState(if (selected) 2.dp else 20.dp , label = "BottomBarButton shift")
+    val animatedOffset by animateDpAsState(if (selected) 2.dp else 20.dp, label = "BottomBarButton shift")
+    val animatedColorBg by animateColorAsState(
+        if (selected) MaterialTheme.colorScheme.surfaceTint else MaterialTheme.colorScheme.surface,
+        label = "BottomBarButton animated background",
+    )
+    val animatedColorBorder by animateColorAsState(
+        if (selected) MaterialTheme.colorScheme.surfaceTint else
+            MaterialTheme.colorScheme.outlineVariant,
+        label = "BottomBarButton animated border",
+    )
+
+    val animatedTint by animateColorAsState(
+        if (selected) MaterialTheme.colorScheme.surface else MaterialTheme.colorScheme.outline,
+        label = "BottomBarButton animated tint",
+    )
 
     Column(modifier = modifier
         .offset { IntOffset(x = 0.dp.roundToPx(), y = animatedOffset.roundToPx()) }
-        .border(2.dp, MaterialTheme.colorScheme.surfaceTint, RoundedCornerShape(16.dp, 16.dp, 0.dp, 0.dp))
+        .border(2.dp, animatedColorBorder, RoundedCornerShape(16.dp, 16.dp, 0.dp, 0.dp))
         .clip(RoundedCornerShape(16.dp, 16.dp, 0.dp, 0.dp))
+        .background(animatedColorBg)
         .clickable {
             onClick()
         }) {
@@ -115,7 +132,7 @@ fun BottomBarButton(modifier: Modifier = Modifier, @DrawableRes icon: Int, selec
                     .size(36.dp)
                     .align(Alignment.Center),
                 painter = painterResource(icon),
-                tint = MaterialTheme.colorScheme.surfaceTint,
+                tint = animatedTint,
                 contentDescription = null
             )
         }

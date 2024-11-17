@@ -1,11 +1,18 @@
 package org.jugregator.op1buddy.features.project.ui.views
 
+import android.content.res.Configuration
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -14,8 +21,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.UiMode
 import androidx.compose.ui.unit.dp
 import org.jugregator.op1buddy.R
 import org.jugregator.op1buddy.features.project.ui.screens.ProjectResource
@@ -49,46 +58,75 @@ fun ProjectResourceItem(type: ProjectResource, onClick: () -> Unit, modifier: Mo
 
 @Composable
 fun DrumkitResourceItem(modifier: Modifier = Modifier, drumkit: ProjectResource.Drumkit, onClick: () -> Unit) {
-    Card(modifier = modifier, onClick = onClick) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically
+    Row(
+        modifier = modifier.clickable { onClick() }.padding(vertical = 10.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Box(
+            modifier = Modifier
+                .padding(start = 16.dp)
+                .size(48.dp)
+                .clip(RoundedCornerShape(8.dp))
+                .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(8.dp))
         ) {
-            Text(
-                modifier = modifier
-                    .padding(8.dp)
-                    .weight(1f),
-                text = drumkit.name
+            SynthIcon(
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .size(24.dp),
+                engine = SynthEngine.DSynth(),
             )
         }
+        Text(
+            modifier = modifier
+                .padding(12.dp)
+                .weight(1f),
+            text = drumkit.name
+        )
     }
 }
 
 @Composable
 fun SynthResourceItem(modifier: Modifier = Modifier, synth: ProjectResource.Synth) {
-    Card(modifier = modifier) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically
+    Row(
+        modifier = modifier.padding(vertical = 10.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Box(
+            modifier = Modifier
+                .padding(start = 16.dp)
+                .size(48.dp)
+                .clip(RoundedCornerShape(8.dp))
+                .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(8.dp))
         ) {
-            Text(
-                modifier = modifier
-                    .padding(8.dp)
-                    .weight(1f),
-                text = synth.name
-            )
             SynthIcon(
                 modifier = Modifier
-                    .size(30.dp)
-                    .padding(8.dp), engine = synth.engine
+                    .align(Alignment.Center)
+                    .size(24.dp),
+                engine = synth.engine,
             )
         }
+        Text(
+            modifier = modifier
+                .padding(12.dp)
+                .weight(1f),
+            text = synth.name
+        )
     }
 }
 
-@Preview
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_NO, showSystemUi = true)
 @Composable
-fun SyntResourceItemPreview() {
+fun SynthResourceItemPreview() {
     AppTheme {
         SynthResourceItem(synth = ProjectResource.Synth(0, "filename", "iter", SynthEngine.Iter()))
+    }
+}
+
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_NO, showSystemUi = true)
+@Composable
+fun DrumkitResourceItemPreview() {
+    AppTheme {
+        DrumkitResourceItem(drumkit = ProjectResource.Drumkit(0, "filename", "iter")) {}
     }
 }
 

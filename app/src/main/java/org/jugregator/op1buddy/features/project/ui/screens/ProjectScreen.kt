@@ -1,7 +1,9 @@
 package org.jugregator.op1buddy.features.project.ui.screens
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.basicMarquee
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -19,6 +21,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -58,47 +61,30 @@ fun ProjectScreen(
                     viewModel.selectTab(it)
                 }
             }
-        }) { innerPadding ->
+        }
+    ) { innerPadding ->
         val items by remember { derivedStateOf { uiState.items } }
         val lazyColumnState = rememberLazyListState()
-        LazyColumn(modifier = Modifier.padding(innerPadding), state = lazyColumnState) {
-            items(items, key = { it.filename }) {
-                ProjectResourceItem(it, {
-                    if (it is ProjectResource.Drumkit) {
-                        onDrumKitSelected(uiState.projectId, it.index)
-                    }
-                })
-            }
-        }
-    }
-
-    /*
-    Column(modifier = modifier) {
-        if (uiState.titleEditEnabled) {
-            Row {
-                TextField(
-                    modifier = Modifier.weight(1f),
-                    value = uiState.title,
-                    onValueChange = { viewModel.updateTitle(it) },
-                )
-                IconButton(onClick = { viewModel.saveProject() }) {
-                    Icon(
-                        imageVector = Icons.Default.Check,
-                        contentDescription = null
-                    )
+        Box(modifier = Modifier
+            .fillMaxHeight()
+            .padding(innerPadding)) {
+            Image(
+                modifier = Modifier.align(Alignment.CenterEnd),
+                painter = painterResource(R.drawable.background_right),
+                contentDescription = null,
+            )
+            LazyColumn(state = lazyColumnState) {
+                items(items, key = { it.filename }) {
+                    ProjectResourceItem(it, {
+                        if (it is ProjectResource.Drumkit) {
+                            onDrumKitSelected(uiState.projectId, it.index)
+                        }
+                    })
                 }
             }
-        } else {
-            Row {
-                Text(modifier = Modifier
-                    .clickable {
-                        viewModel.onEditTitleClicked()
-                    }, text = uiState.title.ifEmpty { "..." })
-            }
         }
-    }
 
-     */
+    }
 }
 
 sealed class ProjectResource(val index: Int, val filename: String) {
@@ -135,7 +121,9 @@ fun ProjectAppBar(modifier: Modifier = Modifier, title: String, onBackClicked: (
         modifier = modifier,
         title = {
             Text(
-                modifier = Modifier.padding(start = 12.dp).basicMarquee(),
+                modifier = Modifier
+                    .padding(start = 12.dp)
+                    .basicMarquee(),
                 text = title,
                 style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Black)
             )

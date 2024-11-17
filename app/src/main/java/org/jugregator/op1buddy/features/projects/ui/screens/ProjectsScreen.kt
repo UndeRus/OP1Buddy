@@ -119,22 +119,6 @@ fun ProjectNumber(id: String, onClick: () -> Unit, modifier: Modifier = Modifier
     }
 }
 
-/*
-@Composable
-fun ProjectTitle(title: String, onClick: () -> Unit, modifier: Modifier = Modifier) {
-    OutlinedButton(onClick = onClick, modifier = modifier.height(80.dp)) {
-        Text(
-            text = title,
-            modifier = Modifier
-                .fillMaxWidth()
-                .basicMarquee(),
-            textAlign = TextAlign.Start,
-            style = MaterialTheme.typography.labelLarge.copy(fontSize = 25.sp)
-        )
-    }
-}
-*/
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProjectsAppBar(modifier: Modifier = Modifier, onBackClicked: () -> Unit, onSearchClicked: () -> Unit) {
