@@ -47,8 +47,8 @@ class ProjectScreenViewModel(
                 val drumkits =
                     if (backupInfo.drumkitsEnabled) projectRepository.readDrumKits(projectInfo) else emptyList()
 
-                _mutableState.update {
-                    it.copy(
+                _mutableState.update { state ->
+                    state.copy(
                         synths = synths,
                         drumkits = drumkits,
                         tapes = backupInfo.tapes.filter { tape -> tape.first.enabled }.map {
@@ -71,13 +71,10 @@ class ProjectScreenViewModel(
                     newProject
                 )
                 project = newProject
+                _mutableState.update { it.copy(settingDialogOpened = true) }
             }
             selectTab(ProjectTab.Synth)
         }
-    }
-
-    fun updateTitle(title: String) {
-        _mutableState.update { it.copy(title = title) }
     }
 
     fun saveProject() {
@@ -87,16 +84,12 @@ class ProjectScreenViewModel(
                 val newProject = localProject.copy(title = state.value.title)
                 if (projectsRepository.updateProject(newProject.id, newProject)) {
                     project = newProject
-                    _mutableState.update { it.copy(title = newProject.title, titleEditEnabled = false) }
+                    _mutableState.update { it.copy(title = newProject.title, settingDialogOpened = false) }
                 } else {
                     //TODO: failed to save, show error
                 }
             }
         }
-    }
-
-    fun onEditTitleClicked() {
-        _mutableState.update { it.copy(titleEditEnabled = true) }
     }
 
     fun selectTab(resource: ProjectTab) {
@@ -128,12 +121,31 @@ class ProjectScreenViewModel(
             )
         }
     }
+
+    fun onMoreClicked() {
+        _mutableState.update {
+            it.copy(settingDialogOpened = true)
+        }
+    }
+
+    fun onSettingsDialogDismiss() {
+        _mutableState.update {
+            it.copy(settingDialogOpened = false)
+        }
+    }
+
+    fun onSettingsDialogConfirm(projectTitle: String) {
+        _mutableState.update {
+            it.copy(settingDialogOpened = false, title = projectTitle)
+        }
+        saveProject()
+    }
 }
 
 data class ProjectUiState(
-    val titleEditEnabled: Boolean = false,
     val projectId: String = "",
     val title: String = "",
+    val settingDialogOpened: Boolean = false,
     val path: String = "",
     val synths: List<SynthInfo> = listOf(),
     val drumkits: List<DrumkitInfo> = listOf(),
