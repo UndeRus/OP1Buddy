@@ -23,6 +23,18 @@ class ProjectsScreenViewModel(
             }
         }
     }
+
+    fun removeProjectConfirmed(project: Project) {
+        viewModelScope.launch {
+            projectsRepository.removeProject(project.id)
+        }
+    }
+
+    fun editProjectConfirmed(project: Project, title: String) {
+        viewModelScope.launch {
+            projectsRepository.updateProject(projectId = project.id, project = project.copy(title = title))
+        }
+    }
 }
 
 data class ProjectsScreenUiState(
