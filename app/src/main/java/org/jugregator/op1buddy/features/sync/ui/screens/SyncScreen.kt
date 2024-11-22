@@ -220,6 +220,7 @@ fun SyncScreenPreview() {
 @Composable
 fun SyncAppBar(modifier: Modifier = Modifier, title: String, onBackClicked: () -> Unit) {
     TopAppBar(
+        modifier = modifier,
         title = {
             Text(
                 text = title,
