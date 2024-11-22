@@ -1,4 +1,4 @@
-package org.jugregator.op1buddy.features.sync
+package org.jugregator.op1buddy.features.sync.data
 
 import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase

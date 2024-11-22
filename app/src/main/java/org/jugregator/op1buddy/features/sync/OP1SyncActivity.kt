@@ -22,7 +22,9 @@ class OP1SyncActivity : ComponentActivity() {
         setContent {
             AppTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    SyncScreen(modifier = Modifier.padding(innerPadding))
+                    SyncScreen(modifier = Modifier.padding(innerPadding), onBackClicked = {
+                        finish()
+                    })
                 }
             }
         }

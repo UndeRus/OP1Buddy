@@ -57,7 +57,10 @@ fun ProjectDeleteDialog(
                         Text("Dismiss")
                     }
                     TextButton(
-                        onClick = { onConfirmation() },
+                        onClick = {
+                            onDismissRequest()
+                            onConfirmation()
+                        },
                         modifier = Modifier.padding(8.dp),
                     ) {
                         Text("Confirm")

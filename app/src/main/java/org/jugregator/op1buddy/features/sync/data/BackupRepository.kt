@@ -1,4 +1,4 @@
-package org.jugregator.op1buddy.features.sync
+package org.jugregator.op1buddy.features.sync.data
 
 import java.io.File
 import java.io.OutputStream

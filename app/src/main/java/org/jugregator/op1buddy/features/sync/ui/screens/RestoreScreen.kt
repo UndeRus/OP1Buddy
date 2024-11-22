@@ -22,21 +22,21 @@ fun RestoreScreen(
     onRestoreSelectionChanged: (BackupInfo) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    UsbConnectionWrapper(connectedState = state.connected, content = {
-        if (state.nowCopying) {
-            WakeLock()
-            DeviceCopyingProgress(progress = state.progress)
-        } else {
-            RestoreReadyForCopy(
-                state = state,
-                onRestoreSelectionChanged = onRestoreSelectionChanged,
-                onRestoreClick = onRestoreClick,
-                modifier = modifier
-            )
-        }
-    })
+    UsbConnectionWrapper(modifier = modifier,
+        connectedState = state.connected, content = {
+            if (state.nowCopying) {
+                WakeLock()
+                DeviceCopyingProgress(progress = state.progress)
+            } else {
+                RestoreReadyForCopy(
+                    state = state,
+                    onRestoreSelectionChanged = onRestoreSelectionChanged,
+                    onRestoreClick = onRestoreClick,
+                    modifier = modifier
+                )
+            }
+        })
 }
-
 
 @Preview
 @Composable

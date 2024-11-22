@@ -1,4 +1,4 @@
-package org.jugregator.op1buddy.features.sync
+package org.jugregator.op1buddy.features.sync.data
 
 import me.jahnen.libaums.core.fs.FileSystem
 import me.jahnen.libaums.core.fs.UsbFile

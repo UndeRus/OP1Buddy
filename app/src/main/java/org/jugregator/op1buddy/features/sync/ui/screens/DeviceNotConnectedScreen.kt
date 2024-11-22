@@ -1,5 +1,6 @@
 package org.jugregator.op1buddy.features.sync.ui.screens
 
+import android.content.res.Configuration
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
@@ -14,6 +15,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -47,17 +50,17 @@ fun DeviceNotConnectedScreen(modifier: Modifier = Modifier) {
             FaqItem(0, R.drawable.faq_page5, R.string.faq5_description),
         )
     val pagerState = rememberPagerState(pageCount = { items.size})
-    Box (modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center){
+    Box(modifier = modifier, contentAlignment = Alignment.Center){
         Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
             HorizontalPager(
-                modifier = Modifier.fillMaxWidth(),
                 state = pagerState,
-                //contentPadding = PaddingValues(16.dp),
                 pageContent = { index ->
-                    FaqItemView(modifier = Modifier.fillMaxWidth(), item = items[index])
+                    FaqItemView(
+                        modifier = Modifier.fillMaxWidth(),
+                        item = items[index])
                 })
 
-            Spacer(Modifier.height(8.dp))
+            Spacer(Modifier.height(32.dp))
             Row(
                 Modifier
                     .wrapContentHeight()
@@ -83,17 +86,17 @@ fun DeviceNotConnectedScreen(modifier: Modifier = Modifier) {
 
 @Composable
 fun FaqItemView(modifier: Modifier = Modifier, item: FaqItem) {
-    Column(modifier = modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
         Image(
             painter = painterResource(id = item.imageResId),
             contentDescription = null,
             contentScale = ContentScale.FillWidth,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.widthIn(max = 286.dp)
         )
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(25.dp))
         Text(
             text = stringResource(item.contentDescriptionResId),
-            style = MaterialTheme.typography.titleLarge,
+            style = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.secondary),
             textAlign = TextAlign.Center
         )
     }
@@ -105,7 +108,7 @@ data class FaqItem(
     @StringRes val contentDescriptionResId: Int
 )
 
-@Preview
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_NO, showSystemUi = true)
 @Composable
 fun DeviceNotConnectedScreenPreview() {
     AppTheme {
@@ -113,10 +116,10 @@ fun DeviceNotConnectedScreenPreview() {
     }
 }
 
-@Preview
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_NO, showSystemUi = true)
 @Composable
 fun FaqItemViewPreview() {
     AppTheme {
-        FaqItemView(item = FaqItem(0, R.drawable.faq_page1, R.string.project_id))
+        FaqItemView(modifier = Modifier.fillMaxSize(), item = FaqItem(0, R.drawable.faq_page1, R.string.project_id))
     }
 }

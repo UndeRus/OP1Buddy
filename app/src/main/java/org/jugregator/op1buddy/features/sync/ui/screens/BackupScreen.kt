@@ -21,7 +21,7 @@ fun BackupScreen(
     onBackupSelectionChanged: (BackupInfo) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    UsbConnectionWrapper(connectedState = state.connected, content = {
+    UsbConnectionWrapper(modifier = modifier, connectedState = state.connected, content = {
         if (state.nowCopying) {
             WakeLock()
             DeviceCopyingProgress(state.progress, modifier)
@@ -36,7 +36,6 @@ fun BackupScreen(
     })
 
 }
-
 
 @Preview
 @Composable

@@ -1,42 +1,103 @@
 package org.jugregator.op1buddy.features.sync.ui.screens
 
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Send
-import androidx.compose.material.icons.filled.Create
-import androidx.compose.material.icons.filled.Share
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.launch
+import org.jugregator.op1buddy.R
 import org.jugregator.op1buddy.features.sync.OP1SyncViewModel
+import org.jugregator.op1buddy.features.sync.ui.views.SyncBottomBar
+import org.jugregator.op1buddy.features.sync.ui.views.SyncTab
 import org.jugregator.op1buddy.ui.theme.AppTheme
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun SyncScreen(modifier: Modifier = Modifier, viewModel: OP1SyncViewModel = koinViewModel()) {
+fun SyncScreen(modifier: Modifier = Modifier, viewModel: OP1SyncViewModel = koinViewModel(), onBackClicked: () -> Unit) {
+    var selectedTab by remember { mutableStateOf(SyncTab.Backup) }
+
+    val title by remember {
+        derivedStateOf {
+            when (selectedTab) {
+                SyncTab.Backup -> "Backup"
+                SyncTab.Restore -> "Restore"
+                SyncTab.Export -> "Export"
+            }
+        }
+    }
 
     val context = LocalContext.current
     LaunchedEffect(viewModel.backupStateFlow.collectAsState().value.backupInfo) {
         viewModel.init(context)
     }
+
+    Scaffold(
+        modifier = modifier,
+        topBar = {
+            SyncAppBar(title = title, onBackClicked = onBackClicked)
+        },
+        bottomBar = {
+            SyncBottomBar(selectedTab = selectedTab) {
+                selectedTab = it
+            }
+        }
+    ) { innerPadding ->
+        when (selectedTab) {
+            SyncTab.Backup -> {
+                val uiState by viewModel.backupStateFlow.collectAsState()
+                BackupScreen(
+                    modifier = Modifier.padding(innerPadding),
+                    state = uiState,
+                    onBackupClick = { viewModel.backupDevice() },
+                    onBackupSelectionChanged = {
+                        viewModel.updateBackupInfo(it)
+                    })
+            }
+
+            SyncTab.Restore -> {
+                val uiState by viewModel.restoreStateFlow.collectAsState()
+                RestoreScreen(
+                    modifier = Modifier.padding(innerPadding),
+                    state = uiState,
+                    onRestoreClick = { viewModel.restoreDevice() },
+                    onRestoreSelectionChanged = {
+                        viewModel.updateRestoreInfo(it)
+                    })
+            }
+
+            SyncTab.Export -> {
+                val uiState by viewModel.restoreStateFlow.collectAsState()
+                val isLoading by remember {
+                    derivedStateOf { uiState.nowCopying }
+                }
+                ExportScreen(
+                    modifier = Modifier.padding(innerPadding),
+                    state = uiState, isCopying = isLoading, onBackupDirSelected = { uri ->
+                        viewModel.onBackupExportDirSelected(context, uri)
+                    })
+            }
+        }
+    }
+
+    /*
 
 
     val pagerState = rememberPagerState(pageCount = {
@@ -88,7 +149,11 @@ fun SyncScreen(modifier: Modifier = Modifier, viewModel: OP1SyncViewModel = koin
                         )
                     },
                     icon = {
-                        Icon(Icons.AutoMirrored.Filled.Send, modifier = Modifier.alpha(isBusyAlpha), contentDescription = null)
+                        Icon(
+                            Icons.AutoMirrored.Filled.Send,
+                            modifier = Modifier.alpha(isBusyAlpha),
+                            contentDescription = null
+                        )
                     }
                 )
                 Tab(
@@ -140,12 +205,49 @@ fun SyncScreen(modifier: Modifier = Modifier, viewModel: OP1SyncViewModel = koin
             }
         }
     }
+    */
 }
 
 @Preview(showBackground = true, showSystemUi = false)
 @Composable
 fun SyncScreenPreview() {
     AppTheme {
-        SyncScreen()
+        SyncScreen() {}
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SyncAppBar(modifier: Modifier = Modifier, title: String, onBackClicked: () -> Unit) {
+    TopAppBar(
+        title = {
+            Text(
+                text = title,
+                modifier = Modifier.padding(start = 35.dp),
+                style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Black)
+            )
+        },
+        navigationIcon = {
+            IconButton(
+                modifier = Modifier.padding(start = 8.dp),
+                onClick = onBackClicked
+            ) {
+                Icon(
+                    modifier = Modifier
+                        .size(20.dp),
+                    painter = painterResource(R.drawable.appbar_back),
+                    tint = MaterialTheme.colorScheme.onSurface,
+                    contentDescription = null
+                )
+            }
+        },
+    )
+}
+
+@Preview
+@Composable
+private fun SyncAppBarPreview() {
+    MaterialTheme {
+        SyncAppBar(title = "Sync") { }
     }
 }

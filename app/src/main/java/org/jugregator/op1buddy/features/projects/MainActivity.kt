@@ -1,23 +1,13 @@
 package org.jugregator.op1buddy.features.projects
 
-import android.graphics.Color
 import android.os.Bundle
 import androidx.activity.ComponentActivity
-import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.systemBars
-import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.foundation.layout.windowInsetsTopHeight
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.lightColorScheme
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -89,7 +79,9 @@ class MainActivity : ComponentActivity() {
                                 })
                         }
                         composable<SyncRoute> {
-                            SyncScreen()
+                            SyncScreen(onBackClicked = {
+                                navController.navigateUp()
+                            })
                         }
 
                         composable<DrumKitRoute> {
