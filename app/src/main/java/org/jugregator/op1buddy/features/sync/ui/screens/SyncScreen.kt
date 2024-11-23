@@ -1,5 +1,7 @@
 package org.jugregator.op1buddy.features.sync.ui.screens
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -10,19 +12,21 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.LifecycleStartEffect
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import org.jugregator.op1buddy.R
 import org.jugregator.op1buddy.features.sync.OP1SyncViewModel
 import org.jugregator.op1buddy.features.sync.ui.views.SyncBottomBar
@@ -31,8 +35,31 @@ import org.jugregator.op1buddy.ui.theme.AppTheme
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun SyncScreen(modifier: Modifier = Modifier, viewModel: OP1SyncViewModel = koinViewModel(), onBackClicked: () -> Unit) {
+fun SyncScreen(
+    modifier: Modifier = Modifier,
+    viewModel: OP1SyncViewModel = koinViewModel(),
+    onBackClicked: () -> Unit
+) {
+    val context = LocalContext.current
+    val lifecycleOwner = LocalLifecycleOwner.current
+    LifecycleStartEffect(viewModel, lifecycleOwner = lifecycleOwner) {
+        viewModel.init(context)
+        onStopOrDispose {
+            viewModel.deInit()
+        }
+    }
+
     var selectedTab by remember { mutableStateOf(SyncTab.Backup) }
+
+    
+    val backupState by viewModel.backupStateFlow.collectAsState()
+    val restoreState by viewModel.restoreStateFlow.collectAsState()
+
+    val interractionEnabled by remember {
+        derivedStateOf {
+            !backupState.nowCopying && !restoreState.nowCopying
+        }
+    }
 
     val title by remember {
         derivedStateOf {
@@ -44,55 +71,63 @@ fun SyncScreen(modifier: Modifier = Modifier, viewModel: OP1SyncViewModel = koin
         }
     }
 
-    val context = LocalContext.current
-    LaunchedEffect(viewModel.backupStateFlow.collectAsState().value.backupInfo) {
-        viewModel.init(context)
-    }
-
     Scaffold(
         modifier = modifier,
         topBar = {
-            SyncAppBar(title = title, onBackClicked = onBackClicked)
+            SyncAppBar(title = title, enabled = interractionEnabled, onBackClicked = onBackClicked)
         },
         bottomBar = {
-            SyncBottomBar(selectedTab = selectedTab) {
+            SyncBottomBar(selectedTab = selectedTab, enabled = interractionEnabled) {
                 selectedTab = it
             }
         }
     ) { innerPadding ->
-        when (selectedTab) {
-            SyncTab.Backup -> {
-                val uiState by viewModel.backupStateFlow.collectAsState()
-                BackupScreen(
-                    modifier = Modifier.padding(innerPadding),
-                    state = uiState,
-                    onBackupClick = { viewModel.backupDevice() },
-                    onBackupSelectionChanged = {
-                        viewModel.updateBackupInfo(it)
-                    })
-            }
+        Box(modifier = Modifier.padding(innerPadding)) {
+            Image(
+                painterResource(R.drawable.background_left_bottom),
+                modifier = Modifier.align(Alignment.BottomStart),
+                contentDescription = null,
+            )
 
-            SyncTab.Restore -> {
-                val uiState by viewModel.restoreStateFlow.collectAsState()
-                RestoreScreen(
-                    modifier = Modifier.padding(innerPadding),
-                    state = uiState,
-                    onRestoreClick = { viewModel.restoreDevice() },
-                    onRestoreSelectionChanged = {
-                        viewModel.updateRestoreInfo(it)
-                    })
-            }
+            Image(
+                painterResource(R.drawable.background_right_top),
+                modifier = Modifier.align(Alignment.TopEnd),
+                contentDescription = null,
+            )
 
-            SyncTab.Export -> {
-                val uiState by viewModel.restoreStateFlow.collectAsState()
-                val isLoading by remember {
-                    derivedStateOf { uiState.nowCopying }
+            when (selectedTab) {
+                SyncTab.Backup -> {
+                    val uiState by viewModel.backupStateFlow.collectAsState()
+                    BackupScreen(
+                        state = uiState,
+                        onBackupClick = { viewModel.backupDevice() },
+                        onBackupSelectionChanged = {
+                            viewModel.updateBackupInfo(it)
+                        })
                 }
-                ExportScreen(
-                    modifier = Modifier.padding(innerPadding),
-                    state = uiState, isCopying = isLoading, onBackupDirSelected = { uri ->
-                        viewModel.onBackupExportDirSelected(context, uri)
-                    })
+
+                SyncTab.Restore -> {
+                    val uiState by viewModel.restoreStateFlow.collectAsState()
+                    RestoreScreen(
+                        state = uiState,
+                        onRestoreClick = { viewModel.restoreDevice() },
+                        onRestoreSelectionChanged = {
+                            viewModel.updateRestoreInfo(it)
+                        })
+                }
+
+                SyncTab.Export -> {
+                    val uiState by viewModel.restoreStateFlow.collectAsState()
+                    val isLoading by remember {
+                        derivedStateOf { uiState.nowCopying }
+                    }
+                    ExportScreen(
+                        state = uiState,
+                        isCopying = isLoading,
+                        onBackupDirSelected = { uri ->
+                            viewModel.onBackupExportDirSelected(context, uri)
+                        })
+                }
             }
         }
     }
@@ -102,13 +137,13 @@ fun SyncScreen(modifier: Modifier = Modifier, viewModel: OP1SyncViewModel = koin
 @Composable
 fun SyncScreenPreview() {
     AppTheme {
-        SyncScreen() {}
+        SyncScreen {}
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SyncAppBar(modifier: Modifier = Modifier, title: String, onBackClicked: () -> Unit) {
+fun SyncAppBar(modifier: Modifier = Modifier, title: String, enabled: Boolean, onBackClicked: () -> Unit) {
     TopAppBar(
         modifier = modifier,
         title = {
@@ -121,7 +156,8 @@ fun SyncAppBar(modifier: Modifier = Modifier, title: String, onBackClicked: () -
         navigationIcon = {
             IconButton(
                 modifier = Modifier.padding(start = 8.dp),
-                onClick = onBackClicked
+                onClick = onBackClicked,
+                enabled = enabled,
             ) {
                 Icon(
                     modifier = Modifier
@@ -137,8 +173,8 @@ fun SyncAppBar(modifier: Modifier = Modifier, title: String, onBackClicked: () -
 
 @Preview
 @Composable
-private fun SyncAppBarPreview() {
+fun SyncAppBarPreview() {
     MaterialTheme {
-        SyncAppBar(title = "Sync") { }
+        SyncAppBar(title = "Sync", enabled = true) { }
     }
 }

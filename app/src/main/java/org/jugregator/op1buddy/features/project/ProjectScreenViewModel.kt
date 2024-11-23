@@ -4,6 +4,8 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import com.google.firebase.crashlytics.ktx.crashlytics
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -33,7 +35,7 @@ class ProjectScreenViewModel(
 
     private var project: Project? = null
 
-    init {
+    fun loadProject() {
         viewModelScope.launch {
             val projectInfo = projectsRepository.readProject(state.value.projectId)
             if (projectInfo != null) {
@@ -87,6 +89,7 @@ class ProjectScreenViewModel(
                     _mutableState.update { it.copy(title = newProject.title, settingDialogOpened = false) }
                 } else {
                     //TODO: failed to save, show error
+                    Firebase.crashlytics.log("Failed to save project")
                 }
             }
         }

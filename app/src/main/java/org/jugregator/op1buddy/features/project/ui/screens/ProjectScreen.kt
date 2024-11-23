@@ -28,6 +28,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.LifecycleStartEffect
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import org.jugregator.op1buddy.R
 import org.jugregator.op1buddy.data.synth.SynthEngine
 import org.jugregator.op1buddy.features.project.ProjectScreenViewModel
@@ -44,6 +46,15 @@ fun ProjectScreen(
     onSyncClicked: (String) -> Unit,
     onDrumKitSelected: (String, Int) -> Unit,
 ) {
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    LifecycleStartEffect(viewModel, lifecycleOwner = lifecycleOwner) {
+        viewModel.loadProject()
+        onStopOrDispose {
+
+        }
+    }
+
     val uiState by viewModel.state.collectAsState()
     Scaffold(
         modifier = modifier,

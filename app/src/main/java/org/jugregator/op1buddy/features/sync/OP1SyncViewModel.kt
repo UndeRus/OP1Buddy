@@ -96,6 +96,11 @@ class OP1SyncViewModel(
         }
     }
 
+    fun deInit() {
+        aums.destroyReceiver()
+        aums.closeDevices()
+    }
+
     private fun refreshLocalBackupInfo() {
         //TODO: check current dir and load restore state
         Log.w("BACKUP DIR", backupDirPath)
@@ -228,12 +233,6 @@ class OP1SyncViewModel(
         _backupStateFlow.update { it.copy(nowCopying = false) }
     }
 
-    override fun onCleared() {
-        super.onCleared()
-        aums.destroyReceiver()
-        aums.closeDevices()
-    }
-
     fun updateBackupInfo(backupInfo: BackupInfo) {
         _backupStateFlow.update { it.copy(backupInfo = backupInfo) }
     }
@@ -256,8 +255,6 @@ class OP1SyncViewModel(
         }
 
         val writer = contentResolver.openOutputStream(selectedFile.uri, "wt")
-
-        // TODO: check if nullable
         writer?.let { outputStream ->
             createBackupExport(backupDir, outputStream)
         }

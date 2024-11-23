@@ -26,7 +26,7 @@ fun RestoreScreen(
         connectedState = state.connected, content = {
             if (state.nowCopying) {
                 WakeLock()
-                DeviceCopyingProgress(progress = state.progress)
+                DeviceCopyingProgress("NOW UPLOADING", progress = state.progress)
             } else {
                 RestoreReadyForCopy(
                     state = state,
@@ -44,7 +44,6 @@ fun RestoreScreenPreview() {
     MaterialTheme {
         val backupInfo = BackupInfo()
         var (tape1, selected) = backupInfo.tapes[0]
-        //tape1.first =
         tape1 = tape1.copy(enabled = false)
         backupInfo.tapes[0] = (tape1 to selected)
         val state = RestoreScreenState(connected = OP1ConnectionState.Connected, backupInfo = backupInfo)

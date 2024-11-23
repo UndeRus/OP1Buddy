@@ -35,7 +35,8 @@ fun SyncBottomBarButton(
     title: String,
     @DrawableRes icon: Int,
     selected: Boolean,
-    onClick: () -> Unit
+    enabled: Boolean,
+    onClick: () -> Unit,
 ) {
 
     val animatedOffset by animateDpAsState(if (selected) 2.dp else 23.dp, label = "BottomBarButton shift")
@@ -59,9 +60,9 @@ fun SyncBottomBarButton(
         .border(2.dp, animatedColorBorder, RoundedCornerShape(8.dp, 8.dp, 0.dp, 0.dp))
         .clip(RoundedCornerShape(8.dp, 8.dp, 0.dp, 0.dp))
         .background(animatedColorBg)
-        .clickable {
+        .clickable(enabled = enabled, onClick = {
             onClick()
-        },
+        }),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box {
@@ -89,7 +90,7 @@ fun SyncBottomBarButtonPreview() {
         SyncBottomBarButton(
             modifier = Modifier.size(86.dp, 118.dp),
             title = "Backup",
-            icon = R.drawable.bb_backup, selected = selected, onClick = {
+            icon = R.drawable.bb_backup, selected = selected, enabled = true, onClick = {
                 selected = !selected
             }
         )

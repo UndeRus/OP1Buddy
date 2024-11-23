@@ -5,12 +5,9 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -24,34 +21,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.UiMode
 import androidx.compose.ui.unit.dp
 import org.jugregator.op1buddy.R
-import org.jugregator.op1buddy.features.project.ui.screens.ProjectResource
 import org.jugregator.op1buddy.data.synth.SynthEngine
+import org.jugregator.op1buddy.features.project.ui.screens.ProjectResource
 import org.jugregator.op1buddy.ui.theme.AppTheme
 
 @Composable
 fun ProjectResourceItem(type: ProjectResource, onClick: () -> Unit, modifier: Modifier = Modifier) {
-    val title by remember {
-        mutableStateOf(
-            when (type) {
-                is ProjectResource.Synth -> "Synth"
-                is ProjectResource.Drumkit -> "Drum"
-                is ProjectResource.Tape -> "Tape"
-            }
-        )
-    }
     Row(modifier = modifier.padding(8.dp)) {
         when (type) {
             is ProjectResource.Drumkit -> DrumkitResourceItem(drumkit = type, onClick = onClick)
             is ProjectResource.Synth -> SynthResourceItem(synth = type)
-            is ProjectResource.Tape -> Text(
-                text = "$title 0",
-                modifier
-                    .fillMaxWidth()
-                    .padding(start = 16.dp)
-            )
+            is ProjectResource.Tape -> TapeResourceItem(tape = type) { }
         }
     }
 }
@@ -157,4 +139,33 @@ fun SynthIcon(modifier: Modifier = Modifier, engine: SynthEngine) {
         contentDescription = null,
         modifier = modifier,
     )
+}
+
+@Composable
+fun TapeResourceItem(modifier: Modifier = Modifier, tape: ProjectResource.Tape, onClick: () -> Unit) {
+    Row(
+        modifier = modifier.clickable { onClick() }.padding(vertical = 10.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Box(
+            modifier = Modifier
+                .padding(start = 16.dp)
+                .size(48.dp)
+                .clip(RoundedCornerShape(8.dp))
+                .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(8.dp))
+        ) {
+            SynthIcon(
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .size(24.dp),
+                engine = SynthEngine.DSynth(),
+            )
+        }
+        Text(
+            modifier = modifier
+                .padding(12.dp)
+                .weight(1f),
+            text = "Tape ${tape.index + 1}"
+        )
+    }
 }

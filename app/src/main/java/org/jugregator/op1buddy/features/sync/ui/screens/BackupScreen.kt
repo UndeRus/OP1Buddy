@@ -24,7 +24,7 @@ fun BackupScreen(
     UsbConnectionWrapper(modifier = modifier, connectedState = state.connected, content = {
         if (state.nowCopying) {
             WakeLock()
-            DeviceCopyingProgress(state.progress, modifier)
+            DeviceCopyingProgress("NOW DOWNLOADING", state.progress, modifier)
         } else {
             BackupReadyForCopy(
                 state = state,
