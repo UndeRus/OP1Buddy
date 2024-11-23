@@ -3401,7 +3401,7 @@ SPLandroidx/compose/runtime/ComposerImpl;->endReusableGroup()V
 SPLandroidx/compose/runtime/ComposerImpl;->endRoot()V
 SPLandroidx/compose/runtime/ComposerImpl;->ensureWriter()V
 HSPLandroidx/compose/runtime/ComposerImpl;->enterGroup(ZLandroidx/compose/runtime/Pending;)V
-HSPLandroidx/compose/runtime/ComposerImpl;->exitGroup(IZ)V
+SPLandroidx/compose/runtime/ComposerImpl;->exitGroup(IZ)V
 SPLandroidx/compose/runtime/ComposerImpl;->finalizeCompose()V
 SPLandroidx/compose/runtime/ComposerImpl;->forceFreshInsertTable()V
 SPLandroidx/compose/runtime/ComposerImpl;->getApplier()Landroidx/compose/runtime/Applier;
@@ -3427,14 +3427,14 @@ SPLandroidx/compose/runtime/ComposerImpl;->rememberedValue()Ljava/lang/Object;
 SPLandroidx/compose/runtime/ComposerImpl;->sourceInformation(Ljava/lang/String;)V
 SPLandroidx/compose/runtime/ComposerImpl;->sourceInformationMarkerEnd()V
 SPLandroidx/compose/runtime/ComposerImpl;->sourceInformationMarkerStart(ILjava/lang/String;)V
-HSPLandroidx/compose/runtime/ComposerImpl;->start-BaiHCIY(ILjava/lang/Object;ILjava/lang/Object;)V
+SPLandroidx/compose/runtime/ComposerImpl;->start-BaiHCIY(ILjava/lang/Object;ILjava/lang/Object;)V
 SPLandroidx/compose/runtime/ComposerImpl;->startDefaults()V
 SPLandroidx/compose/runtime/ComposerImpl;->startGroup(I)V
 SPLandroidx/compose/runtime/ComposerImpl;->startGroup(ILjava/lang/Object;)V
 SPLandroidx/compose/runtime/ComposerImpl;->startMovableGroup(ILjava/lang/Object;)V
 SPLandroidx/compose/runtime/ComposerImpl;->startProvider(Landroidx/compose/runtime/ProvidedValue;)V
 SPLandroidx/compose/runtime/ComposerImpl;->startProviders([Landroidx/compose/runtime/ProvidedValue;)V
-HSPLandroidx/compose/runtime/ComposerImpl;->startReplaceGroup(I)V
+SPLandroidx/compose/runtime/ComposerImpl;->startReplaceGroup(I)V
 SPLandroidx/compose/runtime/ComposerImpl;->startReplaceableGroup(I)V
 SPLandroidx/compose/runtime/ComposerImpl;->startRestartGroup(I)Landroidx/compose/runtime/Composer;
 SPLandroidx/compose/runtime/ComposerImpl;->startReusableGroup(ILjava/lang/Object;)V
@@ -3667,7 +3667,7 @@ SPLandroidx/compose/runtime/IntStack;->isEmpty()Z
 SPLandroidx/compose/runtime/IntStack;->peek()I
 SPLandroidx/compose/runtime/IntStack;->peek2()I
 SPLandroidx/compose/runtime/IntStack;->pop()I
-HSPLandroidx/compose/runtime/IntStack;->push(I)V
+SPLandroidx/compose/runtime/IntStack;->push(I)V
 Landroidx/compose/runtime/IntState;
 Landroidx/compose/runtime/KeyInfo;
 SPLandroidx/compose/runtime/KeyInfo;-><clinit>()V
@@ -3826,7 +3826,6 @@ SPLandroidx/compose/runtime/RecomposeScopeImpl;->getAnchor()Landroidx/compose/ru
 SPLandroidx/compose/runtime/RecomposeScopeImpl;->getRereading()Z
 SPLandroidx/compose/runtime/RecomposeScopeImpl;->getSkipped$runtime_release()Z
 SPLandroidx/compose/runtime/RecomposeScopeImpl;->getUsed()Z
-SPLandroidx/compose/runtime/RecomposeScopeImpl;->getValid()Z
 SPLandroidx/compose/runtime/RecomposeScopeImpl;->recordDerivedStateValue(Landroidx/compose/runtime/DerivedState;Ljava/lang/Object;)V
 SPLandroidx/compose/runtime/RecomposeScopeImpl;->recordRead(Ljava/lang/Object;)Z
 SPLandroidx/compose/runtime/RecomposeScopeImpl;->setAnchor(Landroidx/compose/runtime/Anchor;)V
@@ -4061,7 +4060,7 @@ SPLandroidx/compose/runtime/SlotWriter;->groupKey(I)I
 SPLandroidx/compose/runtime/SlotWriter;->groupObjectKey(I)Ljava/lang/Object;
 SPLandroidx/compose/runtime/SlotWriter;->groupSize(I)I
 HSPLandroidx/compose/runtime/SlotWriter;->insertGroups(I)V
-HSPLandroidx/compose/runtime/SlotWriter;->insertSlots(II)V
+SPLandroidx/compose/runtime/SlotWriter;->insertSlots(II)V
 SPLandroidx/compose/runtime/SlotWriter;->markGroup$default(Landroidx/compose/runtime/SlotWriter;IILjava/lang/Object;)V
 SPLandroidx/compose/runtime/SlotWriter;->markGroup(I)V
 SPLandroidx/compose/runtime/SlotWriter;->moveFrom(Landroidx/compose/runtime/SlotTable;IZ)Ljava/util/List;
@@ -4502,6 +4501,7 @@ SPLandroidx/compose/runtime/external/kotlinx/collections/immutable/implementatio
 SPLandroidx/compose/runtime/external/kotlinx/collections/immutable/implementations/immutableMap/TrieNode;->insertEntryAt(ILjava/lang/Object;Ljava/lang/Object;)Landroidx/compose/runtime/external/kotlinx/collections/immutable/implementations/immutableMap/TrieNode;
 SPLandroidx/compose/runtime/external/kotlinx/collections/immutable/implementations/immutableMap/TrieNode;->keyAtIndex(I)Ljava/lang/Object;
 SPLandroidx/compose/runtime/external/kotlinx/collections/immutable/implementations/immutableMap/TrieNode;->makeNode(ILjava/lang/Object;Ljava/lang/Object;ILjava/lang/Object;Ljava/lang/Object;ILandroidx/compose/runtime/external/kotlinx/collections/immutable/internal/MutabilityOwnership;)Landroidx/compose/runtime/external/kotlinx/collections/immutable/implementations/immutableMap/TrieNode;
+SPLandroidx/compose/runtime/external/kotlinx/collections/immutable/implementations/immutableMap/TrieNode;->moveEntryToNode(IIILjava/lang/Object;Ljava/lang/Object;I)Landroidx/compose/runtime/external/kotlinx/collections/immutable/implementations/immutableMap/TrieNode;
 SPLandroidx/compose/runtime/external/kotlinx/collections/immutable/implementations/immutableMap/TrieNode;->mutableInsertEntryAt(ILjava/lang/Object;Ljava/lang/Object;Landroidx/compose/runtime/external/kotlinx/collections/immutable/internal/MutabilityOwnership;)Landroidx/compose/runtime/external/kotlinx/collections/immutable/implementations/immutableMap/TrieNode;
 SPLandroidx/compose/runtime/external/kotlinx/collections/immutable/implementations/immutableMap/TrieNode;->mutableMoveEntryToNode(IIILjava/lang/Object;Ljava/lang/Object;ILandroidx/compose/runtime/external/kotlinx/collections/immutable/internal/MutabilityOwnership;)Landroidx/compose/runtime/external/kotlinx/collections/immutable/implementations/immutableMap/TrieNode;
 SPLandroidx/compose/runtime/external/kotlinx/collections/immutable/implementations/immutableMap/TrieNode;->mutablePut(ILjava/lang/Object;Ljava/lang/Object;ILandroidx/compose/runtime/external/kotlinx/collections/immutable/implementations/immutableMap/PersistentHashMapBuilder;)Landroidx/compose/runtime/external/kotlinx/collections/immutable/implementations/immutableMap/TrieNode;
@@ -4985,7 +4985,7 @@ SPLandroidx/compose/runtime/snapshots/SnapshotStateObserver$ObservedScopeMap;->a
 SPLandroidx/compose/runtime/snapshots/SnapshotStateObserver$ObservedScopeMap;->clearObsoleteStateReads(Ljava/lang/Object;)V
 SPLandroidx/compose/runtime/snapshots/SnapshotStateObserver$ObservedScopeMap;->getOnChanged()Lkotlin/jvm/functions/Function1;
 SPLandroidx/compose/runtime/snapshots/SnapshotStateObserver$ObservedScopeMap;->notifyInvalidatedScopes()V
-HSPLandroidx/compose/runtime/snapshots/SnapshotStateObserver$ObservedScopeMap;->observe(Ljava/lang/Object;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;)V
+SPLandroidx/compose/runtime/snapshots/SnapshotStateObserver$ObservedScopeMap;->observe(Ljava/lang/Object;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;)V
 SPLandroidx/compose/runtime/snapshots/SnapshotStateObserver$ObservedScopeMap;->recordInvalidation(Ljava/util/Set;)Z
 SPLandroidx/compose/runtime/snapshots/SnapshotStateObserver$ObservedScopeMap;->recordRead(Ljava/lang/Object;)V
 SPLandroidx/compose/runtime/snapshots/SnapshotStateObserver$ObservedScopeMap;->recordRead(Ljava/lang/Object;ILjava/lang/Object;Landroidx/collection/MutableObjectIntMap;)V
@@ -5787,7 +5787,7 @@ SPLandroidx/compose/ui/graphics/Matrix;->box-impl([F)Landroidx/compose/ui/graphi
 SPLandroidx/compose/ui/graphics/Matrix;->constructor-impl$default([FILkotlin/jvm/internal/DefaultConstructorMarker;)[F
 SPLandroidx/compose/ui/graphics/Matrix;->constructor-impl([F)[F
 SPLandroidx/compose/ui/graphics/Matrix;->map-MK-Hz9U([FJ)J
-HSPLandroidx/compose/ui/graphics/Matrix;->map-impl([FLandroidx/compose/ui/geometry/MutableRect;)V
+SPLandroidx/compose/ui/graphics/Matrix;->map-impl([FLandroidx/compose/ui/geometry/MutableRect;)V
 SPLandroidx/compose/ui/graphics/Matrix;->reset-impl([F)V
 SPLandroidx/compose/ui/graphics/Matrix;->rotateX-impl([FF)V
 SPLandroidx/compose/ui/graphics/Matrix;->rotateY-impl([FF)V
@@ -8535,7 +8535,7 @@ SPLandroidx/compose/ui/platform/GraphicsLayerOwnerLayer;->setDirty(Z)V
 SPLandroidx/compose/ui/platform/GraphicsLayerOwnerLayer;->triggerRepaint()V
 SPLandroidx/compose/ui/platform/GraphicsLayerOwnerLayer;->updateDisplayList()V
 SPLandroidx/compose/ui/platform/GraphicsLayerOwnerLayer;->updateLayerProperties(Landroidx/compose/ui/graphics/ReusableGraphicsLayerScope;)V
-HSPLandroidx/compose/ui/platform/GraphicsLayerOwnerLayer;->updateMatrix()V
+SPLandroidx/compose/ui/platform/GraphicsLayerOwnerLayer;->updateMatrix()V
 SPLandroidx/compose/ui/platform/GraphicsLayerOwnerLayer;->updateOutline()V
 Landroidx/compose/ui/platform/GraphicsLayerOwnerLayer$recordLambda$1;
 SPLandroidx/compose/ui/platform/GraphicsLayerOwnerLayer$recordLambda$1;-><init>(Landroidx/compose/ui/platform/GraphicsLayerOwnerLayer;)V
@@ -11269,6 +11269,7 @@ SPLandroidx/datastore/preferences/core/Preferences$Key;->getName()Ljava/lang/Str
 SPLandroidx/datastore/preferences/core/Preferences$Key;->hashCode()I
 Landroidx/datastore/preferences/core/Preferences$Pair;
 Landroidx/datastore/preferences/core/PreferencesFactory;
+SPLandroidx/datastore/preferences/core/PreferencesFactory;->createEmpty()Landroidx/datastore/preferences/core/Preferences;
 SPLandroidx/datastore/preferences/core/PreferencesFactory;->createMutable([Landroidx/datastore/preferences/core/Preferences$Pair;)Landroidx/datastore/preferences/core/MutablePreferences;
 Landroidx/datastore/preferences/core/PreferencesKeys;
 SPLandroidx/datastore/preferences/core/PreferencesKeys;->booleanKey(Ljava/lang/String;)Landroidx/datastore/preferences/core/Preferences$Key;
@@ -11288,6 +11289,8 @@ Landroidx/datastore/preferences/core/PreferencesSerializer;
 SPLandroidx/datastore/preferences/core/PreferencesSerializer;-><clinit>()V
 SPLandroidx/datastore/preferences/core/PreferencesSerializer;-><init>()V
 SPLandroidx/datastore/preferences/core/PreferencesSerializer;->addProtoEntryToPreferences(Ljava/lang/String;Landroidx/datastore/preferences/PreferencesProto$Value;Landroidx/datastore/preferences/core/MutablePreferences;)V
+SPLandroidx/datastore/preferences/core/PreferencesSerializer;->getDefaultValue()Landroidx/datastore/preferences/core/Preferences;
+SPLandroidx/datastore/preferences/core/PreferencesSerializer;->getDefaultValue()Ljava/lang/Object;
 SPLandroidx/datastore/preferences/core/PreferencesSerializer;->getFileExtension()Ljava/lang/String;
 SPLandroidx/datastore/preferences/core/PreferencesSerializer;->getValueProto(Ljava/lang/Object;)Landroidx/datastore/preferences/PreferencesProto$Value;
 SPLandroidx/datastore/preferences/core/PreferencesSerializer;->readFrom(Ljava/io/InputStream;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
@@ -11888,10 +11891,8 @@ Landroidx/emoji2/text/EmojiProcessor$EmojiProcessCallback;
 Landroidx/emoji2/text/EmojiProcessor$ProcessorSm;
 SPLandroidx/emoji2/text/EmojiProcessor$ProcessorSm;-><init>(Landroidx/emoji2/text/MetadataRepo$Node;Z[I)V
 SPLandroidx/emoji2/text/EmojiProcessor$ProcessorSm;->check(I)I
-SPLandroidx/emoji2/text/EmojiProcessor$ProcessorSm;->isEmojiStyle(I)Z
 SPLandroidx/emoji2/text/EmojiProcessor$ProcessorSm;->isInFlushableState()Z
 SPLandroidx/emoji2/text/EmojiProcessor$ProcessorSm;->reset()I
-SPLandroidx/emoji2/text/EmojiProcessor$ProcessorSm;->shouldUseEmojiPresentationStyleForSingleCodepoint()Z
 Landroidx/emoji2/text/FontRequestEmojiCompatConfig;
 SPLandroidx/emoji2/text/FontRequestEmojiCompatConfig;-><clinit>()V
 SPLandroidx/emoji2/text/FontRequestEmojiCompatConfig;-><init>(Landroid/content/Context;Landroidx/core/provider/FontRequest;)V
@@ -11936,19 +11937,17 @@ SPLandroidx/emoji2/text/MetadataRepo;->getRootNode()Landroidx/emoji2/text/Metada
 SPLandroidx/emoji2/text/MetadataRepo;->put(Landroidx/emoji2/text/TypefaceEmojiRasterizer;)V
 Landroidx/emoji2/text/MetadataRepo$Node;
 SPLandroidx/emoji2/text/MetadataRepo$Node;-><init>()V
-SPLandroidx/emoji2/text/MetadataRepo$Node;-><init>(I)V
+HSPLandroidx/emoji2/text/MetadataRepo$Node;-><init>(I)V
 SPLandroidx/emoji2/text/MetadataRepo$Node;->get(I)Landroidx/emoji2/text/MetadataRepo$Node;
-SPLandroidx/emoji2/text/MetadataRepo$Node;->getData()Landroidx/emoji2/text/TypefaceEmojiRasterizer;
 SPLandroidx/emoji2/text/MetadataRepo$Node;->put(Landroidx/emoji2/text/TypefaceEmojiRasterizer;II)V
 Landroidx/emoji2/text/SpannableBuilder;
 Landroidx/emoji2/text/TypefaceEmojiRasterizer;
 SPLandroidx/emoji2/text/TypefaceEmojiRasterizer;-><clinit>()V
 SPLandroidx/emoji2/text/TypefaceEmojiRasterizer;-><init>(Landroidx/emoji2/text/MetadataRepo;I)V
 SPLandroidx/emoji2/text/TypefaceEmojiRasterizer;->getCodepointAt(I)I
-SPLandroidx/emoji2/text/TypefaceEmojiRasterizer;->getCodepointsLength()I
+HSPLandroidx/emoji2/text/TypefaceEmojiRasterizer;->getCodepointsLength()I
 SPLandroidx/emoji2/text/TypefaceEmojiRasterizer;->getId()I
 HSPLandroidx/emoji2/text/TypefaceEmojiRasterizer;->getMetadataItem()Landroidx/emoji2/text/flatbuffer/MetadataItem;
-SPLandroidx/emoji2/text/TypefaceEmojiRasterizer;->isDefaultEmoji()Z
 Landroidx/emoji2/text/UnprecomputeTextOnModificationSpannable;
 Landroidx/emoji2/text/flatbuffer/MetadataItem;
 SPLandroidx/emoji2/text/flatbuffer/MetadataItem;-><init>()V
@@ -11956,7 +11955,6 @@ HSPLandroidx/emoji2/text/flatbuffer/MetadataItem;->__assign(ILjava/nio/ByteBuffe
 HSPLandroidx/emoji2/text/flatbuffer/MetadataItem;->__init(ILjava/nio/ByteBuffer;)V
 SPLandroidx/emoji2/text/flatbuffer/MetadataItem;->codepoints(I)I
 SPLandroidx/emoji2/text/flatbuffer/MetadataItem;->codepointsLength()I
-SPLandroidx/emoji2/text/flatbuffer/MetadataItem;->emojiStyle()Z
 SPLandroidx/emoji2/text/flatbuffer/MetadataItem;->id()I
 Landroidx/emoji2/text/flatbuffer/MetadataList;
 SPLandroidx/emoji2/text/flatbuffer/MetadataList;-><init>()V
