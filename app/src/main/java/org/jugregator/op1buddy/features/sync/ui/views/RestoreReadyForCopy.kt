@@ -15,10 +15,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.jugregator.op1buddy.R
 import org.jugregator.op1buddy.features.sync.BackupInfo
 import org.jugregator.op1buddy.features.sync.RestoreScreenState
 
@@ -31,7 +33,7 @@ fun RestoreReadyForCopy(
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
         Text(
-            text = "Choose items to upload to OP-1",
+            text = stringResource(R.string.restore_screen_title),
             style = MaterialTheme.typography.titleMedium.copy(color = MaterialTheme.colorScheme.outline),
             modifier = Modifier
                 .padding(10.dp)
@@ -116,7 +118,7 @@ fun RestoreReadyForCopy(
             enabled = !state.nowCopying
         ) {
             Text(
-                text = "Upload",
+                text = stringResource(R.string.upload_button_title),
                 style = MaterialTheme.typography.titleLarge.copy(fontSize = 16.sp, fontWeight = FontWeight.Black)
             )
         }

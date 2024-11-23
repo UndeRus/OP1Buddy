@@ -7,7 +7,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import org.jugregator.op1buddy.R
 import org.jugregator.op1buddy.features.sync.BackupInfo
 import org.jugregator.op1buddy.features.sync.OP1ConnectionState
 import org.jugregator.op1buddy.features.sync.RestoreScreenState
@@ -26,7 +28,7 @@ fun RestoreScreen(
         connectedState = state.connected, content = {
             if (state.nowCopying) {
                 WakeLock()
-                DeviceCopyingProgress("NOW UPLOADING", progress = state.progress)
+                DeviceCopyingProgress(stringResource(R.string.restore_progress_title), progress = state.progress)
             } else {
                 RestoreReadyForCopy(
                     state = state,

@@ -26,7 +26,7 @@ class UsbFileRepositoryImpl : UsbFileRepository {
         }
         outputStream.close() // IO
 
-        println("$sourceUsbFile to $targetFile copied")
+        //println("$sourceUsbFile to $targetFile copied")
     }
 
     @Throws(IOException::class, IllegalStateException::class)

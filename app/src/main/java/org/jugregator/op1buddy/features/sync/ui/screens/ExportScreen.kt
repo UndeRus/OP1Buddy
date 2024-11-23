@@ -22,10 +22,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.jugregator.op1buddy.R
 import org.jugregator.op1buddy.features.sync.RestoreScreenState
 import org.jugregator.op1buddy.features.sync.isEmpty
 import org.jugregator.op1buddy.features.sync.ui.views.DrumSelector
@@ -51,7 +53,7 @@ fun ExportScreen(
 
     Column(modifier = modifier.fillMaxWidth()) {
         Text(
-            text = "Export current backup",
+            text = stringResource(R.string.export_title),
             style = MaterialTheme.typography.titleMedium.copy(color = MaterialTheme.colorScheme.outline),
             modifier = Modifier
                 .padding(10.dp)
@@ -146,7 +148,7 @@ fun ExportScreen(
             enabled = isExportEnabled
         ) {
             Text(
-                text = "Export",
+                text = stringResource(R.string.export),
                 style = MaterialTheme.typography.titleLarge.copy(fontSize = 16.sp, fontWeight = FontWeight.Black)
             )
         }

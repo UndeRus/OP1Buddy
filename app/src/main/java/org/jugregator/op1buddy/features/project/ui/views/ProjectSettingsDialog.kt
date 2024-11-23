@@ -21,9 +21,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import org.jugregator.op1buddy.R
 
 @Composable
 fun ProjectSettingsDialog(
@@ -46,7 +48,7 @@ fun ProjectSettingsDialog(
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Text(
-                    text = "Project name",
+                    text = stringResource(R.string.project_dialog_title),
                     modifier = Modifier.padding(16.dp),
                 )
 
@@ -65,7 +67,7 @@ fun ProjectSettingsDialog(
                         onClick = { onDismissRequest() },
                         modifier = Modifier.padding(8.dp),
                     ) {
-                        Text("Dismiss")
+                        Text(stringResource(R.string.dismiss))
                     }
                     TextButton(
                         onClick = {
@@ -74,7 +76,7 @@ fun ProjectSettingsDialog(
                         },
                         modifier = Modifier.padding(8.dp),
                     ) {
-                        Text("Confirm")
+                        Text(stringResource(R.string.confirm))
                     }
                 }
             }

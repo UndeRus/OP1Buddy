@@ -16,9 +16,11 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import org.jugregator.op1buddy.R
 
 @Composable
 fun ProjectDeleteDialog(
@@ -44,7 +46,7 @@ fun ProjectDeleteDialog(
                     text = projectTitle,
                     modifier = Modifier.padding(16.dp),
                 )
-                Text("Do you really want delete project?")
+                Text(stringResource(R.string.project_delete_dialog_title))
                 Row(
                     modifier = Modifier
                         .fillMaxWidth(),
@@ -54,7 +56,7 @@ fun ProjectDeleteDialog(
                         onClick = { onDismissRequest() },
                         modifier = Modifier.padding(8.dp),
                     ) {
-                        Text("Dismiss")
+                        Text(stringResource(R.string.dismiss))
                     }
                     TextButton(
                         onClick = {
@@ -63,7 +65,7 @@ fun ProjectDeleteDialog(
                         },
                         modifier = Modifier.padding(8.dp),
                     ) {
-                        Text("Confirm")
+                        Text(stringResource(R.string.confirm))
                     }
                 }
             }

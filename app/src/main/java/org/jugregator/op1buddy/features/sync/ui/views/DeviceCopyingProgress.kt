@@ -17,10 +17,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.jugregator.op1buddy.R
 import org.jugregator.op1buddy.ui.theme.AppTheme
 
 @Composable
@@ -60,7 +62,7 @@ fun DeviceCopyingProgress(title: String, progress: Float, modifier: Modifier = M
             }
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "Wait until 100% load",
+                text = stringResource(R.string.progress_warning),
                 style = MaterialTheme.typography.bodyLarge.copy(
                     lineHeight = 28.sp,
                     color = MaterialTheme.colorScheme.onPrimaryContainer

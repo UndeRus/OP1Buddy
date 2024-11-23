@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="app_name">OP1Buddy</string>
-    <string name="faq1_description">Подключите OP-1 к телефону USB-кабелем</string>
-    <string name="faq2_description">Включите синтезатор</string>
-    <string name="faq3_description">Нажмите Shift + Com</string>
-    <string name="faq4_description">Нажмите на Tape 3</string>
-    <string name="faq5_description">Подтвердите разрешение</string>
-</resources>

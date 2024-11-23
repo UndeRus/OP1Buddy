@@ -13,6 +13,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.jugregator.op1buddy.R
@@ -28,7 +29,7 @@ fun SyncBottomBar(
         Box(modifier = Modifier.width(10.dp))
         Box(modifier = Modifier.weight(0.2f))
         SyncBottomBarButton(
-            title = "Backup",
+            title = stringResource(R.string.backup_bottom_bar_tab),
             selected = selectedTab == SyncTab.Backup,
             modifier = Modifier
                 .height(118.dp)
@@ -42,7 +43,7 @@ fun SyncBottomBar(
 
         Box(modifier = Modifier.width(10.dp))
         SyncBottomBarButton(
-            title = "Restore",
+            title = stringResource(R.string.restore_bottom_bar_tab),
             selected = selectedTab == SyncTab.Restore,
             modifier = Modifier
                 .height(118.dp)
@@ -56,7 +57,7 @@ fun SyncBottomBar(
 
         Box(modifier = Modifier.width(10.dp))
         SyncBottomBarButton(
-            title = "Export",
+            title = stringResource(R.string.export_bottombar_tab),
             selected = selectedTab == SyncTab.Export,
             modifier = Modifier
                 .height(118.dp)

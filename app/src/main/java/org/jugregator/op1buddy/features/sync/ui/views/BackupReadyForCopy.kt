@@ -15,11 +15,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.jugregator.op1buddy.R
 import org.jugregator.op1buddy.features.sync.BackupInfo
 import org.jugregator.op1buddy.features.sync.BackupScreenState
 
@@ -32,7 +34,7 @@ fun BackupReadyForCopy(
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
         Text(
-            text = "Choose current item to download from OP-1",
+            text = stringResource(R.string.backup_screen_description),
             textAlign = TextAlign.Center,
             modifier = Modifier
                 .padding(10.dp)
@@ -106,7 +108,7 @@ fun BackupReadyForCopy(
             enabled = !state.nowCopying
         ) {
             Text(
-                text = "Download",
+                text = stringResource(R.string.download),
                 style = MaterialTheme.typography.titleLarge.copy(fontSize = 16.sp, fontWeight = FontWeight.Black)
             )
         }

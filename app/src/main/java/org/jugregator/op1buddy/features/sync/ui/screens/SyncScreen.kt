@@ -64,9 +64,9 @@ fun SyncScreen(
     val title by remember {
         derivedStateOf {
             when (selectedTab) {
-                SyncTab.Backup -> "Backup"
-                SyncTab.Restore -> "Restore"
-                SyncTab.Export -> "Export"
+                SyncTab.Backup -> context.getString(R.string.backup_tab_title)
+                SyncTab.Restore -> context.getString(R.string.restore_tab_title)
+                SyncTab.Export -> context.getString(R.string.export_tab_title)
             }
         }
     }
