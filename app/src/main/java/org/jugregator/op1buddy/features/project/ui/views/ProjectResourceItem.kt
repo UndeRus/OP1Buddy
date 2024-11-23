@@ -28,7 +28,7 @@ import org.jugregator.op1buddy.ui.theme.AppTheme
 
 @Composable
 fun ProjectResourceItem(type: ProjectResource, onClick: () -> Unit, modifier: Modifier = Modifier) {
-    Row(modifier = modifier.padding(8.dp)) {
+    Row(modifier = modifier) {
         when (type) {
             is ProjectResource.Drumkit -> DrumkitResourceItem(drumkit = type, onClick = onClick)
             is ProjectResource.Synth -> SynthResourceItem(synth = type)

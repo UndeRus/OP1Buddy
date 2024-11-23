@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">OP1Buddy</string>
+    <string name="app_name">Sync for OP-1</string>
     <string name="sync_screen">Sync for OP-1</string>
     <string name="faq1_description">Connect with USB cable</string>
     <string name="faq2_description">Power on the synthesizer</string>
