@@ -14,7 +14,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,7 +40,9 @@ fun ProjectResourceItem(type: ProjectResource, onClick: () -> Unit, modifier: Mo
 @Composable
 fun DrumkitResourceItem(modifier: Modifier = Modifier, drumkit: ProjectResource.Drumkit, onClick: () -> Unit) {
     Row(
-        modifier = modifier.clickable { onClick() }.padding(vertical = 10.dp),
+        modifier = modifier
+            .clickable { onClick() }
+            .padding(vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Box(
@@ -142,9 +143,20 @@ fun SynthIcon(modifier: Modifier = Modifier, engine: SynthEngine) {
 }
 
 @Composable
+fun TapeIcon(modifier: Modifier = Modifier) {
+    Icon(
+        painter = painterResource(id = R.drawable.tape_selector),
+        contentDescription = null,
+        modifier = modifier,
+    )
+}
+
+@Composable
 fun TapeResourceItem(modifier: Modifier = Modifier, tape: ProjectResource.Tape, onClick: () -> Unit) {
     Row(
-        modifier = modifier.clickable { onClick() }.padding(vertical = 10.dp),
+        modifier = modifier
+            .clickable { onClick() }
+            .padding(vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Box(
@@ -154,11 +166,10 @@ fun TapeResourceItem(modifier: Modifier = Modifier, tape: ProjectResource.Tape, 
                 .clip(RoundedCornerShape(8.dp))
                 .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(8.dp))
         ) {
-            SynthIcon(
+            TapeIcon(
                 modifier = Modifier
                     .align(Alignment.Center)
                     .size(24.dp),
-                engine = SynthEngine.DSynth(),
             )
         }
         Text(
@@ -167,5 +178,13 @@ fun TapeResourceItem(modifier: Modifier = Modifier, tape: ProjectResource.Tape, 
                 .weight(1f),
             text = "Tape ${tape.index + 1}"
         )
+    }
+}
+
+@Preview
+@Composable
+fun TapeResourceItemPreview() {
+    MaterialTheme {
+        TapeResourceItem(tape = ProjectResource.Tape(0, "asdasd")) {}
     }
 }
