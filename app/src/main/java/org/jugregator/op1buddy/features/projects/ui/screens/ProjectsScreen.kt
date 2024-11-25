@@ -1,14 +1,24 @@
 package org.jugregator.op1buddy.features.projects.ui.screens
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Build
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
@@ -28,17 +38,23 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import org.jugregator.op1buddy.R
 import org.jugregator.op1buddy.data.project.Project
 import org.jugregator.op1buddy.features.project.ui.views.ProjectDeleteDialog
 import org.jugregator.op1buddy.features.project.ui.views.ProjectSettingsDialog
 import org.jugregator.op1buddy.features.projects.ProjectsScreenViewModel
 import org.jugregator.op1buddy.features.projects.ui.views.ProjectItem
+import org.jugregator.op1buddy.ui.theme.AppTheme
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -49,20 +65,43 @@ fun ProjectsScreen(
     onProjectClicked: (Project) -> Unit,
     onNewProjectClicked: () -> Unit,
 ) {
+    val context = LocalContext.current
+    val createBackupFileLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.OpenDocument()
+    ) { uri ->
+        uri?.let {
+            viewModel.onBackupPathSelected(context, uri)
+        }
+    }
+
     val state by viewModel.uiState.collectAsState()
     Scaffold(modifier = modifier,
         topBar = {
             ProjectsAppBar(onBackClicked = onBackClicked, onSearchClicked = { })
         },
         floatingActionButton = {
-            FloatingActionButton(
-                onClick = { onNewProjectClicked() },
-                shape = CircleShape,
-                elevation = FloatingActionButtonDefaults.elevation(0.dp),
-                containerColor = MaterialTheme.colorScheme.error
-            ) {
-                Icon(painterResource(R.drawable.fab_plus), stringResource(R.string.create_new_project_button_title))
+            Column {
+                FloatingActionButton(
+                    onClick = { createBackupFileLauncher.launch(arrayOf("application/zip")) },
+                    shape = CircleShape,
+                    elevation = FloatingActionButtonDefaults.elevation(0.dp),
+                    containerColor = MaterialTheme.colorScheme.error
+                ) {
+                    Icon(Icons.Filled.Build, stringResource(R.string.import_project_button_title))
+                }
+
+                Spacer(Modifier.height(8.dp))
+
+                FloatingActionButton(
+                    onClick = { onNewProjectClicked() },
+                    shape = CircleShape,
+                    elevation = FloatingActionButtonDefaults.elevation(0.dp),
+                    containerColor = MaterialTheme.colorScheme.error
+                ) {
+                    Icon(painterResource(R.drawable.fab_plus), stringResource(R.string.create_new_project_button_title))
+                }
             }
+
         }) { innerPadding ->
         Box(
             modifier = Modifier
@@ -79,45 +118,49 @@ fun ProjectsScreen(
 
             var editDialogOpened by remember { mutableStateOf(false) }
             var deleteDialogOpened by remember { mutableStateOf(false) }
-            LazyColumn {
-                itemsIndexed(projects, key = { index, project -> project.id }) { index, project ->
-                    ProjectItem(
-                        modifier = Modifier.fillParentMaxWidth(),
-                        project = project, onClick = {
-                            onProjectClicked(project)
-                        }, onDeleteClicked = {
-                            deleteDialogOpened = true
-                        }, onEditClicked = {
-                            editDialogOpened = true
-                        })
-                    if (editDialogOpened) {
-                        ProjectSettingsDialog(
-                            projectTitle = project.title,
-                            onDismissRequest = {
-                                editDialogOpened = false
-                            },
-                            onConfirmation = { title ->
-                                viewModel.editProjectConfirmed(project, title)
-                            }
-                        )
-                    }
-                    if (deleteDialogOpened) {
-                        ProjectDeleteDialog(
-                            projectTitle = project.title,
-                            onDismissRequest = {
-                                deleteDialogOpened = false
-                            },
-                            onConfirmation = {
-                                viewModel.removeProjectConfirmed(project)
-                            }
-                        )
-                    }
-                    if (index < projects.size) {
-                        HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
+
+            if (state.projectImporting) {
+                ImportProgress()
+            } else {
+                LazyColumn {
+                    itemsIndexed(projects, key = { index, project -> project.id }) { index, project ->
+                        ProjectItem(
+                            modifier = Modifier.fillParentMaxWidth(),
+                            project = project, onClick = {
+                                onProjectClicked(project)
+                            }, onDeleteClicked = {
+                                deleteDialogOpened = true
+                            }, onEditClicked = {
+                                editDialogOpened = true
+                            })
+                        if (editDialogOpened) {
+                            ProjectSettingsDialog(
+                                projectTitle = project.title,
+                                onDismissRequest = {
+                                    editDialogOpened = false
+                                },
+                                onConfirmation = { title ->
+                                    viewModel.editProjectConfirmed(project, title)
+                                }
+                            )
+                        }
+                        if (deleteDialogOpened) {
+                            ProjectDeleteDialog(
+                                projectTitle = project.title,
+                                onDismissRequest = {
+                                    deleteDialogOpened = false
+                                },
+                                onConfirmation = {
+                                    viewModel.removeProjectConfirmed(project)
+                                }
+                            )
+                        }
+                        if (index < projects.size) {
+                            HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
+                        }
                     }
                 }
             }
-
         }
     }
 
@@ -187,3 +230,67 @@ fun ProjectsAppBarPreview() {
         ProjectsAppBar(onBackClicked = {}, onSearchClicked = {})
     }
 }
+
+@Composable
+fun ImportProgress(modifier: Modifier = Modifier) {
+//    val progress = 0.5f
+//    val progressPercent = (progress * 100).toInt()
+    Box(modifier = modifier.fillMaxSize()) {
+        Column(modifier = Modifier.align(Alignment.Center), horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(
+                stringResource(R.string.project_import_progress_title),
+                style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Medium),
+                modifier = Modifier.padding(bottom = 16.dp),
+                textAlign = TextAlign.Center,
+            )
+            Box {
+                CircularProgressIndicator(
+                    modifier = Modifier
+                        .size(234.dp)
+                        .align(Alignment.Center),
+                    strokeWidth = 12.dp,
+                    trackColor = progressColor,
+                    strokeCap = StrokeCap.Square,
+                    //gapSize = 0.dp,
+                    //progress = { progress },
+                )
+
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .size(168.dp)
+                        .background(progressColor, shape = CircleShape)
+                )
+
+                /*
+                Text(
+                    text = "$progressPercent%",
+                    modifier = Modifier.align(Alignment.Center),
+                    style = MaterialTheme.typography.titleLarge.copy(fontSize = 64.sp)
+                )
+                */
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = stringResource(R.string.progress_warning),
+                style = MaterialTheme.typography.bodyLarge.copy(
+                    lineHeight = 28.sp,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                ),
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(top = 16.dp)
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun ImportProgressPreview() {
+    AppTheme {
+        ImportProgress()
+    }
+}
+
+private val progressColor = Color(0xFFEAEAEA)

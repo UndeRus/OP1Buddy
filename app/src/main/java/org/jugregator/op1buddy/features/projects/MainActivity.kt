@@ -36,7 +36,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
 
         enableEdgeToEdge()
         setContent {
@@ -55,7 +55,8 @@ class MainActivity : ComponentActivity() {
                                 },
                                 onProjectClicked = { project ->
                                     navController.navigate(ProjectRoute(projectId = project.id))
-                                }, onNewProjectClicked = {
+                                },
+                                onNewProjectClicked = {
                                     navController.navigate(ProjectRoute(isNew = true))
                                 })
                         }

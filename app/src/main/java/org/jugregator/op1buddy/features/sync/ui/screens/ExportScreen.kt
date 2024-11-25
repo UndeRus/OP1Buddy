@@ -130,7 +130,7 @@ fun ExportScreen(
                 createBackupFileLauncher.launch(
                     String.format(
                         Locale.US,
-                        "%s.zip",
+                        "%s.op1.zip",
                         dateFormated
                     )
                 )

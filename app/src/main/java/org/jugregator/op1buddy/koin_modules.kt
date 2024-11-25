@@ -8,8 +8,8 @@ import org.jugregator.op1buddy.features.drumkit.data.DrumkitRepository
 //import org.jugregator.op1buddy.features.drumkit.media.ExoPlayerProvider
 import org.jugregator.op1buddy.features.project.ProjectScreenViewModel
 import org.jugregator.op1buddy.features.projects.ProjectsScreenViewModel
-import org.jugregator.op1buddy.features.sync.data.BackupRepository
-import org.jugregator.op1buddy.features.sync.data.BackupRepositoryImpl
+import org.jugregator.op1buddy.data.project.BackupRepository
+import org.jugregator.op1buddy.data.project.BackupRepositoryImpl
 import org.jugregator.op1buddy.data.project.LocalFileRepository
 import org.jugregator.op1buddy.data.project.LocalFileRepositoryImpl
 import org.jugregator.op1buddy.data.project.ProjectRepository
@@ -62,7 +62,10 @@ val appModule = module {
     }
 
     viewModel<ProjectsScreenViewModel> {
-        ProjectsScreenViewModel(projectsRepository = get())
+        ProjectsScreenViewModel(
+            projectsRepository = get(),
+            backupRepository = get()
+        )
     }
 
     viewModel<ProjectScreenViewModel> {

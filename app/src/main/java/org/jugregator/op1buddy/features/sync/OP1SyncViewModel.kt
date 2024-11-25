@@ -28,7 +28,7 @@ import org.jugregator.op1buddy.OP1State
 import org.jugregator.op1buddy.data.ProjectsRepository
 import org.jugregator.op1buddy.data.project.LocalFileRepository
 import org.jugregator.op1buddy.features.projects.SyncRoute
-import org.jugregator.op1buddy.features.sync.data.BackupRepository
+import org.jugregator.op1buddy.data.project.BackupRepository
 import org.jugregator.op1buddy.features.sync.data.UsbFileRepository
 import java.io.File
 import java.io.OutputStream

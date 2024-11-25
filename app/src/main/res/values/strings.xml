@@ -16,6 +16,7 @@
     <string name="restore_screen_title">Choose items to upload to OP-1</string>
     <string name="upload_button_title">Upload</string>
     <string name="create_new_project_button_title">Create new project</string>
+    <string name="import_project_button_title">Import project</string>
     <string name="projects_title">Projects</string>
     <string name="project_dialog_title">Project name</string>
     <string name="dismiss">Dismiss</string>
@@ -27,4 +28,5 @@
     <string name="backup_progress_title">NOW DOWNLOADING</string>
     <string name="backup_screen_description">Choose current item to download from OP-1</string>
     <string name="download">Download</string>
+    <string name="project_import_progress_title">Project importing</string>
 </resources>
