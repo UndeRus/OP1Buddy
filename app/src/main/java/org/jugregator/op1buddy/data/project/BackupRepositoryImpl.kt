@@ -1,6 +1,5 @@
 package org.jugregator.op1buddy.data.project
 
-import android.util.Log
 import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase
 import java.io.BufferedInputStream
@@ -22,7 +21,7 @@ class BackupRepositoryImpl : BackupRepository {
         try {
             val files = (filesDir.listFiles() ?: arrayOf<File>()).map { it.name }
 
-            var origin: BufferedInputStream? = null
+            var origin: BufferedInputStream?
 
             val out = ZipOutputStream(BufferedOutputStream(outputZipFileOutputStream))
 
@@ -60,7 +59,6 @@ class BackupRepositoryImpl : BackupRepository {
             val entries = sequence {
                 var zipEntry = input.getNextEntry()
                 while (zipEntry != null) {
-                    Log.e("IMPORT", zipEntry.name)
                     yield(zipEntry)
                     zipEntry = input.getNextEntry()
                 }
@@ -72,16 +70,11 @@ class BackupRepositoryImpl : BackupRepository {
 
             var zipEntry = input.nextEntry
             while (zipEntry != null) {
-                if (zipEntry.name.startsWith("synth_")) {
-                    if (backupInfo.synthsEnabled) {
-                        copyFileFromBackup(projectDir, zipEntry, input)
-                        //Files.copy(input, outputFile.toPath())
-                    }
+                if (zipEntry.name.startsWith("synth_") && backupInfo.synthsEnabled) {
+                    copyFileFromBackup(projectDir, zipEntry, input)
                 }
-                if (zipEntry.name.startsWith("drum_")) {
-                    if (backupInfo.drumkitsEnabled) {
-                        copyFileFromBackup(projectDir, zipEntry, input)
-                    }
+                if (zipEntry.name.startsWith("drum_") && backupInfo.drumkitsEnabled) {
+                    copyFileFromBackup(projectDir, zipEntry, input)
                 }
 
                 if (zipEntry.name.startsWith("tape_")) {

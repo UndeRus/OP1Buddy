@@ -54,31 +54,32 @@ class ProjectsScreenViewModel(
 
     fun onBackupPathSelected(context: Context, uri: Uri) {
         viewModelScope.launch {
-            val contentResolver = context.contentResolver
-            val takeFlags: Int = Intent.FLAG_GRANT_READ_URI_PERMISSION or
-                Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-            // Check for the freshest data.
-            contentResolver.takePersistableUriPermission(uri, takeFlags)
-
-            val selectedFile = DocumentFile.fromSingleUri(context, uri)
-            if (selectedFile == null) {
-                Toast.makeText(context, "File not found", Toast.LENGTH_SHORT).show()
-                return@launch
-            }
-
-            val filename = contentResolver.queryFileName(uri)
-            filename?.let {
-                if (!it.endsWith(".op1.zip")) {
-                    Toast.makeText(context, "Wrong project format", Toast.LENGTH_SHORT).show()
-                    return@launch
-                }
-            }
-
             _mutableUiState.update {
                 it.copy(projectImporting = true)
             }
 
             withContext(Dispatchers.IO) {
+                val contentResolver = context.contentResolver
+                val takeFlags: Int = Intent.FLAG_GRANT_READ_URI_PERMISSION or
+                    Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                // Check for the freshest data.
+                contentResolver.takePersistableUriPermission(uri, takeFlags)
+
+                val selectedFile = DocumentFile.fromSingleUri(context, uri)
+                if (selectedFile == null) {
+                    Toast.makeText(context, "File not found", Toast.LENGTH_SHORT).show()
+                    return@withContext
+                }
+
+                val filename = contentResolver.queryFileName(uri)
+                filename?.let {
+                    if (!it.endsWith(".op1.zip")) {
+                        Toast.makeText(context, "Wrong project format", Toast.LENGTH_SHORT).show()
+                        return@withContext
+                    }
+                }
+
+
                 val id = UUID.randomUUID().toString()
                 val backupDir = File(context.filesDir, "op1backup/${id}")
                 val project = Project(
@@ -131,6 +132,7 @@ private fun hasKnownExtension(filename: String): Boolean {
 
 val allSupportedDocumentsTypesToExtensions = mapOf(
     "application/msword" to ".doc",
+    "application/zip" to ".zip",
     "application/vnd.openxmlformats-officedocument.wordprocessingml.document" to ".docx",
     "application/pdf" to ".pdf",
     "text/rtf" to ".rtf",
