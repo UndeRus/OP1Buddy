@@ -1,15 +1,8 @@
 package org.jugregator.op1buddy.features.project.ui.screens
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.basicMarquee
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -19,10 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -30,12 +20,19 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.navigation.NavDestination
+import androidx.navigation.NavDestination.Companion.hasRoute
+import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import org.jugregator.op1buddy.R
 import org.jugregator.op1buddy.data.synth.SynthEngine
 import org.jugregator.op1buddy.features.project.ProjectScreenViewModel
 import org.jugregator.op1buddy.features.project.ui.views.ProjectBottomBar
-import org.jugregator.op1buddy.features.project.ui.views.ProjectResourceItem
 import org.jugregator.op1buddy.features.project.ui.views.ProjectSettingsDialog
+import org.jugregator.op1buddy.features.projects.ProjectSubRoute
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -46,16 +43,20 @@ fun ProjectScreen(
     onSyncClicked: (String) -> Unit,
     onDrumKitSelected: (String, Int) -> Unit,
 ) {
+
+    val navController = rememberNavController()
     val lifecycleOwner = LocalLifecycleOwner.current
 
     LifecycleStartEffect(viewModel, lifecycleOwner = lifecycleOwner) {
         viewModel.loadProject()
         onStopOrDispose {
-
         }
     }
 
     val uiState by viewModel.state.collectAsState()
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = navBackStackEntry?.destination
+
     Scaffold(
         modifier = modifier,
         topBar = {
@@ -66,40 +67,74 @@ fun ProjectScreen(
             )
         }, bottomBar = {
             ProjectBottomBar(
-                selectedTab = uiState.tabOpened
+                selectedTab = when {
+                    checkRoute<ProjectSubRoute.SynthListRoute>(currentDestination) -> ProjectTab.Synth
+
+                    checkRoute<ProjectSubRoute.DrumkitListListRoute>(currentDestination) -> ProjectTab.Drumkit
+
+                    checkRoute<ProjectSubRoute.TapePlayerRoute>(currentDestination) -> ProjectTab.Tape
+
+                    else -> ProjectTab.Synth
+                }
+
             ) {
-                if (it == ProjectTab.Sync) {
-                    onSyncClicked(uiState.projectId)
-                } else {
-                    viewModel.selectTab(it)
+                when (it) {
+                    ProjectTab.Synth -> {
+                        navController.navigate(
+                            ProjectSubRoute.SynthListRoute(projectId = uiState.projectId)
+                        ) {
+                            popUpTo(navController.graph.id) { inclusive = true }
+                            launchSingleTop = true
+                        }
+                    }
+
+                    ProjectTab.Drumkit -> {
+                        navController.navigate(
+                            ProjectSubRoute.DrumkitListListRoute(projectId = uiState.projectId)
+                        ) {
+                            popUpTo(navController.graph.id) { inclusive = true }
+                            launchSingleTop = true
+                        }
+                    }
+
+                    ProjectTab.Tape -> {
+                        navController.navigate(
+                            ProjectSubRoute.TapePlayerRoute(projectId = uiState.projectId)
+                        ) {
+                            popUpTo(navController.graph.id) { inclusive = true }
+                            launchSingleTop = true
+                        }
+                    }
+
+                    ProjectTab.Sync -> onSyncClicked(uiState.projectId)
                 }
             }
         }
     ) { innerPadding ->
-        val items by remember { derivedStateOf { uiState.items } }
-        val lazyColumnState = rememberLazyListState()
-        Box(
-            modifier = Modifier
-                .fillMaxHeight()
-                .fillMaxWidth()
-                .padding(innerPadding)
+        NavHost(
+            modifier = Modifier.padding(innerPadding),
+            navController = navController,
+            startDestination = ProjectSubRoute.SynthListRoute(projectId = uiState.projectId)
         ) {
-            Image(
-                modifier = Modifier.align(Alignment.CenterEnd),
-                painter = painterResource(R.drawable.background_right),
-                contentDescription = null,
-            )
-            LazyColumn(state = lazyColumnState) {
-                items(items, key = { it.filename }) {
-                    ProjectResourceItem(it, {
-                        if (it is ProjectResource.Drumkit) {
-                            onDrumKitSelected(uiState.projectId, it.index)
-                        }
-                    })
-                }
+
+            composable<ProjectSubRoute.SynthListRoute> {
+                SynthListScreen(onBackPressed = {
+                    onBackClicked()
+                })
+            }
+
+            composable<ProjectSubRoute.DrumkitListListRoute> {
+                DrumkitListScreen(onDrumKitSelected = { projectId, drumkitIndex ->
+                    onDrumKitSelected(projectId, drumkitIndex)
+                }, onBackPressed = {
+                    onBackClicked()
+                })
+            }
+
+            composable<ProjectSubRoute.TapePlayerRoute> {
+                TapePlayerScreen()
             }
         }
-
     }
     if (uiState.settingDialogOpened) {
         ProjectSettingsDialog(
@@ -110,6 +145,12 @@ fun ProjectScreen(
                 viewModel.onSettingsDialogConfirm(projectTitle)
             })
     }
+}
+
+inline fun <reified T : Any> checkRoute(currentDestination: NavDestination?): Boolean {
+    return currentDestination?.hierarchy?.any {
+        it.hasRoute<T>()
+    } == true
 }
 
 sealed class ProjectResource(val index: Int, val filename: String) {

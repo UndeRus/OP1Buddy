@@ -81,7 +81,12 @@ fun parseDrumKitFromFile(filePath: String, json: Json): DrumkitInfo? {
     return parseDrumKit(filePath = filePath, fileInputStream = file.inputStream(), json = json)
 }
 
-fun parseDrumKit(filePath: String = "", fileInputStream: InputStream, withSamples: Boolean = false, json: Json): DrumkitInfo? {
+fun parseDrumKit(
+    filePath: String = "",
+    fileInputStream: InputStream,
+    withSamples: Boolean = false,
+    json: Json
+): DrumkitInfo? {
     val (applChunk, ssndChunk) = readDrumKitAiffDataAndroid(fileInputStream)
 
     if (applChunk != null) {

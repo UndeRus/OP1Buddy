@@ -30,6 +30,18 @@ data class ProjectRoute(val isNew: Boolean = false, val projectId: String? = nul
 data class SyncRoute(val projectId: String)
 
 @Serializable
+sealed class ProjectSubRoute {
+    @Serializable
+    data class SynthListRoute(val projectId: String) : ProjectSubRoute()
+
+    @Serializable
+    data class DrumkitListListRoute(val projectId: String) : ProjectSubRoute()
+
+    @Serializable
+    data class TapePlayerRoute(val projectId: String) : ProjectSubRoute()
+}
+
+@Serializable
 data class DrumKitRoute(val projectId: String, val drumkitIndex: Int)
 
 class MainActivity : ComponentActivity() {
@@ -89,7 +101,6 @@ class MainActivity : ComponentActivity() {
                             DrumKitScreen()
                         }
                     }
-                    //}
                 }
             }
         }

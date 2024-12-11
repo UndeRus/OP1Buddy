@@ -32,7 +32,10 @@ fun ProjectResourceItem(type: ProjectResource, onClick: () -> Unit, modifier: Mo
         when (type) {
             is ProjectResource.Drumkit -> DrumkitResourceItem(drumkit = type, onClick = onClick)
             is ProjectResource.Synth -> SynthResourceItem(synth = type)
-            is ProjectResource.Tape -> TapeResourceItem(tape = type) { }
+            is ProjectResource.Tape -> TapePlayer(
+                onPlayClick = onClick,
+                onStopClick = {}
+            )
         }
     }
 }

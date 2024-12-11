@@ -16,8 +16,7 @@ import org.jugregator.op1buddy.data.ProjectsRepository
 import org.jugregator.op1buddy.features.drumkit.data.DrumkitRepository
 import org.jugregator.op1buddy.features.projects.DrumKitRoute
 
-class DrumKitScreenViewModel
-    (
+class DrumKitScreenViewModel(
     savedStateHandle: SavedStateHandle,
     private val projectsRepository: ProjectsRepository,
     private val drumkitRepository: DrumkitRepository,
@@ -87,6 +86,5 @@ class DrumKitScreenViewModel
 data class DrumKitUiState(
     val drumCount: Int = 0
 )
-
 
 private const val DRUMKIT_SAMPLE_RATE = 44100

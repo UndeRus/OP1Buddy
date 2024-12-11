@@ -1,12 +1,17 @@
 package org.jugregator.op1buddy.data.project
 
 import android.content.Context
+import android.content.res.AssetManager
 import kotlinx.serialization.json.Json
 import org.jugregator.op1buddy.data.drumkit.DrumkitInfo
 import org.jugregator.op1buddy.data.drumkit.parseDrumKitFromFile
 import org.jugregator.op1buddy.data.synth.SynthInfo
 import org.jugregator.op1buddy.data.synth.parseSynth
+import org.jugregator.op1buddy.data.tape.AiffTapeMetadata
+import org.jugregator.op1buddy.data.tape.readTapeAiffMetadataDataAndroid
+import org.jugregator.op1buddy.features.project.data.player.RangedInputStream
 import java.io.File
+import java.io.InputStream
 
 class ProjectRepositoryImpl(
     private val context: Context,
@@ -39,7 +44,21 @@ class ProjectRepositoryImpl(
         return result
     }
 
-    override fun readTapes(project: Project) {
-        TODO("Not yet implemented")
+    override fun readTapes(project: Project): List<Pair<InputStream, AiffTapeMetadata>> {
+        val tapes = listOf(
+            "track_1.aif",
+            "track_2.aif",
+            "track_3.aif",
+            "track_4.aif",
+        )
+        return tapes.mapNotNull {
+            val inputStream = context.assets.open(it, AssetManager.ACCESS_RANDOM)
+            val metadata = readTapeAiffMetadataDataAndroid(inputStream)
+            inputStream.reset()
+            metadata?.let {
+                val sampleInputStream = RangedInputStream(metadata.startOffset, metadata.endOffset, inputStream)
+                sampleInputStream to it
+            }
+        }
     }
 }

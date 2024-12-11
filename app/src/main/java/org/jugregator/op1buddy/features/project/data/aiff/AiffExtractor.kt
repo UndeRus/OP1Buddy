@@ -164,10 +164,10 @@ class AiffExtractor : Extractor {
         val size = input.readInt()
         val shortBuffer = ByteArray(2)
         input.read(shortBuffer, 0, shortBuffer.size)
-        val channels = hexArrayToDecimal(shortBuffer)
+        val channels = hexArrayToDecimal2(shortBuffer)
         val numFrames = input.readInt()
         input.read(shortBuffer, 0, shortBuffer.size)
-        val sampleSizeInBits = hexArrayToDecimal(shortBuffer)
+        val sampleSizeInBits = hexArrayToDecimal2(shortBuffer)
         input.skip(10) // 80bit float sample rate in hz
         val compressionType = input.readString(4)
         val compressionNameSizeBuffer = ByteArray(1)
@@ -240,9 +240,21 @@ fun ExtractorInput.readString(length: Int): String {
     return String(bytes, Charsets.US_ASCII)
 }
 
-fun hexArrayToDecimal(array: ByteArray): Int {
+fun hexArrayToDecimal2(array: ByteArray): Int {
     val byte0 = array[0].toInt()
     val byte1 = array[1].toInt()
     val result = (byte0 shl 8) + byte1
     return result
+}
+
+fun hexArrayToDecimal3(array: ByteArray): Int {
+    val byte0 = array[0].toInt()
+    val byte1 = array[1].toInt()
+    val byte3 = array[2].toInt()
+    val result = (byte0 shl 16) + (byte1 shl 8) + byte3
+    return result
+}
+
+fun hexArrayToDecimal(array: ByteArray): Int {
+    return ByteBuffer.wrap(array).order(ByteOrder.BIG_ENDIAN).getInt()
 }
