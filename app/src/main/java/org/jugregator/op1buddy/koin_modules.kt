@@ -3,22 +3,19 @@ package org.jugregator.op1buddy
 import kotlinx.serialization.json.Json
 import org.jugregator.op1buddy.data.ProjectsRepository
 import org.jugregator.op1buddy.data.ProjectsRepositoryImpl
-import org.jugregator.op1buddy.features.drumkit.DrumKitScreenViewModel
-import org.jugregator.op1buddy.features.drumkit.data.DrumkitRepository
-//import org.jugregator.op1buddy.features.drumkit.media.ExoPlayerProvider
-import org.jugregator.op1buddy.features.project.ProjectScreenViewModel
-import org.jugregator.op1buddy.features.projects.ProjectsScreenViewModel
 import org.jugregator.op1buddy.data.project.BackupRepository
 import org.jugregator.op1buddy.data.project.BackupRepositoryImpl
 import org.jugregator.op1buddy.data.project.LocalFileRepository
 import org.jugregator.op1buddy.data.project.LocalFileRepositoryImpl
 import org.jugregator.op1buddy.data.project.ProjectRepository
 import org.jugregator.op1buddy.data.project.ProjectRepositoryImpl
-import org.jugregator.op1buddy.features.project.SynthListScreenViewModel
-import org.jugregator.op1buddy.features.drumkit.media.ExoPlayerProvider
+import org.jugregator.op1buddy.features.drumkit.DrumKitScreenViewModel
+import org.jugregator.op1buddy.features.drumkit.data.DrumkitRepository
 import org.jugregator.op1buddy.features.project.DrumkitListScreenViewModel
-import org.jugregator.op1buddy.features.project.TapePlayerExoPlayerViewModel
+import org.jugregator.op1buddy.features.project.ProjectScreenViewModel
+import org.jugregator.op1buddy.features.project.SynthListScreenViewModel
 import org.jugregator.op1buddy.features.project.TapePlayerScreenViewModel
+import org.jugregator.op1buddy.features.projects.ProjectsScreenViewModel
 import org.jugregator.op1buddy.features.sync.OP1SyncViewModel
 import org.jugregator.op1buddy.features.sync.data.UsbFileRepository
 import org.jugregator.op1buddy.features.sync.data.UsbFileRepositoryImpl
@@ -86,16 +83,6 @@ val appModule = module {
             projectsRepository = get(),
             drumkitRepository = get(),
         )
-    }
-
-    single<ExoPlayerProvider> {
-        ExoPlayerProvider(androidContext())
-    }
-
-    viewModel<TapePlayerExoPlayerViewModel> {
-        TapePlayerExoPlayerViewModel(
-            androidContext(),
-            get())
     }
 
     viewModel<DrumkitListScreenViewModel> {

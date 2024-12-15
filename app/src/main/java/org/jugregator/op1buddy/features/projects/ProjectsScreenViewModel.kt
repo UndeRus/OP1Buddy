@@ -74,7 +74,9 @@ class ProjectsScreenViewModel(
                 val filename = contentResolver.queryFileName(uri)
                 filename?.let {
                     if (!it.endsWith(".op1.zip")) {
-                        Toast.makeText(context, "Wrong project format", Toast.LENGTH_SHORT).show()
+                        withContext(Dispatchers.Main) {
+                            Toast.makeText(context, "Wrong project format", Toast.LENGTH_SHORT).show()
+                        }
                         return@withContext
                     }
                 }

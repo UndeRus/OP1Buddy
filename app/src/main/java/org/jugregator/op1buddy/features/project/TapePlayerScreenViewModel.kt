@@ -91,6 +91,17 @@ class TapePlayerScreenViewModel(
         _mutableState.update { it.copy(position = 0L) }
     }
 
+    fun seekToSample(sampleIndex: Long, move: Boolean) {
+        _mutableState.update { it.copy(position = sampleIndex) }
+        if (move) {
+            viewModelScope.launch {
+                withContext(Dispatchers.IO) {
+                    player.seek(sampleIndex)
+                }
+            }
+        }
+    }
+
     fun toggleTrack(index: Int, checked: Boolean) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {

@@ -114,7 +114,7 @@ fun ProjectScreen(
         NavHost(
             modifier = Modifier.padding(innerPadding),
             navController = navController,
-            startDestination = ProjectSubRoute.TapePlayerRoute(projectId = uiState.projectId)
+            startDestination = ProjectSubRoute.SynthListRoute(projectId = uiState.projectId)
         ) {
 
             composable<ProjectSubRoute.SynthListRoute> {

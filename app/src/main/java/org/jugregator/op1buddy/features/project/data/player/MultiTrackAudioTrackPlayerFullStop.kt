@@ -105,6 +105,7 @@ class MultiTrackFullStopAudioTrackPlayer {
                     PlayerAction.Play -> {
                         playbackThread = Thread(::playAudio).apply {
                             start()
+                            priority = Thread.MIN_PRIORITY
                         }
                         playerState.set(PlayerState.Playing)
                     }
@@ -182,6 +183,7 @@ class MultiTrackFullStopAudioTrackPlayer {
         emitAction(PlayerAction.Seek(offsetInSamples))
     }
 
+    @Synchronized
     private fun fullStopPlaying() {
         playbackThread?.interrupt()
         playbackThread = null
