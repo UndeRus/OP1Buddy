@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -28,7 +29,7 @@ class ProjectScreenViewModel(
     private var project: Project? = null
 
     fun loadProject() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             val projectInfo = projectsRepository.readProject(state.value.projectId)
             if (projectInfo != null) {
                 _mutableState.update { it.copy(title = projectInfo.title, path = projectInfo.backupDir) }

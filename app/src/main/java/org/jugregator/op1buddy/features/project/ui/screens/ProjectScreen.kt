@@ -114,7 +114,7 @@ fun ProjectScreen(
         NavHost(
             modifier = Modifier.padding(innerPadding),
             navController = navController,
-            startDestination = ProjectSubRoute.SynthListRoute(projectId = uiState.projectId)
+            startDestination = ProjectSubRoute.TapePlayerRoute(projectId = uiState.projectId)
         ) {
 
             composable<ProjectSubRoute.SynthListRoute> {
@@ -132,7 +132,9 @@ fun ProjectScreen(
             }
 
             composable<ProjectSubRoute.TapePlayerRoute> {
-                TapePlayerScreen()
+                TapePlayerScreen(onBackPressed = {
+                    onBackClicked()
+                })
             }
         }
     }

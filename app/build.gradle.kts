@@ -100,6 +100,9 @@ dependencies {
     implementation(libs.kotlinx.serialization)
     implementation(libs.androidx.profileinstaller)
 
+    implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.8")
+
+
     // Firebase stuff
     implementation(platform(libs.firebase.bom))
     // Add the dependencies for the Crashlytics and Analytics libraries

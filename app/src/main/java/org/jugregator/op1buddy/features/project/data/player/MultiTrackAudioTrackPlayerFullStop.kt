@@ -5,15 +5,15 @@ import android.media.AudioFormat
 import android.media.AudioTrack
 import android.os.Build
 import java.io.InputStream
-import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicLong
 import java.util.concurrent.atomic.AtomicReference
 
 class MultiTrackFullStopAudioTrackPlayer {
 
-    private var positionListener: ((Long) -> Unit)? = null
     private var inputStreams = emptyList<InputStream>()
-    private var enabledTracks = mutableListOf<AtomicBoolean>()
+
+    @Volatile
+    private var enabledTracks = arrayOf<Boolean>()
 
     private var minBufferSize: Int = AudioTrack.getMinBufferSize(
         TAPE_SAMPLE_RATE,
@@ -32,12 +32,11 @@ class MultiTrackFullStopAudioTrackPlayer {
 
     private var playerState = AtomicReference(PlayerState.Stopped)
 
-    fun getPosition(): Long {
-        return seekPositionBytes.get()
-    }
+    val isPlaying
+        get() = playerState.get() == PlayerState.Playing
 
-    fun setPositionListener(listener: (Long) -> Unit) {
-        this.positionListener = listener
+    fun getPosition(): Long {
+        return seekPositionInSamples
     }
 
     private sealed class PlayerAction {
@@ -53,6 +52,7 @@ class MultiTrackFullStopAudioTrackPlayer {
                 when (action) {
                     PlayerAction.Play -> {
                         playbackThread = Thread(::playAudio).apply {
+                            priority = Thread.MIN_PRIORITY
                             start()
                         }
                         playerState.set(PlayerState.Playing)
@@ -63,11 +63,7 @@ class MultiTrackFullStopAudioTrackPlayer {
                         seekToSample(action.offsetInSamples)
                     }
 
-                    PlayerAction.Stop -> {
-                        // We're stopped, do nothing
-                    }
-
-                    PlayerAction.Pause -> {
+                    PlayerAction.Stop, PlayerAction.Pause -> {
                         //Do nothing
                     }
                 }
@@ -147,8 +143,9 @@ class MultiTrackFullStopAudioTrackPlayer {
                     .setChannelMask(AudioFormat.CHANNEL_OUT_MONO)
                     .build()
             )
+            .setTransferMode(AudioTrack.MODE_STREAM)
             .setBufferSizeInBytes(minBufferSize)
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        val track = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             builder
                 .setPerformanceMode(AudioTrack.PERFORMANCE_MODE_LOW_LATENCY)
 
@@ -160,13 +157,13 @@ class MultiTrackFullStopAudioTrackPlayer {
                         .build()
                 )
         }.build()
+        return track
     }
 
     //TODO: extract to ingest only inputstreams
     fun prepare(inputStreams: List<InputStream>) {
         this.inputStreams = inputStreams
-        //TODO: analyze tracks and recalculate offsets
-        enabledTracks = MutableList(inputStreams.size) { AtomicBoolean(true) }
+        enabledTracks = MutableList(inputStreams.size) { true }.toTypedArray()
     }
 
     fun play() {
@@ -199,7 +196,9 @@ class MultiTrackFullStopAudioTrackPlayer {
     }
 
     fun toggleTrack(trackIndex: Int, enabled: Boolean) {
-        enabledTracks.getOrNull(trackIndex)?.set(enabled)
+        if (trackIndex < enabledTracks.size) {
+            enabledTracks[trackIndex] = enabled
+        }
     }
 
     private fun seekToTime(milliseconds: Long) {
@@ -214,7 +213,7 @@ class MultiTrackFullStopAudioTrackPlayer {
 
     private fun seekToByte(byteOffset: Long) {
         seekPositionBytes.set(byteOffset)
-        positionListener?.invoke(seekPositionInSamples)
+        //positionListener?.invoke(seekPositionInSamples)
         for (inputStream in inputStreams) {
             inputStream.reset()
             inputStream.skip(byteOffset)
@@ -227,7 +226,7 @@ class MultiTrackFullStopAudioTrackPlayer {
 
         val buffers = inputStreams.map {
             ByteArray(minBufferSize)
-        }
+        }.toTypedArray()
 
         val resultBuffer = ByteArray(minBufferSize)
 
@@ -236,7 +235,7 @@ class MultiTrackFullStopAudioTrackPlayer {
                 while (playerState.get() == PlayerState.Playing) {
                     var belowZero = 0
                     var maxReadSize = 0
-                    for (i in 0 until inputStreams.size) {
+                    for (i in inputStreams.indices) {
                         val readSize = inputStreams[i].read(buffers[i], 0, buffers[i].size)
                         if (readSize < 0) {
                             belowZero += 1
@@ -250,10 +249,9 @@ class MultiTrackFullStopAudioTrackPlayer {
                         break
                     }
                     seekPositionBytes.addAndGet(maxReadSize.toLong())
-                    positionListener?.invoke(seekPositionInSamples)
 
-                    mixBuffers(resultBuffer, buffers.toTypedArray(), enabledTracks.toTypedArray())
-                    audioTrack?.write(resultBuffer, 0, maxReadSize)
+                    mixBuffers(resultBuffer, buffers, enabledTracks)
+                    audioTrack?.write(resultBuffer, 0, maxReadSize, AudioTrack.WRITE_BLOCKING)
                 }
             } catch (e: InterruptedException) {
                 //TODO: interrupt during stop
@@ -282,19 +280,16 @@ private fun bytesToSamples(bytesOffset: Long): Long {
     return bytesOffset / BYTES_PER_SAMPLE
 }
 
-fun mixBuffers(resultBuffer: ByteArray, buffers: Array<ByteArray>, enabled: Array<AtomicBoolean>) {
+inline fun mixBuffers(resultBuffer: ByteArray, buffers: Array<ByteArray>, enabled: Array<Boolean>) {
     assert(buffers.all { it.size == resultBuffer.size })
     for (i in resultBuffer.indices step 2) {
         // Convert bytes to PCM samples
         var sample = 0
         for (b in buffers.indices) {
-            if (enabled[b].get()) {
+            if (enabled[b]) {
                 sample += (buffers[b][i + 1].toInt() shl 8) or (buffers[b][i].toInt() and 0xFF)
             }
         }
-
-//        val sample1 = (buffer1[i + 1].toInt() shl 8) or (buffer1[i].toInt() and 0xFF)
-//        val sample2 = (buffer2[i + 1].toInt() shl 8) or (buffer2[i].toInt() and 0xFF)
 
         // Mix samples and clamp to valid range
         val mixedSample = sample.coerceIn(-32768, 32767)

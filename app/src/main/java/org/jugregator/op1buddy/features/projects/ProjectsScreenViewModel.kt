@@ -32,7 +32,7 @@ class ProjectsScreenViewModel(
     val uiState: StateFlow<ProjectsScreenUiState> = _mutableUiState
 
     init {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             val projectsFlow = projectsRepository.readAllProjects()
             projectsFlow.collect { projects ->
                 _mutableUiState.update { it.copy(projects = projects) }

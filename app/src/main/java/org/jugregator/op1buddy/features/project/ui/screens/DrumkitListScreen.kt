@@ -2,6 +2,7 @@ package org.jugregator.op1buddy.features.project.ui.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -50,7 +51,7 @@ fun DrumkitListScreen(
     }
     val lazyColumnState = rememberLazyListState()
     Box(
-        modifier = modifier
+        modifier = modifier.fillMaxSize()
     ) {
         Image(
             modifier = Modifier.align(Alignment.CenterEnd),

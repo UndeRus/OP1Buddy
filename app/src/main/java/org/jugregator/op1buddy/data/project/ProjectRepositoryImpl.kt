@@ -22,12 +22,14 @@ class ProjectRepositoryImpl(
         val result = mutableListOf<DrumkitInfo>()
         for (i in 1..8) {
             val file = File(context.filesDir, "op1backup/$projectDir/drum_$i.aif")
+            if (file.exists()) {
             parseDrumKitFromFile(
                 filePath = file.absolutePath,
                 json = json
             )?.also {
                 result.add(it)
             }
+                }
         }
         return result
     }
@@ -37,8 +39,10 @@ class ProjectRepositoryImpl(
         val result = mutableListOf<SynthInfo>()
         for (i in 1..8) {
             val file = File(context.filesDir, "op1backup/$projectDir/synth_$i.aif")
-            parseSynth(filePath = file.absolutePath, json = json)?.also {
-                result.add(it)
+            if (file.exists()) {
+                parseSynth(filePath = file.absolutePath, json = json)?.also {
+                    result.add(it)
+                }
             }
         }
         return result

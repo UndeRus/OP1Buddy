@@ -16,10 +16,15 @@ class RangedInputStream(
 
     @Throws(IOException::class)
     override fun reset() {
+        innerInputStream.reset()
         if (innerInputStream.skip(startOffset) != startOffset) {
             throw IOException("Unable to skip to start position")
         }
         position = startOffset
+    }
+
+    override fun markSupported(): Boolean {
+        return false
     }
 
     @Throws(IOException::class)

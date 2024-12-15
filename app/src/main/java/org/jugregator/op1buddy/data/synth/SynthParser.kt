@@ -65,7 +65,7 @@ fun readSynthAiffDataAndroid(inputStream: InputStream): Pair<ApplChunk?, SsndChu
 
                 else -> {
                     // Skip other chunks
-                    println("Skip TAG $chunkId")
+                    //println("Skip TAG $chunkId")
                     input.skip(chunkSize.toLong())
                 }
             }

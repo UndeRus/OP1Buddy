@@ -17,6 +17,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
@@ -29,8 +31,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -39,12 +43,19 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.util.fastMap
 import androidx.media3.common.util.UnstableApi
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import org.jugregator.op1buddy.features.project.ui.screens.ProjectResource
 import org.jugregator.op1buddy.ui.theme.AppTheme
+import kotlin.math.max
+import kotlin.math.min
 import kotlin.math.roundToInt
+import kotlin.math.sin
 
 @androidx.annotation.OptIn(UnstableApi::class)
 @Composable
@@ -89,7 +100,6 @@ fun SeparateTape(modifier: Modifier = Modifier, tape: ProjectResource.Tape, onCl
     }
 }
 
-@Suppress("NonSkippableComposable")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MultiTrackPlayer(
@@ -97,50 +107,104 @@ fun MultiTrackPlayer(
     value: Int,
     onValueChanged: (Int) -> Unit,
     onValueChangeFinished: (() -> Unit)?,
-    tapeRanges: List<List<Pair<Long, Long>>>,
+    tapeRanges: ImmutableList<ImmutableList<Pair<Long, Long>>>,
     fromZero: Boolean = true,
+    onPlayClick: () -> Unit,
+    onPauseClick: () -> Unit,
+    onStopClick: () -> Unit,
+    onTrackToggle: (Int, Boolean) -> Unit,
 ) {
-    val minRangeValue by remember {
-        derivedStateOf {
-            if (fromZero) {
-                0L
-            } else {
-                tapeRanges.flatten().minByOrNull { it.first }?.first ?: 0L
+    // TODO: make single flatten
+
+    val (minRangeValue, maxRangeValue) = remember(tapeRanges, fromZero) {
+
+        var minRange = if (fromZero) 0L else Long.MAX_VALUE
+        var maxRange = Long.MIN_VALUE
+
+        if (tapeRanges.size == 0) {
+            minRange = 0L
+            maxRange = 10L
+        } else {
+            for (singleTape in tapeRanges) {
+                for (range in singleTape) {
+                    if (!fromZero && range.first < minRange) {
+                        minRange = range.first
+                    }
+
+                    if (range.second > maxRange) {
+                        maxRange = range.second
+                    }
+                }
+            }
+            if (maxRange == 0L) {
+                maxRange = 10L
             }
         }
+        minRange to maxRange
     }
-    val maxRangeValue by remember { derivedStateOf { tapeRanges.flatten().maxByOrNull { it.second }?.second ?: 0L } }
+
+    var canvasWidth by remember { mutableIntStateOf(-1) }
+
+
+    val leftColumnWeight = .9f
+    val rightColumnWeight = .15f
+    val barHeight = 30.dp
+
     Column(modifier = modifier) {
 
-        for (range in tapeRanges) {
+        for (tapeIndex in 0 until tapeRanges.size) {
 
-            val barHeight = 30.dp
             Row(verticalAlignment = Alignment.CenterVertically) {
-                var checked by remember { mutableStateOf(false) }
-                Canvas(
-                    modifier = Modifier
-                        .weight(.9f)
-                        .height(barHeight)
-                ) {
-                    val canvasWidth = size.width
+                val tape = tapeRanges[tapeIndex]
+                var checked by remember { mutableStateOf(true) }
 
+                val tapeRange = remember(tape, minRangeValue, maxRangeValue, canvasWidth) {
+                    tape.map { range ->
+                        val left = range.first.toFloat() / maxRangeValue * canvasWidth
+                        val right = range.second.toFloat() / maxRangeValue * canvasWidth
 
+                        (left to right)
+                    }.toImmutableList()
+                }
 
-                    for ((rangeStart, rangeEnd) in range) {
+                val rangeColor = remember(value, checked, tape) {
+                    tape.map { range ->
                         val color = if (!checked) {
                             Color.Gray
-                        } else if (value in rangeStart..rangeEnd) {
+                        } else if (value in range.first..range.second) {
                             Color.Green
                         } else {
                             Color.Black
                         }
+                        color
+                    }.toImmutableList()
+                }
 
-                        val left = rangeStart.toFloat() / maxRangeValue * canvasWidth
-                        val right = rangeEnd.toFloat() / maxRangeValue * canvasWidth
+                Canvas(
+                    modifier = Modifier
+                        .weight(leftColumnWeight)
+                        .height(barHeight)
+                        .onSizeChanged {
+                            if (canvasWidth == -1) {
+                                canvasWidth = it.width
+                            }
+                        }
+                ) {
+                    // Call first time to calculate width
+                    if (canvasWidth == -1) {
+                        return@Canvas
+                    }
+
+                    val barHeightPx = barHeight.toPx()
+
+                    for (singleRangeIndex in 0 until tapeRange.size) {
+                        val singleRange = tapeRange[singleRangeIndex]
+                        val color = rangeColor[singleRangeIndex]
+                        val (left, right) = singleRange
                         drawRect(
                             color,
                             topLeft = Offset(x = left, y = 0f),
-                            size = Size(width = right - left, height = barHeight.toPx())
+                            size = Size(width = right - left, height = barHeightPx)
                         )
                     }
                 }
@@ -148,19 +212,21 @@ fun MultiTrackPlayer(
                 Box(
                     Modifier
                         .padding(start = 10.dp)
-                        .weight(.1f)
+                        .weight(rightColumnWeight)
                 ) {
-                    Checkbox(checked, { checked = it })
+                    Checkbox(checked, {
+                        checked = it
+                        onTrackToggle(tapeIndex, it)
+                    })
                 }
             }
 
         }
     }
 
-
     Row {
         Slider(
-            modifier = Modifier.weight(0.9f),
+            modifier = Modifier.weight(leftColumnWeight),
             steps = maxRangeValue.toInt() - 1,
             value = value.toFloat(),
             onValueChange = { onValueChanged(it.roundToInt()) },
@@ -170,7 +236,7 @@ fun MultiTrackPlayer(
                 val fraction by remember {
                     derivedStateOf {
                         (sliderState.value - sliderState.valueRange.start) /
-                        (sliderState.valueRange.endInclusive - sliderState.valueRange.start)
+                            (sliderState.valueRange.endInclusive - sliderState.valueRange.start)
                     }
                 }
 
@@ -196,7 +262,7 @@ fun MultiTrackPlayer(
         )
         Box(
             Modifier
-                .weight(.1f)
+                .weight(rightColumnWeight)
                 .padding(end = 10.dp)
         )
     }
@@ -205,8 +271,14 @@ fun MultiTrackPlayer(
         IconButton({}) {
             Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, contentDescription = null)
         }
-        IconButton({}) {
+        IconButton(onClick = onPlayClick) {
             Icon(Icons.Filled.PlayArrow, contentDescription = null)
+        }
+        IconButton(onClick = onPauseClick) {
+            Icon(Icons.AutoMirrored.Filled.List, contentDescription = null)
+        }
+        IconButton(onClick = onStopClick) {
+            Icon(Icons.Filled.Home, contentDescription = null)
         }
         IconButton({}) {
             Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null)
@@ -228,15 +300,30 @@ fun MultiTrackSliderPreview() {
             MultiTrackPlayer(
                 value = value,
                 onValueChanged = { value = it },
-                tapeRanges = listOf(
-                    listOf(1L to 10L, 12L to 50L),
-                    listOf(0L to 5L, 6L to 13L),
-                    listOf(3L to 12L, 23L to 30L),
-                    listOf(5L to 33L, 40L to 55L),
-                ),
                 onValueChangeFinished = {
                     println("Slider value $value")
-                }
+                },
+                tapeRanges = listOf(
+
+                    listOf(
+                        0L to 84672L,
+                        84672L to 169344L,
+                        169344L to 338688L,
+                        338688L to 423360L,
+                        592704L to 1016064L,
+                        1185408L to 1524096L,
+                        15748960L to 15875936L
+                    ).toImmutableList(),
+
+                    listOf(1L to 10L, 12L to 50L).toImmutableList(),
+                    listOf(0L to 5L, 6L to 13L).toImmutableList(),
+                    listOf(3L to 12L, 23L to 30L).toImmutableList(),
+                    listOf(5L to 33L, 40L to 55L).toImmutableList(),
+                ).toImmutableList(),
+                onPlayClick = {},
+                onStopClick = {},
+                onPauseClick = {},
+                onTrackToggle = { index, checked -> }
             )
         }
     }
