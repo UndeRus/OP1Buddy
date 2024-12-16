@@ -2,7 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.serialization)
-    id("com.vk.vkompose") version "0.6.1"
+    id("com.vk.vkompose") version "0.6.2"
     alias(libs.plugins.baselineprofile)
     id("com.google.firebase.crashlytics")
     id("com.google.gms.google-services")
@@ -85,11 +85,6 @@ dependencies {
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.navigation.compose)
 
-    // Player
-    implementation("androidx.media3:media3-exoplayer:1.4.1")
-    implementation("androidx.media3:media3-exoplayer-dash:1.4.1")
-    implementation("androidx.media3:media3-ui:1.4.1")
-
     // Koin
     implementation(platform(libs.koin.bom))
     implementation(libs.koin.core)
@@ -100,7 +95,7 @@ dependencies {
     implementation(libs.kotlinx.serialization)
     implementation(libs.androidx.profileinstaller)
 
-    implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.8")
+    implementation(libs.kotlinx.collections.immutable)
 
 
     // Firebase stuff
