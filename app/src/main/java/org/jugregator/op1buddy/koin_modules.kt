@@ -47,12 +47,6 @@ val appModule = module {
         }
     }
 
-    /*
-    single<ExoPlayerProvider> {
-        ExoPlayerProvider(androidContext())
-    }
-     */
-
     viewModel {
         OP1SyncViewModel(
             savedStateHandle = get(),
