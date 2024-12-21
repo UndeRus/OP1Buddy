@@ -3,7 +3,6 @@ package org.jugregator.op1buddy.features.project.ui.screens
 import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -64,7 +63,6 @@ fun TapePlayerScreen(
             targetValue = uiState.position.toInt(),
             label = "Slider Value"
         )
-        Text("Player")
         MultiTrackPlayer(
             value = animatedSliderValue,
             onValueChanged = { newValue ->

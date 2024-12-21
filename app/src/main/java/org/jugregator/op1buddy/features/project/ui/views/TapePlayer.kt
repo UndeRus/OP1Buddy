@@ -1,5 +1,6 @@
 package org.jugregator.op1buddy.features.project.ui.views
 
+import android.content.res.Configuration
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -14,12 +15,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material.icons.automirrored.filled.List
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -38,14 +33,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.util.fastMapIndexed
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
+import org.jugregator.op1buddy.R
 import org.jugregator.op1buddy.features.project.ui.screens.ProjectResource
 import org.jugregator.op1buddy.ui.theme.AppTheme
 import kotlin.math.roundToInt
@@ -137,10 +136,9 @@ fun MultiTrackPlayer(
 
     var canvasWidth by remember { mutableIntStateOf(-1) }
 
-
     val leftColumnWeight = .9f
     val rightColumnWeight = .15f
-    val barHeight = 30.dp
+    val barHeight = 4.dp
 
     Column(modifier = modifier) {
 
@@ -159,6 +157,7 @@ fun MultiTrackPlayer(
                     }.toImmutableList()
                 }
 
+                /*
                 val rangeColor = remember(value, checked, tape) {
                     tape.map { range ->
                         val color = if (!checked) {
@@ -171,9 +170,29 @@ fun MultiTrackPlayer(
                         color
                     }.toImmutableList()
                 }
+                */
+                val barColors = remember {
+                    arrayOf(
+                        Color(0xFFff3d3d),
+                        Color(0xFF1741b7),
+                        Color(0xFF2ae743),
+                    )
+                }
+                val barColorsSize by remember {
+                    derivedStateOf {
+                        barColors.size
+                    }
+                }
+
+                val rangeColor = remember(value, tape) {
+                    tape.fastMapIndexed { index, range ->
+                        barColors[index % barColorsSize]
+                    }.toImmutableList()
+                }
 
                 Canvas(
                     modifier = Modifier
+                        .background(Color(0xFFeaeaea))
                         .weight(leftColumnWeight)
                         .height(barHeight)
                         .onSizeChanged {
@@ -203,8 +222,8 @@ fun MultiTrackPlayer(
 
                 Box(
                     Modifier
-                        .padding(start = 10.dp)
                         .weight(rightColumnWeight)
+                    //.padding(start = 10.dp)
                 ) {
                     Checkbox(checked, {
                         checked = it
@@ -224,6 +243,7 @@ fun MultiTrackPlayer(
             onValueChange = { onValueChanged(it.roundToInt()) },
             onValueChangeFinished = onValueChangeFinished,
             valueRange = minRangeValue.toFloat()..(maxRangeValue - 1).toFloat(),
+
             track = { sliderState ->
                 val fraction by remember {
                     derivedStateOf {
@@ -237,49 +257,129 @@ fun MultiTrackPlayer(
                         Modifier
                             .fillMaxWidth(fraction)
                             .align(Alignment.CenterStart)
-                            .height(6.dp)
-                            .padding(end = 16.dp)
+                            .height(4.dp)
                             .background(Color.Red, CircleShape)
                     )
                     Box(
                         Modifier
                             .fillMaxWidth(1f - fraction)
                             .align(Alignment.CenterEnd)
-                            .height(1.dp)
-                            .padding(start = 16.dp)
-                            .background(Color.Blue, CircleShape)
+                            .height(4.dp)
+                            .background(MaterialTheme.colorScheme.onSurface, CircleShape)
                     )
                 }
+            },
+            thumb = {
+
             }
         )
         Box(
             Modifier
                 .weight(rightColumnWeight)
-                .padding(end = 10.dp)
         )
     }
 
     Row(horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()) {
-        IconButton({}) {
-            Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, contentDescription = null)
-        }
         IconButton(onClick = onPlayClick) {
-            Icon(Icons.Filled.PlayArrow, contentDescription = null)
+            Icon(painterResource(R.drawable.player_play), contentDescription = null)
         }
         IconButton(onClick = onPauseClick) {
-            Icon(Icons.AutoMirrored.Filled.List, contentDescription = null)
+            Icon(painterResource(R.drawable.player_pause), contentDescription = null)
         }
         IconButton(onClick = onStopClick) {
-            Icon(Icons.Filled.Home, contentDescription = null)
-        }
-        IconButton({}) {
-            Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null)
+            Icon(painterResource(R.drawable.player_stop), contentDescription = null)
         }
     }
 
 }
 
-@Preview
+@Composable
+fun SliderTrackBackground(modifier: Modifier = Modifier, fraction: Float) {
+    val tickWidth = 1.dp
+    val trackHeight = 9.dp
+    val barHeight = 4.dp
+    val minutesLength = 6
+    val subminutesCount = 6
+    val marksColor = Color(0xFF1c1c1c)
+    val dotRadius = 1.dp
+
+    val barColor = Color(0xFFeaeaea)
+    Box(modifier.fillMaxWidth()) {
+        Box(
+            Modifier
+                .fillMaxWidth()
+                .height(trackHeight)
+                .drawWithCache {
+                    // max len 6:00:00 = 6 * 60
+
+                    onDrawWithContent {
+
+                        drawRect(
+                            barColor,
+                            topLeft = Offset(0f, ((trackHeight / 2) - (barHeight / 2)).toPx()),
+                            size = Size(size.width, barHeight.toPx())
+                        )
+
+                        for (step in 0..minutesLength * subminutesCount) {
+                            val x = 1f / (minutesLength * subminutesCount) * step
+
+                            if (step % minutesLength == 0) {
+
+                                drawRect(
+                                    color = marksColor,
+                                    topLeft = Offset(
+                                        x * size.width
+                                            - tickWidth.toPx() / 2, 0f
+                                    ),
+                                    size = Size(tickWidth.toPx(), trackHeight.toPx())
+                                )
+                            } else {
+
+                                drawCircle(
+                                    color = marksColor,
+                                    radius = dotRadius.toPx(),
+                                    center = Offset(
+                                        x * size.width
+                                            - (dotRadius / 2).toPx(), (trackHeight / 2).toPx()
+                                    )
+                                )
+                            }
+                        }
+                    }
+                }
+        )
+        /*
+        Box(
+            Modifier
+                .fillMaxWidth(fraction)
+                .align(Alignment.CenterStart)
+                .height(6.dp)
+                .padding(end = 16.dp)
+                .background(Color.Red, CircleShape)
+
+            */
+        /*
+        Box(
+            Modifier
+                .fillMaxWidth(1f - fraction)
+                .align(Alignment.CenterEnd)
+                .height(10.dp)
+                .padding(start = 16.dp)
+                .background(MaterialTheme.colorScheme.onSurface, CircleShape)
+        )
+        */
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun SliderTrackPreview() {
+    AppTheme {
+        SliderTrackBackground(fraction = 0.5f)
+    }
+}
+
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_NO or Configuration.UI_MODE_TYPE_NORMAL, showBackground = true)
 @Composable
 fun MultiTrackSliderPreview() {
     AppTheme {
@@ -288,7 +388,7 @@ fun MultiTrackSliderPreview() {
                 .padding(horizontal = 17.dp)
         ) {
             Box(modifier = Modifier.height(100.dp))
-            var value by remember { mutableIntStateOf(0) }
+            var value by remember { mutableIntStateOf(762048) }
             MultiTrackPlayer(
                 value = value,
                 onValueChanged = { value = it },
@@ -304,7 +404,7 @@ fun MultiTrackSliderPreview() {
                         338688L to 423360L,
                         592704L to 1016064L,
                         1185408L to 1524096L,
-                        15748960L to 15875936L
+                        //15748960L to 15875936L
                     ).toImmutableList(),
 
                     listOf(1L to 10L, 12L to 50L).toImmutableList(),
