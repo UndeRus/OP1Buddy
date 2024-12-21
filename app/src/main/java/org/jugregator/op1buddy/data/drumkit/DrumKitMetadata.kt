@@ -25,3 +25,11 @@ data class DrumKitMetadata(
     @SerialName("volume") var volume: ArrayList<Int> = arrayListOf()
 
 )
+
+fun DrumKitMetadata.getType() : DrumkitType {
+    return when(type) {
+        "dbox" -> DrumkitType.DBox
+        "drum" -> DrumkitType.Sample
+        else -> DrumkitType.Unknown
+    }
+}

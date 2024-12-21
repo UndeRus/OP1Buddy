@@ -22,6 +22,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.jugregator.op1buddy.R
+import org.jugregator.op1buddy.data.drumkit.DrumkitType
 import org.jugregator.op1buddy.data.synth.SynthEngine
 import org.jugregator.op1buddy.features.project.ui.screens.ProjectResource
 import org.jugregator.op1buddy.ui.theme.AppTheme
@@ -112,7 +113,7 @@ fun SynthResourceItemPreview() {
 @Composable
 fun DrumkitResourceItemPreview() {
     AppTheme {
-        DrumkitResourceItem(drumkit = ProjectResource.Drumkit(0, "filename", "iter")) {}
+        DrumkitResourceItem(drumkit = ProjectResource.Drumkit(0, "filename", "iter", DrumkitType.Sample)) {}
     }
 }
 

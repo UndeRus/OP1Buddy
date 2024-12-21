@@ -28,6 +28,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import org.jugregator.op1buddy.R
+import org.jugregator.op1buddy.data.drumkit.DrumkitType
 import org.jugregator.op1buddy.data.synth.SynthEngine
 import org.jugregator.op1buddy.features.project.ProjectScreenViewModel
 import org.jugregator.op1buddy.features.project.ui.views.ProjectBottomBar
@@ -159,7 +160,9 @@ sealed class ProjectResource(val index: Int, val filename: String) {
     class Synth(index: Int, filename: String, val name: String, val engine: SynthEngine) :
         ProjectResource(index, filename)
 
-    class Drumkit(index: Int, filename: String, val name: String) : ProjectResource(index, filename)
+    class Drumkit(index: Int, filename: String, val name: String, val type: DrumkitType) :
+        ProjectResource(index, filename)
+
     class Tape(index: Int, filename: String) : ProjectResource(index, filename)
 }
 

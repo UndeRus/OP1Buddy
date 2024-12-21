@@ -16,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import org.jugregator.op1buddy.R
+import org.jugregator.op1buddy.data.drumkit.DrumkitType
 import org.jugregator.op1buddy.features.project.DrumkitListScreenViewModel
 import org.jugregator.op1buddy.features.project.ui.views.DrumkitResourceItem
 import org.koin.androidx.compose.koinViewModel
@@ -44,6 +45,7 @@ fun DrumkitListScreen(
                 ProjectResource.Drumkit(
                     index = index,
                     filename = drumkitInfo.filename,
+                    type = drumkitInfo.drumType,
                     name = drumkitInfo.name
                 )
             }
@@ -62,7 +64,9 @@ fun DrumkitListScreen(
             items(items, key = { it.filename }) {
                 DrumkitResourceItem(drumkit = it, onClick = {
                     viewModel.onDrumKitSelected(it.index) { projectId, drumkitIndex ->
-                        onDrumKitSelected(projectId, drumkitIndex)
+                        if (it.type == DrumkitType.Sample) {
+                            onDrumKitSelected(projectId, drumkitIndex)
+                        }
                     }
                 })
             }

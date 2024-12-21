@@ -104,9 +104,21 @@ fun parseDrumKit(
                 val currentChunk = ssndChunk.soundData.copyOfRange(byteStart * 2, byteEnd * 2)
                 chunks.add(currentChunk)
             }
-            return DrumkitInfo(filename = filePath, name = data.name ?: "", samples = chunks, metadata = data)
+            return DrumkitInfo(
+                filename = filePath,
+                name = data.name ?: "",
+                samples = chunks,
+                metadata = data,
+                drumType = data.getType()
+            )
         } else {
-            return DrumkitInfo(filename = filePath, name = data.name ?: "", samples = listOf(), metadata = data)
+            return DrumkitInfo(
+                filename = filePath,
+                name = data.name ?: "",
+                samples = listOf(),
+                metadata = data,
+                drumType = data.getType()
+            )
         }
     } else {
         println("APPL Chunk not found.")
