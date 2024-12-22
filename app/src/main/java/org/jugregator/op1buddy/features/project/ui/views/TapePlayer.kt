@@ -26,6 +26,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -33,7 +34,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
@@ -47,6 +48,8 @@ import kotlinx.collections.immutable.toImmutableList
 import org.jugregator.op1buddy.R
 import org.jugregator.op1buddy.features.project.ui.screens.ProjectResource
 import org.jugregator.op1buddy.ui.theme.AppTheme
+import kotlin.math.ceil
+import kotlin.math.max
 import kotlin.math.roundToInt
 
 @Composable
@@ -127,6 +130,9 @@ fun MultiTrackPlayer(
                     }
                 }
             }
+
+
+            maxRange = max(ceil(maxRange / (44100 * 60.0)).toLong() * 44100 * 60, 44100 * 60)
             if (maxRange == 0L) {
                 maxRange = 10L
             }
@@ -173,9 +179,9 @@ fun MultiTrackPlayer(
                 */
                 val barColors = remember {
                     arrayOf(
-                        Color(0xFFff3d3d),
-                        Color(0xFF1741b7),
-                        Color(0xFF2ae743),
+                        Color(0xFFff3d3d), //TODO: extract
+                        Color(0xFF1741b7), //TODO: extract
+                        Color(0xFF2ae743), //TODO: extract
                     )
                 }
                 val barColorsSize by remember {
@@ -192,7 +198,8 @@ fun MultiTrackPlayer(
 
                 Canvas(
                     modifier = Modifier
-                        .background(Color(0xFFeaeaea))
+                        .padding(horizontal = 6.dp)
+                        .background(Color(0xFFeaeaea)) //TODO: extract
                         .weight(leftColumnWeight)
                         .height(barHeight)
                         .onSizeChanged {
@@ -223,7 +230,6 @@ fun MultiTrackPlayer(
                 Box(
                     Modifier
                         .weight(rightColumnWeight)
-                    //.padding(start = 10.dp)
                 ) {
                     Checkbox(checked, {
                         checked = it
@@ -235,6 +241,7 @@ fun MultiTrackPlayer(
         }
     }
 
+    val thumbSize = 12.dp
     Row {
         Slider(
             modifier = Modifier.weight(leftColumnWeight),
@@ -245,34 +252,37 @@ fun MultiTrackPlayer(
             valueRange = minRangeValue.toFloat()..(maxRangeValue - 1).toFloat(),
 
             track = { sliderState ->
-                val fraction by remember {
+                val fraction by remember(sliderState) {
                     derivedStateOf {
                         (sliderState.value - sliderState.valueRange.start) /
                             (sliderState.valueRange.endInclusive - sliderState.valueRange.start)
                     }
                 }
 
-                Box(Modifier.fillMaxWidth()) {
-                    Box(
-                        Modifier
-                            .fillMaxWidth(fraction)
-                            .align(Alignment.CenterStart)
-                            .height(4.dp)
-                            .background(Color.Red, CircleShape)
-                    )
-                    Box(
-                        Modifier
-                            .fillMaxWidth(1f - fraction)
-                            .align(Alignment.CenterEnd)
-                            .height(4.dp)
-                            .background(MaterialTheme.colorScheme.onSurface, CircleShape)
-                    )
+                val maxRangeInMinutes by remember {
+                    derivedStateOf {
+                        max(ceil(maxRangeValue / (44100 * 60.0)).toLong(), 1)
+                    }
                 }
+
+                SliderTrack(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    fraction = fraction,
+                    lengthInMinutes = maxRangeInMinutes
+                )
             },
             thumb = {
-
+                Box(
+                    Modifier
+                        .padding(vertical = 2.5.dp)
+                        .size(thumbSize)
+                        .align(Alignment.CenterVertically)
+                        .background(Color(0xFF1c1c1c), CircleShape)
+                )
             }
         )
+        //}
         Box(
             Modifier
                 .weight(rightColumnWeight)
@@ -294,80 +304,90 @@ fun MultiTrackPlayer(
 }
 
 @Composable
-fun SliderTrackBackground(modifier: Modifier = Modifier, fraction: Float) {
+fun SliderFilledTrack(modifier: Modifier = Modifier, fraction: Float, trackColor: Color = Color(0xFF1c1c1c)) {
+    val filledBarHeight = 4.dp
+    Box(
+        modifier
+            .background(color = trackColor)
+            .height(filledBarHeight)
+            .fillMaxWidth(fraction)
+    )
+}
+
+@Composable
+fun SliderTrackBackground(
+    modifier: Modifier = Modifier,
+    lengthInMinutes: Long = 6,
+    marksColor: Color = Color(0xFF1c1c1c),
+    barColor: Color = Color(0xFFeaeaea),
+) {
     val tickWidth = 1.dp
     val trackHeight = 9.dp
     val barHeight = 4.dp
-    val minutesLength = 6
     val subminutesCount = 6
-    val marksColor = Color(0xFF1c1c1c)
     val dotRadius = 1.dp
 
-    val barColor = Color(0xFFeaeaea)
-    Box(modifier.fillMaxWidth()) {
-        Box(
-            Modifier
-                .fillMaxWidth()
-                .height(trackHeight)
-                .drawWithCache {
-                    // max len 6:00:00 = 6 * 60
+    Box(
+        modifier
+            .height(trackHeight)
+            .fillMaxWidth()
+            .drawBehind {
 
-                    onDrawWithContent {
+                drawRect(
+                    barColor,
+                    topLeft = Offset(0f, ((trackHeight / 2) - (barHeight / 2)).toPx()),
+                    size = Size(size.width, barHeight.toPx())
+                )
+
+                for (step in 0..lengthInMinutes * subminutesCount) {
+                    val x = 1f / (lengthInMinutes * subminutesCount) * step
+
+                    if (step % subminutesCount == 0L) {
 
                         drawRect(
-                            barColor,
-                            topLeft = Offset(0f, ((trackHeight / 2) - (barHeight / 2)).toPx()),
-                            size = Size(size.width, barHeight.toPx())
+                            color = marksColor,
+                            topLeft = Offset(
+                                x * size.width
+                                    - tickWidth.toPx() / 2, 0f
+                            ),
+                            size = Size(tickWidth.toPx(), trackHeight.toPx())
                         )
+                    } else {
 
-                        for (step in 0..minutesLength * subminutesCount) {
-                            val x = 1f / (minutesLength * subminutesCount) * step
-
-                            if (step % minutesLength == 0) {
-
-                                drawRect(
-                                    color = marksColor,
-                                    topLeft = Offset(
-                                        x * size.width
-                                            - tickWidth.toPx() / 2, 0f
-                                    ),
-                                    size = Size(tickWidth.toPx(), trackHeight.toPx())
-                                )
-                            } else {
-
-                                drawCircle(
-                                    color = marksColor,
-                                    radius = dotRadius.toPx(),
-                                    center = Offset(
-                                        x * size.width
-                                            - (dotRadius / 2).toPx(), (trackHeight / 2).toPx()
-                                    )
-                                )
-                            }
-                        }
+                        drawCircle(
+                            color = marksColor,
+                            radius = dotRadius.toPx(),
+                            center = Offset(
+                                x * size.width
+                                    - (dotRadius / 2).toPx(), (trackHeight / 2).toPx()
+                            )
+                        )
                     }
                 }
-        )
-        /*
-        Box(
-            Modifier
-                .fillMaxWidth(fraction)
-                .align(Alignment.CenterStart)
-                .height(6.dp)
-                .padding(end = 16.dp)
-                .background(Color.Red, CircleShape)
 
-            */
-        /*
-        Box(
-            Modifier
-                .fillMaxWidth(1f - fraction)
-                .align(Alignment.CenterEnd)
-                .height(10.dp)
-                .padding(start = 16.dp)
-                .background(MaterialTheme.colorScheme.onSurface, CircleShape)
+            }
+    )
+}
+
+@Composable
+fun SliderTrack(modifier: Modifier = Modifier, fraction: Float, lengthInMinutes: Long) {
+    Box(modifier = modifier) {
+        val trackColor = Color(0xFF1c1c1c)
+        val barColor = Color(0xFFeaeaea)
+        SliderTrackBackground(lengthInMinutes = lengthInMinutes, marksColor = trackColor, barColor = barColor)
+        SliderFilledTrack(
+            modifier = Modifier.align(Alignment.CenterStart),
+            fraction = fraction,
+            trackColor = trackColor,
         )
-        */
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun SliderTrackBackgroundPreview(modifier: Modifier = Modifier) {
+    AppTheme {
+        SliderTrackBackground(lengthInMinutes = 1)
     }
 }
 
@@ -375,7 +395,46 @@ fun SliderTrackBackground(modifier: Modifier = Modifier, fraction: Float) {
 @Composable
 private fun SliderTrackPreview() {
     AppTheme {
-        SliderTrackBackground(fraction = 0.5f)
+        SliderTrack(fraction = 0.5f, lengthInMinutes = 1)
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Preview(showBackground = true)
+@Composable
+fun SliderPreview(modifier: Modifier = Modifier) {
+    val thumbSize = 12.dp
+    AppTheme {
+        //Box {
+        var value by remember { mutableFloatStateOf(0.5f) }
+        Slider(
+            value = value,
+            onValueChange = { value = it },
+            track = { sliderState ->
+                val fraction by remember {
+                    derivedStateOf {
+                        (sliderState.value - sliderState.valueRange.start) /
+                            (sliderState.valueRange.endInclusive - sliderState.valueRange.start)
+                    }
+                }
+
+                SliderTrack(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    fraction = fraction,
+                    lengthInMinutes = 1,
+                )
+            },
+            thumb = {
+                Box(
+                    Modifier
+                        .padding(vertical = 2.5.dp)
+                        .size(thumbSize)
+                        .background(Color(0xFF1c1c1c), CircleShape)
+                )
+            }
+        )
+        //}
     }
 }
 

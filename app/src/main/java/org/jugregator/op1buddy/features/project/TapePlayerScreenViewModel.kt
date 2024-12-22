@@ -1,5 +1,6 @@
 package org.jugregator.op1buddy.features.project
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -56,8 +57,14 @@ class TapePlayerScreenViewModel(
                 player.prepare(tapes.map { it.first })
                 tapes
             }
+
+            val maxLength = withContext(Dispatchers.Default) {
+                tapesData.map { it.second.regions.regions }
+                    .maxBy { it.maxBy { it.second }.second }
+                    .maxBy { it.second }.second
+            }
             _mutableState.update {
-                it.copy(tapes = tapesData)
+                it.copy(tapes = tapesData, maxLength = maxLength)
             }
         }
     }
@@ -66,8 +73,14 @@ class TapePlayerScreenViewModel(
         player.play()
         viewModelScope.launch {
             while (player.isPlaying) {
+                val newPosition = player.getPosition()
+                Log.e("NEED TO STOP", "$newPosition ${uiState.value.maxLength}")
+                if (newPosition >= uiState.value.maxLength) {
+                    stop()
+                    return@launch
+                }
                 _mutableState.update {
-                    it.copy(position = player.getPosition())
+                    it.copy(position = newPosition)
                 }
                 delay(100)
             }
@@ -113,5 +126,6 @@ class TapePlayerScreenViewModel(
 
 data class TapePlayerScreenState(
     val tapes: List<Pair<InputStream, AiffTapeMetadata>> = listOf(),
-    val position: Long = 0
+    val position: Long = 0,
+    val maxLength: Long = 0
 )
