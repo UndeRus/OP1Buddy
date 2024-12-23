@@ -17,7 +17,9 @@ import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import kotlinx.collections.immutable.toImmutableList
 import org.jugregator.op1buddy.features.project.TapePlayerScreenViewModel
+import org.jugregator.op1buddy.features.project.ui.views.EmptyTapesView
 import org.jugregator.op1buddy.features.project.ui.views.MultiTrackPlayer
+import org.jugregator.op1buddy.features.project.ui.views.TapesLoadingView
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -48,7 +50,6 @@ fun TapePlayerScreen(
             }
         }
 
-
         val tapeRanges by remember {
             derivedStateOf {
                 uiState.tapes.map {
@@ -63,29 +64,36 @@ fun TapePlayerScreen(
             targetValue = uiState.position.toInt(),
             label = "Slider Value"
         )
-        MultiTrackPlayer(
-            value = animatedSliderValue,
-            onValueChanged = { newValue ->
-                value = newValue
-                viewModel.seekToSample(newValue.toLong(), false)
-            },
-            onValueChangeFinished = {
-                viewModel.seekToSample(value.toLong(), true)
-            },
-            tapeRanges = tapeRanges.toImmutableList(),
-            fromZero = true,
-            onPlayClick = {
-                viewModel.play()
-            },
-            onPauseClick = {
-                viewModel.pause()
-            },
-            onStopClick = {
-                viewModel.stop()
-            },
-            onTrackToggle = { index, checked ->
-                viewModel.toggleTrack(index, checked)
-            }
-        )
+
+        if (uiState.isLoading) {
+            TapesLoadingView()
+        } else if (uiState.isEmpty) {
+            EmptyTapesView()
+        } else {
+            MultiTrackPlayer(
+                value = animatedSliderValue,
+                onValueChanged = { newValue ->
+                    value = newValue
+                    viewModel.seekToSample(newValue.toLong(), false)
+                },
+                onValueChangeFinished = {
+                    viewModel.seekToSample(value.toLong(), true)
+                },
+                tapeRanges = tapeRanges.toImmutableList(),
+                fromZero = true,
+                onPlayClick = {
+                    viewModel.play()
+                },
+                onPauseClick = {
+                    viewModel.pause()
+                },
+                onStopClick = {
+                    viewModel.stop()
+                },
+                onTrackToggle = { index, checked ->
+                    viewModel.toggleTrack(index, checked)
+                }
+            )
+        }
     }
 }

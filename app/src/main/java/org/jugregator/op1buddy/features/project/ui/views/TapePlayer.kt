@@ -2,6 +2,7 @@ package org.jugregator.op1buddy.features.project.ui.views
 
 import android.content.res.Configuration
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -11,12 +12,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -48,6 +49,8 @@ import kotlinx.collections.immutable.toImmutableList
 import org.jugregator.op1buddy.R
 import org.jugregator.op1buddy.features.project.ui.screens.ProjectResource
 import org.jugregator.op1buddy.ui.theme.AppTheme
+import java.text.DecimalFormat
+import java.text.NumberFormat
 import kotlin.math.ceil
 import kotlin.math.max
 import kotlin.math.roundToInt
@@ -147,10 +150,25 @@ fun MultiTrackPlayer(
     val barHeight = 4.dp
 
     Column(modifier = modifier) {
+        Box(modifier = Modifier
+            .align(Alignment.CenterHorizontally)
+            .padding(bottom = 28.dp), contentAlignment = Alignment.TopCenter) {
+            Image(
+                painter = painterResource(R.drawable.player_player), contentDescription = null
+            )
+
+            val f: NumberFormat = DecimalFormat("00")
+            val positionInSeconds = value / 44100
+            val frames = (value / (44100 / 24)) % 24
+            val minutes = positionInSeconds / 60
+            val seconds = positionInSeconds % 60
+
+            Text("${f.format(minutes)}:${f.format(seconds)}:${f.format(frames)}", style = MaterialTheme.typography.headlineSmall)
+        }
 
         for (tapeIndex in 0 until tapeRanges.size) {
 
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            Row(modifier = Modifier.padding(vertical = 6.dp), verticalAlignment = Alignment.CenterVertically) {
                 val tape = tapeRanges[tapeIndex]
                 var checked by remember { mutableStateOf(true) }
 
@@ -231,10 +249,12 @@ fun MultiTrackPlayer(
                     Modifier
                         .weight(rightColumnWeight)
                 ) {
-                    Checkbox(checked, {
-                        checked = it
-                        onTrackToggle(tapeIndex, it)
-                    })
+                    MuteToggleView(
+                        modifier = Modifier.offset(x = (-6).dp),
+                        checked = checked, onCheckedChange = {
+                            checked = it
+                            onTrackToggle(tapeIndex, it)
+                        })
                 }
             }
 

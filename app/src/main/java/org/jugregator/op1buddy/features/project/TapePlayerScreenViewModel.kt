@@ -1,6 +1,5 @@
 package org.jugregator.op1buddy.features.project
 
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -58,13 +57,19 @@ class TapePlayerScreenViewModel(
                 tapes
             }
 
-            val maxLength = withContext(Dispatchers.Default) {
-                tapesData.map { it.second.regions.regions }
-                    .maxBy { it.maxBy { it.second }.second }
-                    .maxBy { it.second }.second
-            }
-            _mutableState.update {
-                it.copy(tapes = tapesData, maxLength = maxLength)
+            if (tapesData.isEmpty()) {
+                _mutableState.update {
+                    it.copy(isEmpty = true, isLoading = false)
+                }
+            } else {
+                val maxLength = withContext(Dispatchers.Default) {
+                    tapesData.map { it.second.regions.regions }
+                        .maxByOrNull { it.maxBy { it.second }.second }
+                        ?.maxByOrNull { it.second }?.second ?: 10L
+                }
+                _mutableState.update {
+                    it.copy(tapes = tapesData, maxLength = maxLength, isLoading = false)
+                }
             }
         }
     }
@@ -74,7 +79,6 @@ class TapePlayerScreenViewModel(
         viewModelScope.launch {
             while (player.isPlaying) {
                 val newPosition = player.getPosition()
-                Log.e("NEED TO STOP", "$newPosition ${uiState.value.maxLength}")
                 if (newPosition >= uiState.value.maxLength) {
                     stop()
                     return@launch
@@ -82,7 +86,7 @@ class TapePlayerScreenViewModel(
                 _mutableState.update {
                     it.copy(position = newPosition)
                 }
-                delay(100)
+                delay(PROGRESS_TIMEOUT_MILLIS)
             }
         }
     }
@@ -124,8 +128,12 @@ class TapePlayerScreenViewModel(
     }
 }
 
+private const val PROGRESS_TIMEOUT_MILLIS: Long = 100
+
 data class TapePlayerScreenState(
     val tapes: List<Pair<InputStream, AiffTapeMetadata>> = listOf(),
     val position: Long = 0,
-    val maxLength: Long = 0
+    val maxLength: Long = 0,
+    val isEmpty: Boolean = false,
+    val isLoading: Boolean = true,
 )

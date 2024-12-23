@@ -6,6 +6,5 @@ import java.io.OutputStream
 
 interface BackupRepository {
     fun compressBackup(filesDir: File, outputZipFileOutputStream: OutputStream)
-
-    fun importBackup(projectDir: File, inputZipFileInputStream: () -> InputStream?)
+    suspend fun importBackup(projectDir: File, inputZipFileInputStream: () -> InputStream?, onProgress: (Float) -> Unit)
 }

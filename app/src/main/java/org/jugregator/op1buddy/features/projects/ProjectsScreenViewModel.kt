@@ -91,7 +91,9 @@ class ProjectsScreenViewModel(
                 )
                 projectsRepository.createProject(project)
                 val inputStreamLambda = { contentResolver.openInputStream(selectedFile.uri) }
-                backupRepository.importBackup(backupDir, inputStreamLambda)
+                backupRepository.importBackup(backupDir, inputStreamLambda) { progress ->
+                    _mutableUiState.update { it.copy(projectImportProgress = progress) }
+                }
             }
 
             _mutableUiState.update {
@@ -156,4 +158,5 @@ private fun <K, V> Map<K, V>.invert(): Map<V, K> {
 data class ProjectsScreenUiState(
     val projects: List<Project> = listOf(),
     val projectImporting: Boolean = false,
+    val projectImportProgress: Float = 0f
 )

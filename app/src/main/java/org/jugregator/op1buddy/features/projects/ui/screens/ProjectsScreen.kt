@@ -232,9 +232,8 @@ fun ProjectsAppBarPreview() {
 }
 
 @Composable
-fun ImportProgress(modifier: Modifier = Modifier) {
-//    val progress = 0.5f
-//    val progressPercent = (progress * 100).toInt()
+fun ImportProgress(modifier: Modifier = Modifier, progress: Float = 0f) {
+    val progressPercent = (progress * 100).toInt()
     Box(modifier = modifier.fillMaxSize()) {
         Column(modifier = Modifier.align(Alignment.Center), horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
@@ -251,8 +250,8 @@ fun ImportProgress(modifier: Modifier = Modifier) {
                     strokeWidth = 12.dp,
                     trackColor = progressColor,
                     strokeCap = StrokeCap.Square,
-                    //gapSize = 0.dp,
-                    //progress = { progress },
+                    gapSize = 0.dp,
+                    progress = { progress },
                 )
 
                 Box(
@@ -262,13 +261,11 @@ fun ImportProgress(modifier: Modifier = Modifier) {
                         .background(progressColor, shape = CircleShape)
                 )
 
-                /*
                 Text(
                     text = "$progressPercent%",
                     modifier = Modifier.align(Alignment.Center),
                     style = MaterialTheme.typography.titleLarge.copy(fontSize = 64.sp)
                 )
-                */
             }
             Spacer(modifier = Modifier.height(8.dp))
             Text(
@@ -287,7 +284,7 @@ fun ImportProgress(modifier: Modifier = Modifier) {
 
 @Preview
 @Composable
-private fun ImportProgressPreview() {
+fun ImportProgressPreview() {
     AppTheme {
         ImportProgress()
     }

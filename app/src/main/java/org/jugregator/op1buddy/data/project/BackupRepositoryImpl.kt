@@ -2,6 +2,7 @@ package org.jugregator.op1buddy.data.project
 
 import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.yield
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 import java.io.File
@@ -52,7 +53,11 @@ class BackupRepositoryImpl : BackupRepository {
         }
     }
 
-    override fun importBackup(projectDir: File, inputZipFileInputStream: () -> InputStream?) {
+    override suspend fun importBackup(
+        projectDir: File,
+        inputZipFileInputStream: () -> InputStream?,
+        onProgress: (Float) -> Unit
+    ) {
         try {
             var input = ZipInputStream(BufferedInputStream(inputZipFileInputStream() ?: return))
 
@@ -66,20 +71,37 @@ class BackupRepositoryImpl : BackupRepository {
 
             val backupInfo = readBackupInfo({ entries }, { it.name })
 
+            val tapesCount = backupInfo.tapes.count { it.first.enabled }
+            val synthsCount = if (backupInfo.synthsEnabled) 8 else 0
+            val drumsCount = if (backupInfo.drumkitsEnabled) 8 else 0
+
+            val total = tapesCount + synthsCount + drumsCount
+            var progress = 0
+
             input = ZipInputStream(BufferedInputStream(inputZipFileInputStream() ?: return))
 
             var zipEntry = input.nextEntry
             while (zipEntry != null) {
                 if (zipEntry.name.startsWith("synth_") && backupInfo.synthsEnabled) {
                     copyFileFromBackup(projectDir, zipEntry, input)
+                    //TODO: increment progress 1/8
+                    progress += 1
                 }
                 if (zipEntry.name.startsWith("drum_") && backupInfo.drumkitsEnabled) {
                     copyFileFromBackup(projectDir, zipEntry, input)
+                    //TODO: increment progress 1/8
+                    progress += 1
                 }
 
                 if (zipEntry.name.startsWith("tape_")) {
                     copyFileFromBackup(projectDir, zipEntry, input)
+                    //TODO: increment progress +1/tapes_in_backup
+                    progress += 1
                 }
+
+                val percentageProgress = progress.toFloat() / total
+                onProgress(percentageProgress)
+                yield()
 
                 zipEntry = input.nextEntry
             }
