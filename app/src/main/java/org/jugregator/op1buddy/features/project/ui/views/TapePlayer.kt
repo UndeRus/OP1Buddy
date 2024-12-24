@@ -158,9 +158,11 @@ fun MultiTrackPlayer(
     val barHeight = 4.dp
 
     Column(modifier = modifier) {
-        Box(modifier = Modifier
-            .align(Alignment.CenterHorizontally)
-            .padding(bottom = 28.dp), contentAlignment = Alignment.TopCenter) {
+        Box(
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .padding(bottom = 28.dp), contentAlignment = Alignment.TopCenter
+        ) {
             Image(
                 painter = painterResource(R.drawable.player_player), contentDescription = null
             )
@@ -174,7 +176,7 @@ fun MultiTrackPlayer(
             Text("$minutes:${f.format(seconds)}:${f.format(frames)}", style = MaterialTheme.typography.headlineSmall)
 
             val infiniteTransition = rememberInfiniteTransition()
-            val angle by infiniteTransition.animateFloat(
+            val leftAngle by infiniteTransition.animateFloat(
                 initialValue = 0f,
                 targetValue = -360f,
                 animationSpec =
@@ -190,15 +192,35 @@ fun MultiTrackPlayer(
                 ),
                 label = "Reel rotation"
             )
+            val rightAngle by infiniteTransition.animateFloat(
+                initialValue = 0f,
+                targetValue = -360f,
+                animationSpec =
+                infiniteRepeatable(
+                    // Infinitely repeating a 1000ms tween animation using default easing curve.
+                    animation = tween(2000, easing = LinearEasing),
+                    // After each iteration of the animation (i.e. every 1000ms), the animation
+                    // will
+                    // start again from the [initialValue] defined above.
+                    // This is the default [RepeatMode]. See [RepeatMode.Reverse] below for an
+                    // alternative.
+                    repeatMode = RepeatMode.Restart
+                ),
+                label = "Reel rotation"
+            )
 
 
             Image(
-                modifier = Modifier.align(Alignment.TopStart).graphicsLayer(rotationZ = if (isPlaying) angle else 0f),
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .graphicsLayer(rotationZ = if (isPlaying) leftAngle else 0f),
                 painter = painterResource(R.drawable.reel), contentDescription = null
             )
 
             Image(
-                modifier = Modifier.align(Alignment.TopEnd).graphicsLayer(rotationZ = if (isPlaying) angle else 0f),
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .graphicsLayer(rotationZ = if (isPlaying) rightAngle else 0f),
                 painter = painterResource(R.drawable.reel), contentDescription = null
             )
         }
@@ -299,13 +321,12 @@ fun MultiTrackPlayer(
     }
 
     val thumbSize = 12.dp
-    
+
     val sliderEnabled = true
     if (sliderEnabled) {
         Row {
             Slider(
                 modifier = Modifier.weight(leftColumnWeight),
-                steps = maxRangeValue.toInt() - 1,
                 value = value.toFloat(),
                 onValueChange = { onValueChanged(it.roundToInt()) },
                 onValueChangeFinished = onValueChangeFinished,
