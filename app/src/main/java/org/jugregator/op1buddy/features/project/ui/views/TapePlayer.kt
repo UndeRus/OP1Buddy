@@ -1,6 +1,12 @@
 package org.jugregator.op1buddy.features.project.ui.views
 
 import android.content.res.Configuration
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -39,6 +45,7 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -106,6 +113,7 @@ fun MultiTrackPlayer(
     onValueChangeFinished: (() -> Unit)?,
     tapeRanges: ImmutableList<ImmutableList<Pair<Long, Long>>>,
     fromZero: Boolean = true,
+    isPlaying: Boolean = false,
     onPlayClick: () -> Unit,
     onPauseClick: () -> Unit,
     onStopClick: () -> Unit,
@@ -163,7 +171,36 @@ fun MultiTrackPlayer(
             val minutes = positionInSeconds / 60
             val seconds = positionInSeconds % 60
 
-            Text("${f.format(minutes)}:${f.format(seconds)}:${f.format(frames)}", style = MaterialTheme.typography.headlineSmall)
+            Text("$minutes:${f.format(seconds)}:${f.format(frames)}", style = MaterialTheme.typography.headlineSmall)
+
+            val infiniteTransition = rememberInfiniteTransition()
+            val angle by infiniteTransition.animateFloat(
+                initialValue = 0f,
+                targetValue = -360f,
+                animationSpec =
+                infiniteRepeatable(
+                    // Infinitely repeating a 1000ms tween animation using default easing curve.
+                    animation = tween(4000, easing = LinearEasing),
+                    // After each iteration of the animation (i.e. every 1000ms), the animation
+                    // will
+                    // start again from the [initialValue] defined above.
+                    // This is the default [RepeatMode]. See [RepeatMode.Reverse] below for an
+                    // alternative.
+                    repeatMode = RepeatMode.Restart
+                ),
+                label = "Reel rotation"
+            )
+
+
+            Image(
+                modifier = Modifier.align(Alignment.TopStart).graphicsLayer(rotationZ = if (isPlaying) angle else 0f),
+                painter = painterResource(R.drawable.reel), contentDescription = null
+            )
+
+            Image(
+                modifier = Modifier.align(Alignment.TopEnd).graphicsLayer(rotationZ = if (isPlaying) angle else 0f),
+                painter = painterResource(R.drawable.reel), contentDescription = null
+            )
         }
 
         for (tapeIndex in 0 until tapeRanges.size) {
@@ -262,51 +299,55 @@ fun MultiTrackPlayer(
     }
 
     val thumbSize = 12.dp
-    Row {
-        Slider(
-            modifier = Modifier.weight(leftColumnWeight),
-            steps = maxRangeValue.toInt() - 1,
-            value = value.toFloat(),
-            onValueChange = { onValueChanged(it.roundToInt()) },
-            onValueChangeFinished = onValueChangeFinished,
-            valueRange = minRangeValue.toFloat()..(maxRangeValue - 1).toFloat(),
+    
+    val sliderEnabled = true
+    if (sliderEnabled) {
+        Row {
+            Slider(
+                modifier = Modifier.weight(leftColumnWeight),
+                steps = maxRangeValue.toInt() - 1,
+                value = value.toFloat(),
+                onValueChange = { onValueChanged(it.roundToInt()) },
+                onValueChangeFinished = onValueChangeFinished,
+                valueRange = minRangeValue.toFloat()..(maxRangeValue - 1).toFloat(),
 
-            track = { sliderState ->
-                val fraction by remember(sliderState) {
-                    derivedStateOf {
-                        (sliderState.value - sliderState.valueRange.start) /
-                            (sliderState.valueRange.endInclusive - sliderState.valueRange.start)
+                track = { sliderState ->
+                    val fraction by remember(sliderState) {
+                        derivedStateOf {
+                            (sliderState.value - sliderState.valueRange.start) /
+                                (sliderState.valueRange.endInclusive - sliderState.valueRange.start)
+                        }
                     }
-                }
 
-                val maxRangeInMinutes by remember {
-                    derivedStateOf {
-                        max(ceil(maxRangeValue / (44100 * 60.0)).toLong(), 1)
+                    val maxRangeInMinutes by remember {
+                        derivedStateOf {
+                            max(ceil(maxRangeValue / (44100 * 60.0)).toLong(), 1)
+                        }
                     }
-                }
 
-                SliderTrack(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    fraction = fraction,
-                    lengthInMinutes = maxRangeInMinutes
-                )
-            },
-            thumb = {
-                Box(
-                    Modifier
-                        .padding(vertical = 2.5.dp)
-                        .size(thumbSize)
-                        .align(Alignment.CenterVertically)
-                        .background(Color(0xFF1c1c1c), CircleShape)
-                )
-            }
-        )
-        //}
-        Box(
-            Modifier
-                .weight(rightColumnWeight)
-        )
+                    SliderTrack(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        fraction = fraction,
+                        lengthInMinutes = maxRangeInMinutes
+                    )
+                },
+                thumb = {
+                    Box(
+                        Modifier
+                            .padding(vertical = 2.5.dp)
+                            .size(thumbSize)
+                            .align(Alignment.CenterVertically)
+                            .background(Color(0xFF1c1c1c), CircleShape)
+                    )
+                }
+            )
+            //}
+            Box(
+                Modifier
+                    .weight(rightColumnWeight)
+            )
+        }
     }
 
     Row(horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()) {
@@ -468,6 +509,7 @@ fun MultiTrackSliderPreview() {
         ) {
             Box(modifier = Modifier.height(100.dp))
             var value by remember { mutableIntStateOf(762048) }
+            var isPlaying by remember { mutableStateOf(false) }
             MultiTrackPlayer(
                 value = value,
                 onValueChanged = { value = it },
@@ -491,9 +533,16 @@ fun MultiTrackSliderPreview() {
                     listOf(3L to 12L, 23L to 30L).toImmutableList(),
                     listOf(5L to 33L, 40L to 55L).toImmutableList(),
                 ).toImmutableList(),
-                onPlayClick = {},
-                onStopClick = {},
-                onPauseClick = {},
+                isPlaying = isPlaying,
+                onPlayClick = {
+                    isPlaying = true
+                },
+                onStopClick = {
+                    isPlaying = false
+                },
+                onPauseClick = {
+                    isPlaying = false
+                },
                 onTrackToggle = { index, checked -> }
             )
         }

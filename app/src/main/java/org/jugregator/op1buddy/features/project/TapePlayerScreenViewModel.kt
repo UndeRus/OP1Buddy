@@ -76,6 +76,7 @@ class TapePlayerScreenViewModel(
 
     fun play() {
         player.play()
+        _mutableState.update { it.copy(isPlaying = true) }
         viewModelScope.launch {
             while (player.isPlaying) {
                 val newPosition = player.getPosition()
@@ -96,6 +97,8 @@ class TapePlayerScreenViewModel(
             withContext(Dispatchers.IO) {
                 player.pause()
             }
+            _mutableState.update { it.copy(isPlaying = false) }
+
         }
     }
 
@@ -105,7 +108,7 @@ class TapePlayerScreenViewModel(
                 player.stop()
             }
         }
-        _mutableState.update { it.copy(position = 0L) }
+        _mutableState.update { it.copy(position = 0L, isPlaying = false) }
     }
 
     fun seekToSample(sampleIndex: Long, move: Boolean) {
@@ -136,4 +139,5 @@ data class TapePlayerScreenState(
     val maxLength: Long = 0,
     val isEmpty: Boolean = false,
     val isLoading: Boolean = true,
+    val isPlaying: Boolean = false,
 )

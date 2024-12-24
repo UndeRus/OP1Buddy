@@ -81,6 +81,7 @@ fun TapePlayerScreen(
                 },
                 tapeRanges = tapeRanges.toImmutableList(),
                 fromZero = true,
+                isPlaying = uiState.isPlaying,
                 onPlayClick = {
                     viewModel.play()
                 },
