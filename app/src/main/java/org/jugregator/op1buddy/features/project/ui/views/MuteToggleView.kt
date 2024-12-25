@@ -1,9 +1,10 @@
 package org.jugregator.op1buddy.features.project.ui.views
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -14,16 +15,16 @@ import org.jugregator.op1buddy.R
 
 @Composable
 fun MuteToggleView(checked: Boolean, onCheckedChange: (Boolean) -> Unit, modifier: Modifier = Modifier) {
-    Icon(
+    val id = if (!checked) {
+        R.drawable.track_muted
+    } else {
+        R.drawable.track_loud
+    }
+    Image(
         modifier = modifier.clickable {
             onCheckedChange(!checked)
         },
-        painter = if(!checked) {painterResource(
-
-                R.drawable.track_muted
-        )} else {
-            painterResource(R.drawable.track_loud)
-        }, contentDescription = null
+        painter = key(id) { painterResource(id) }, contentDescription = null
     )
 }
 
