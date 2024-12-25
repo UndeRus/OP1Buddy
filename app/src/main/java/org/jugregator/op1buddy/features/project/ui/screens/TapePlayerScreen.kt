@@ -12,6 +12,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -93,7 +94,8 @@ fun TapePlayerScreen(
                 },
                 onTrackToggle = { index, checked ->
                     viewModel.toggleTrack(index, checked)
-                }
+                },
+                trackColor = Color(0xFF1c1c1c)
             )
         }
     }

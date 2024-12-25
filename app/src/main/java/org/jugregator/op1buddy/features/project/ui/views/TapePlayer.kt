@@ -33,7 +33,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -118,7 +117,16 @@ fun MultiTrackPlayer(
     onPauseClick: () -> Unit,
     onStopClick: () -> Unit,
     onTrackToggle: (Int, Boolean) -> Unit,
-) {
+    barColors: Array<Color> =
+        arrayOf(
+            Color(0xFFff3d3d), //TODO: extract
+            Color(0xFF1741b7), //TODO: extract
+            Color(0xFF2ae743), //TODO: extract
+        ),
+    trackColor: Color = Color(0xFF1c1c1c),
+    barColor: Color = Color(0xFFeaeaea),
+
+    ) {
     // TODO: make single flatten
 
     val (minRangeValue, maxRangeValue) = remember(tapeRanges, fromZero) {
@@ -143,7 +151,12 @@ fun MultiTrackPlayer(
             }
 
 
-            maxRange = max(ceil(maxRange / (44100 * 60.0)).toLong() * 44100 * 60, 44100 * 60)
+            maxRange = max(
+                ceil(
+                    maxRange / (SAMPLE_RATE * MIN_TAPE_LENGTH_SECONDS.toFloat())
+                ).toLong() * SAMPLE_RATE * MIN_TAPE_LENGTH_SECONDS,
+                SAMPLE_RATE * MIN_TAPE_LENGTH_SECONDS
+            )
             if (maxRange == 0L) {
                 maxRange = 10L
             }
@@ -168,36 +181,29 @@ fun MultiTrackPlayer(
             )
 
             val f: NumberFormat = DecimalFormat("00")
-            val positionInSeconds = value / 44100
-            val frames = (value / (44100 / 24)) % 24
-            val minutes = positionInSeconds / 60
-            val seconds = positionInSeconds % 60
+            val positionInSeconds = value / SAMPLE_RATE
+            val frames = (value / (SAMPLE_RATE / FRAMES_PER_SECOND)) % FRAMES_PER_SECOND
+            val minutes = positionInSeconds / MIN_TAPE_LENGTH_SECONDS
+            val seconds = positionInSeconds % MIN_TAPE_LENGTH_SECONDS
 
             Text("$minutes:${f.format(seconds)}:${f.format(frames)}", style = MaterialTheme.typography.headlineSmall)
 
-            val infiniteTransition = rememberInfiniteTransition()
+            val infiniteTransition = rememberInfiniteTransition(label = "infinite reel rotation")
             val leftAngle by infiniteTransition.animateFloat(
                 initialValue = 0f,
                 targetValue = -360f,
                 animationSpec =
                 infiniteRepeatable(
-                    // Infinitely repeating a 1000ms tween animation using default easing curve.
                     animation = tween(4000, easing = LinearEasing),
-                    // After each iteration of the animation (i.e. every 1000ms), the animation
-                    // will
-                    // start again from the [initialValue] defined above.
-                    // This is the default [RepeatMode]. See [RepeatMode.Reverse] below for an
-                    // alternative.
                     repeatMode = RepeatMode.Restart
                 ),
-                label = "Reel rotation"
+                label = "Left reel rotation"
             )
             val rightAngle by infiniteTransition.animateFloat(
                 initialValue = 0f,
                 targetValue = -360f,
                 animationSpec =
                 infiniteRepeatable(
-                    // Infinitely repeating a 1000ms tween animation using default easing curve.
                     animation = tween(2000, easing = LinearEasing),
                     // After each iteration of the animation (i.e. every 1000ms), the animation
                     // will
@@ -206,7 +212,7 @@ fun MultiTrackPlayer(
                     // alternative.
                     repeatMode = RepeatMode.Restart
                 ),
-                label = "Reel rotation"
+                label = "Right reel rotation"
             )
 
 
@@ -240,35 +246,10 @@ fun MultiTrackPlayer(
                     }.toImmutableList()
                 }
 
-                /*
-                val rangeColor = remember(value, checked, tape) {
-                    tape.map { range ->
-                        val color = if (!checked) {
-                            Color.Gray
-                        } else if (value in range.first..range.second) {
-                            Color.Green
-                        } else {
-                            Color.Black
-                        }
-                        color
-                    }.toImmutableList()
-                }
-                */
-                val barColors = remember {
-                    arrayOf(
-                        Color(0xFFff3d3d), //TODO: extract
-                        Color(0xFF1741b7), //TODO: extract
-                        Color(0xFF2ae743), //TODO: extract
-                    )
-                }
-                val barColorsSize by remember {
-                    derivedStateOf {
-                        barColors.size
-                    }
-                }
+                val barColorsSize = barColors.size
 
                 val rangeColor = remember(value, tape) {
-                    tape.fastMapIndexed { index, range ->
+                    tape.fastMapIndexed { index, _ ->
                         barColors[index % barColorsSize]
                     }.toImmutableList()
                 }
@@ -276,7 +257,7 @@ fun MultiTrackPlayer(
                 Canvas(
                     modifier = Modifier
                         .padding(horizontal = 6.dp)
-                        .background(Color(0xFFeaeaea)) //TODO: extract
+                        .background(barColor)
                         .weight(leftColumnWeight)
                         .height(barHeight)
                         .onSizeChanged {
@@ -342,7 +323,7 @@ fun MultiTrackPlayer(
 
                     val maxRangeInMinutes by remember {
                         derivedStateOf {
-                            max(ceil(maxRangeValue / (44100 * 60.0)).toLong(), 1)
+                            max(ceil(maxRangeValue / (SAMPLE_RATE * MIN_TAPE_LENGTH_SECONDS.toFloat())).toLong(), 1)
                         }
                     }
 
@@ -350,7 +331,9 @@ fun MultiTrackPlayer(
                         modifier = Modifier
                             .fillMaxWidth(),
                         fraction = fraction,
-                        lengthInMinutes = maxRangeInMinutes
+                        lengthInMinutes = maxRangeInMinutes,
+                        trackColor = trackColor,
+                        barColor = barColor,
                     )
                 },
                 thumb = {
@@ -359,7 +342,7 @@ fun MultiTrackPlayer(
                             .padding(vertical = 2.5.dp)
                             .size(thumbSize)
                             .align(Alignment.CenterVertically)
-                            .background(Color(0xFF1c1c1c), CircleShape)
+                            .background(trackColor, CircleShape)
                     )
                 }
             )
@@ -452,10 +435,15 @@ fun SliderTrackBackground(
 }
 
 @Composable
-fun SliderTrack(modifier: Modifier = Modifier, fraction: Float, lengthInMinutes: Long) {
+fun SliderTrack(
+    modifier: Modifier = Modifier,
+    fraction: Float,
+    lengthInMinutes: Long,
+    trackColor: Color = Color(0xFF1c1c1c),
+    barColor: Color = Color(0xFFeaeaea)
+) {
     Box(modifier = modifier) {
-        val trackColor = Color(0xFF1c1c1c)
-        val barColor = Color(0xFFeaeaea)
+
         SliderTrackBackground(lengthInMinutes = lengthInMinutes, marksColor = trackColor, barColor = barColor)
         SliderFilledTrack(
             modifier = Modifier.align(Alignment.CenterStart),
@@ -478,45 +466,6 @@ fun SliderTrackBackgroundPreview(modifier: Modifier = Modifier) {
 private fun SliderTrackPreview() {
     AppTheme {
         SliderTrack(fraction = 0.5f, lengthInMinutes = 1)
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Preview(showBackground = true)
-@Composable
-fun SliderPreview(modifier: Modifier = Modifier) {
-    val thumbSize = 12.dp
-    AppTheme {
-        //Box {
-        var value by remember { mutableFloatStateOf(0.5f) }
-        Slider(
-            value = value,
-            onValueChange = { value = it },
-            track = { sliderState ->
-                val fraction by remember {
-                    derivedStateOf {
-                        (sliderState.value - sliderState.valueRange.start) /
-                            (sliderState.valueRange.endInclusive - sliderState.valueRange.start)
-                    }
-                }
-
-                SliderTrack(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    fraction = fraction,
-                    lengthInMinutes = 1,
-                )
-            },
-            thumb = {
-                Box(
-                    Modifier
-                        .padding(vertical = 2.5.dp)
-                        .size(thumbSize)
-                        .background(Color(0xFF1c1c1c), CircleShape)
-                )
-            }
-        )
-        //}
     }
 }
 
@@ -558,14 +507,19 @@ fun MultiTrackSliderPreview() {
                 onPlayClick = {
                     isPlaying = true
                 },
-                onStopClick = {
-                    isPlaying = false
-                },
                 onPauseClick = {
                     isPlaying = false
                 },
-                onTrackToggle = { index, checked -> }
+                onStopClick = {
+                    isPlaying = false
+                },
+                onTrackToggle = { index, checked -> },
+                trackColor = Color(0xFF1c1c1c)
             )
         }
     }
 }
+
+private const val SAMPLE_RATE: Long = 44100
+private const val MIN_TAPE_LENGTH_SECONDS = 60
+private const val FRAMES_PER_SECOND = 24
