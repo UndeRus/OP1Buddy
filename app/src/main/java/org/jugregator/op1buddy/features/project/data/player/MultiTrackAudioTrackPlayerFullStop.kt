@@ -161,7 +161,6 @@ class MultiTrackFullStopAudioTrackPlayer {
         return track
     }
 
-    //TODO: extract to ingest only inputstreams
     fun prepare(inputStreams: List<InputStream>) {
         this.inputStreams = inputStreams
         enabledTracks = MutableList(inputStreams.size) { true }.toTypedArray()

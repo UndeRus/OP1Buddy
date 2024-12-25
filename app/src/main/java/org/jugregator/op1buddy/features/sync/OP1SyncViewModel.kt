@@ -102,8 +102,6 @@ class OP1SyncViewModel(
     }
 
     private fun refreshLocalBackupInfo() {
-        //TODO: check current dir and load restore state
-        Log.w("BACKUP DIR", backupDirPath)
         val savedBackupInfo = localFileRepository.readBackupInfo(backupDirPath)
         _restoreStateFlow.update { it.copy(backupInfo = savedBackupInfo) }
     }

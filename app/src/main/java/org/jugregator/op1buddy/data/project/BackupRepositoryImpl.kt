@@ -84,18 +84,18 @@ class BackupRepositoryImpl : BackupRepository {
             while (zipEntry != null) {
                 if (zipEntry.name.startsWith("synth_") && backupInfo.synthsEnabled) {
                     copyFileFromBackup(projectDir, zipEntry, input)
-                    //TODO: increment progress 1/8
+                    // increment progress 1/(16 + tapes count)
                     progress += 1
                 }
                 if (zipEntry.name.startsWith("drum_") && backupInfo.drumkitsEnabled) {
                     copyFileFromBackup(projectDir, zipEntry, input)
-                    //TODO: increment progress 1/8
+                    // increment progress 1/(16 + tapes count)
                     progress += 1
                 }
 
                 if (zipEntry.name.startsWith("tape_")) {
                     copyFileFromBackup(projectDir, zipEntry, input)
-                    //TODO: increment progress +1/tapes_in_backup
+                    // increment progress 1/(16 + tapes count)
                     progress += 1
                 }
 

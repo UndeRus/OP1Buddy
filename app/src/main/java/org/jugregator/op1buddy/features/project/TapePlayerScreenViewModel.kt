@@ -50,7 +50,6 @@ class TapePlayerScreenViewModel(
             }
             project = projectInfo
 
-            //TODO: prepare player
             val tapesData = withContext(Dispatchers.IO) {
                 val tapes = projectRepository.readTapes(projectInfo)
                 player.prepare(tapes.map { it.first })

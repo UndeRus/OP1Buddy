@@ -119,16 +119,14 @@ fun MultiTrackPlayer(
     onTrackToggle: (Int, Boolean) -> Unit,
     barColors: Array<Color> =
         arrayOf(
-            Color(0xFFff3d3d), //TODO: extract
-            Color(0xFF1741b7), //TODO: extract
-            Color(0xFF2ae743), //TODO: extract
+            Color(0xFFff3d3d),
+            Color(0xFF1741b7),
+            Color(0xFF2ae743),
         ),
     trackColor: Color = Color(0xFF1c1c1c),
     barColor: Color = Color(0xFFeaeaea),
 
     ) {
-    // TODO: make single flatten
-
     val (minRangeValue, maxRangeValue) = remember(tapeRanges, fromZero) {
 
         var minRange = if (fromZero) 0L else Long.MAX_VALUE
