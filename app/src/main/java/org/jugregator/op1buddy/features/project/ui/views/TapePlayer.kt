@@ -156,7 +156,7 @@ fun MultiTrackPlayer(
                 targetValue = -360f,
                 animationSpec =
                 infiniteRepeatable(
-                    animation = tween(4000, easing = LinearEasing),
+                    animation = tween(SLOW_REEL_DURATION_MILLIS, easing = LinearEasing),
                     repeatMode = RepeatMode.Restart
                 ),
                 label = "Left reel rotation"
@@ -166,12 +166,7 @@ fun MultiTrackPlayer(
                 targetValue = -360f,
                 animationSpec =
                 infiniteRepeatable(
-                    animation = tween(2000, easing = LinearEasing),
-                    // After each iteration of the animation (i.e. every 1000ms), the animation
-                    // will
-                    // start again from the [initialValue] defined above.
-                    // This is the default [RepeatMode]. See [RepeatMode.Reverse] below for an
-                    // alternative.
+                    animation = tween(FAST_REEL_DURATION_MILLIS, easing = LinearEasing),
                     repeatMode = RepeatMode.Restart
                 ),
                 label = "Right reel rotation"
@@ -485,3 +480,6 @@ fun MultiTrackSliderPreview() {
 private const val SAMPLE_RATE: Long = 44100
 private const val MIN_TAPE_LENGTH_SECONDS = 60
 private const val FRAMES_PER_SECOND = 24
+
+private const val FAST_REEL_DURATION_MILLIS = 2000
+private const val SLOW_REEL_DURATION_MILLIS = 4000
