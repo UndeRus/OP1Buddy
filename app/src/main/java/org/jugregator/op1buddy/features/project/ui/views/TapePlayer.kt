@@ -10,8 +10,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,7 +20,6 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -39,7 +36,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -53,7 +49,6 @@ import androidx.compose.ui.util.fastMapIndexed
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import org.jugregator.op1buddy.R
-import org.jugregator.op1buddy.features.project.ui.screens.ProjectResource
 import org.jugregator.op1buddy.ui.theme.AppTheme
 import java.text.DecimalFormat
 import java.text.NumberFormat
@@ -70,36 +65,6 @@ fun TapePlayer(modifier: Modifier = Modifier, onPlayClick: () -> Unit, onStopCli
         Button({ onStopClick() }) {
             Text("Stop")
         }
-    }
-}
-
-@Composable
-fun SeparateTape(modifier: Modifier = Modifier, tape: ProjectResource.Tape, onClick: () -> Unit) {
-    Row(
-        modifier = modifier
-            .clickable { onClick() }
-            .padding(vertical = 10.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Box(
-            modifier = Modifier
-                .padding(start = 16.dp)
-                .size(48.dp)
-                .clip(RoundedCornerShape(8.dp))
-                .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(8.dp))
-        ) {
-            TapeIcon(
-                modifier = Modifier
-                    .align(Alignment.Center)
-                    .size(24.dp),
-            )
-        }
-        Text(
-            modifier = modifier
-                .padding(12.dp)
-                .weight(1f),
-            text = "Tape ${tape.index + 1}"
-        )
     }
 }
 
@@ -125,7 +90,6 @@ fun MultiTrackPlayer(
         ),
     trackColor: Color = Color(0xFF1c1c1c),
     barColor: Color = Color(0xFFeaeaea),
-
     ) {
     val (minRangeValue, maxRangeValue) = remember(tapeRanges, fromZero) {
 
@@ -453,7 +417,7 @@ fun SliderTrack(
 
 @Preview(showBackground = true)
 @Composable
-fun SliderTrackBackgroundPreview(modifier: Modifier = Modifier) {
+fun SliderTrackBackgroundPreview() {
     AppTheme {
         SliderTrackBackground(lengthInMinutes = 1)
     }
@@ -461,7 +425,7 @@ fun SliderTrackBackgroundPreview(modifier: Modifier = Modifier) {
 
 @Preview(showBackground = true)
 @Composable
-private fun SliderTrackPreview() {
+fun SliderTrackPreview() {
     AppTheme {
         SliderTrack(fraction = 0.5f, lengthInMinutes = 1)
     }
@@ -511,7 +475,7 @@ fun MultiTrackSliderPreview() {
                 onStopClick = {
                     isPlaying = false
                 },
-                onTrackToggle = { index, checked -> },
+                onTrackToggle = { _, _ -> },
                 trackColor = Color(0xFF1c1c1c)
             )
         }
