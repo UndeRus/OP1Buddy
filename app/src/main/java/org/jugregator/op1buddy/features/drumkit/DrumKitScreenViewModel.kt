@@ -3,6 +3,7 @@ package org.jugregator.op1buddy.features.drumkit
 import android.media.AudioAttributes
 import android.media.AudioFormat
 import android.media.AudioTrack
+import android.os.Build
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -14,6 +15,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.jugregator.op1buddy.data.ProjectsRepository
 import org.jugregator.op1buddy.features.drumkit.data.DrumkitRepository
+import org.jugregator.op1buddy.features.project.data.player.TAPE_SAMPLE_RATE
 import org.jugregator.op1buddy.features.projects.DrumKitRoute
 
 class DrumKitScreenViewModel(
@@ -29,22 +31,39 @@ class DrumKitScreenViewModel(
         AudioFormat.CHANNEL_OUT_MONO, AudioFormat.ENCODING_PCM_16BIT
     )
 
-    private val simplePlayer: AudioTrack = AudioTrack.Builder()
-        .setAudioAttributes(
-            AudioAttributes.Builder()
-                .setUsage(AudioAttributes.USAGE_GAME)
-                .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                .build()
-        )
-        .setAudioFormat(
-            AudioFormat.Builder()
-                .setEncoding(AudioFormat.ENCODING_PCM_16BIT)
-                .setSampleRate(DRUMKIT_SAMPLE_RATE)
-                .setChannelMask(AudioFormat.CHANNEL_OUT_MONO)
-                .build()
-        )
-        .setBufferSizeInBytes(minBufferSize)
-        .build()
+    private val simplePlayer: AudioTrack = buildAudioTrack()
+
+    private fun buildAudioTrack(): AudioTrack {
+        val builder = AudioTrack.Builder()
+            .setAudioAttributes(
+                AudioAttributes.Builder()
+                    .setUsage(AudioAttributes.USAGE_MEDIA)
+                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                    .build()
+            )
+            .setAudioFormat(
+                AudioFormat.Builder()
+                    .setEncoding(AudioFormat.ENCODING_PCM_16BIT)
+                    .setSampleRate(TAPE_SAMPLE_RATE)
+                    .setChannelMask(AudioFormat.CHANNEL_OUT_MONO)
+                    .build()
+            )
+            .setTransferMode(AudioTrack.MODE_STREAM)
+            .setBufferSizeInBytes(minBufferSize)
+        val track = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            builder
+                .setPerformanceMode(AudioTrack.PERFORMANCE_MODE_LOW_LATENCY)
+
+        } else {
+            builder
+                .setAudioAttributes(
+                    AudioAttributes.Builder()
+                        .setFlags(AudioAttributes.FLAG_LOW_LATENCY)
+                        .build()
+                )
+        }.build()
+        return track
+    }
 
     private val loadedSamples = mutableListOf<ByteArray>()
 
@@ -61,7 +80,7 @@ class DrumKitScreenViewModel(
                     loadedSamples.add(sample)
                 }
 
-                _mutableState.update { it.copy(drumCount = samples.size) }
+                _mutableState.update { it.copy(drumCount = samples.size, title = drumkit.name) }
             }
 
         }
@@ -69,6 +88,7 @@ class DrumKitScreenViewModel(
 
     fun play(index: Int) {
         viewModelScope.launch {
+            simplePlayer.flush()
             val sample = loadedSamples[index]
             for (part in sample.toList().chunked(minBufferSize)) {
                 simplePlayer.write(part.toByteArray(), 0, part.size)
@@ -84,6 +104,7 @@ class DrumKitScreenViewModel(
 }
 
 data class DrumKitUiState(
+    val title: String = "",
     val drumCount: Int = 0
 )
 

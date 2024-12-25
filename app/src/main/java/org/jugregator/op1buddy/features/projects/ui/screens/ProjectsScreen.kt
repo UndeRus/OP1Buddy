@@ -6,6 +6,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,11 +14,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Build
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -80,17 +80,17 @@ fun ProjectsScreen(
             ProjectsAppBar(onBackClicked = onBackClicked, onSearchClicked = { })
         },
         floatingActionButton = {
-            Column {
+            Row {
                 FloatingActionButton(
                     onClick = { createBackupFileLauncher.launch(arrayOf("application/zip")) },
                     shape = CircleShape,
                     elevation = FloatingActionButtonDefaults.elevation(0.dp),
                     containerColor = MaterialTheme.colorScheme.error
                 ) {
-                    Icon(Icons.Filled.Build, stringResource(R.string.import_project_button_title))
+                    Icon(painterResource(R.drawable.fab_import), stringResource(R.string.import_project_button_title))
                 }
 
-                Spacer(Modifier.height(8.dp))
+                Spacer(Modifier.width(8.dp))
 
                 FloatingActionButton(
                     onClick = { onNewProjectClicked() },

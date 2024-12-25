@@ -98,7 +98,9 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable<DrumKitRoute> {
-                            DrumKitScreen()
+                            DrumKitScreen(onBackClicked = {
+                                navController.navigateUp()
+                            })
                         }
                     }
                 }

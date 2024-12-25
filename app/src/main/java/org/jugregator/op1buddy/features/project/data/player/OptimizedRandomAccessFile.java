@@ -51,13 +51,13 @@ import java.nio.charset.StandardCharsets;
 public class OptimizedRandomAccessFile {
 
     private static final int BUFFER_SIZE = 8192 * 2;
-    private static int defaultExpectedLineLength = 80;
-    private RandomAccessFile raf;
+    private static final int defaultExpectedLineLength = 80;
+    private final RandomAccessFile raf;
     private Long actualFilePointer;
     //private char[] charBuffer;
-    private byte[] charBuffer;
+    private final byte[] charBuffer;
     private int nChars, nextChar;
-    private int bufferSize;
+    private final int bufferSize;
     private long lastOffset;
     private boolean skipLF;
 
@@ -168,7 +168,7 @@ public class OptimizedRandomAccessFile {
         }
         int n = Math.min(len, nChars - nextChar);
         for (int i = 0; i < n; i++) {
-            cbuf[off + i] = (byte) charBuffer[nextChar + i];
+            cbuf[off + i] = charBuffer[nextChar + i];
         }
         //System.arraycopy(charBuffer, nextChar, cbuf, off, n);
         nextChar += n;
@@ -198,7 +198,7 @@ public class OptimizedRandomAccessFile {
      * <code>len</code> is negative, or <code>len</code> is greater than
      * <code>b.length - off</code>
      */
-    public synchronized int read(byte b[], int off, int len) throws IOException {
+    public synchronized int read(byte[] b, int off, int len) throws IOException {
         //resetPosition();
         if ((off < 0) || (off > b.length) || (len < 0)
                 || ((off + len) > b.length) || ((off + len) < 0)) {
@@ -238,7 +238,7 @@ public class OptimizedRandomAccessFile {
      * if some other I/O error occurs.
      * @exception NullPointerException If <code>b</code> is <code>null</code>.
      */
-    public synchronized int read(byte b[]) throws IOException {
+    public synchronized int read(byte[] b) throws IOException {
         return read(b, 0, b.length);
     }
 
@@ -255,7 +255,7 @@ public class OptimizedRandomAccessFile {
      * the bytes.
      * @exception IOException if an I/O error occurs.
      */
-    public synchronized final void readFully(byte b[]) throws IOException {
+    public synchronized final void readFully(byte[] b) throws IOException {
         resetPosition();
         raf.readFully(b);
     }
@@ -275,7 +275,7 @@ public class OptimizedRandomAccessFile {
      * the bytes.
      * @exception IOException if an I/O error occurs.
      */
-    public synchronized final void readFully(byte b[], int off, int len) throws IOException {
+    public synchronized final void readFully(byte[] b, int off, int len) throws IOException {
         resetPosition();
         raf.readFully(b, off, len);
     }
@@ -356,7 +356,7 @@ public class OptimizedRandomAccessFile {
      * @param b the data.
      * @exception IOException if an I/O error occurs.
      */
-    public synchronized void write(byte b[]) throws IOException {
+    public synchronized void write(byte[] b) throws IOException {
         resetPosition();
         raf.write(b, 0, b.length);
     }
@@ -371,7 +371,7 @@ public class OptimizedRandomAccessFile {
      * @param len the number of bytes to write.
      * @exception IOException if an I/O error occurs.
      */
-    public synchronized void write(byte b[], int off, int len) throws IOException {
+    public synchronized void write(byte[] b, int off, int len) throws IOException {
         resetPosition();
         raf.write(b, off, len);
     }
@@ -733,8 +733,7 @@ public class OptimizedRandomAccessFile {
 
         boolean omitLF = ignoreLF || skipLF;
 
-        bufferLoop:
-        for (;;) {
+        for (; ; ) {
 
             if (nextChar >= nChars) {
                 fill();
@@ -764,7 +763,7 @@ public class OptimizedRandomAccessFile {
                 c = charBuffer[i];
                 if (((char) c == '\n') || ((char) c == '\r')) {
                     eol = true;
-                    break charLoop;
+                    break;
                 }
             }
 
@@ -820,9 +819,7 @@ public class OptimizedRandomAccessFile {
             nChars = n;
             nextChar = 0;
         }
-        for (int i = 0; i < buffer.length; i++) {
-            charBuffer[i] = buffer[i];
-        }
+        System.arraycopy(buffer, 0, charBuffer, 0, buffer.length);
     }
 
     /**
