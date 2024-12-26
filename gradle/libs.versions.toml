@@ -1,29 +1,27 @@
 [versions]
-agp = "8.4.1"
+agp = "8.7.3"
 androidLoggingLog4j = "1.0.3"
-firebaseBom = "33.4.0"
+firebaseBom = "33.7.0"
 javaFsVersion = "0.1.4"
-koinAndroidxCompose = "4.0.0"
-koinAndroidxComposeNavigation = "4.0.0"
-kotlin = "1.9.0"
-coreKtx = "1.13.1"
+kotlin = "2.0.20"
+coreKtx = "1.15.0"
 junit = "4.13.2"
-junitVersion = "1.1.5"
-espressoCore = "3.5.1"
+junitVersion = "1.2.1"
+espressoCore = "3.6.1"
 kotlinxCollectionsImmutable = "0.3.8"
-lifecycleRuntimeKtx = "2.8.0"
-activityCompose = "1.9.0"
-composeBom = "2023.08.00"
-coroutines = "1.3.9"
-composeGoogleFonts = "1.6.7"
+lifecycleRuntimeKtx = "2.8.7"
+activityCompose = "1.9.3"
+composeBom = "2024.12.01"
+coroutines = "1.8.0"
+composeGoogleFonts = "1.7.6"
 fat32lib = "0.6.5"
 documentfile = "1.0.1"
-koin-bom = "4.0.0"
+koin-bom = "4.0.1"
 log4j = "1.2.17"
-navigation = "2.8.4"
+navigation = "2.8.5"
 kotlin-serialization = "1.6.0"
-uiautomator = "2.2.0"
-benchmarkMacroJunit4 = "1.2.4"
+uiautomator = "2.3.0"
+benchmarkMacroJunit4 = "1.3.3"
 baselineprofile = "1.3.3"
 profileinstaller = "1.4.1"
 material3Android = "1.3.1"
@@ -36,8 +34,6 @@ firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "fir
 firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics" }
 google-firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
 google-firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics" }
-insert-koin-koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koinAndroidxCompose" }
-insert-koin-koin-androidx-compose-navigation = { module = "io.insert-koin:koin-androidx-compose-navigation", version.ref = "koinAndroidxComposeNavigation" }
 java-fs = { module = "me.jahnen:java-fs", version.ref = "javaFsVersion" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
@@ -59,10 +55,9 @@ androidx-documentfile = { group = "androidx.documentfile", name = "documentfile"
 koin-bom = { module = "io.insert-koin:koin-bom", version.ref = "koin-bom" }
 koin-core = { module = "io.insert-koin:koin-core" }
 koin-android = { module = "io.insert-koin:koin-android" }
-koin-compose = { module = "io.insert-koin:koin-compose" }
 koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose" }
 koin-androidx-compose-navigation = { module = "io.insert-koin:koin-androidx-compose-navigation" }
-koin-compose-viewmodel = { module = "io.insert-koin:koin-compose-viewmodel" }
+koin-test-junit4 = { module = "io.insert-koin:koin-test-junit4", version.ref = "koin-bom" }
 kotlinx-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "kotlinxCollectionsImmutable" }
 log4j = { module = "log4j:log4j", version.ref = "log4j" }
 navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
@@ -78,4 +73,5 @@ jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = 
 serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 android-test = { id = "com.android.test", version.ref = "agp" }
 baselineprofile = { id = "androidx.baselineprofile", version.ref = "baselineprofile" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 

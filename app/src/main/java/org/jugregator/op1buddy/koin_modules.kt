@@ -11,6 +11,7 @@ import org.jugregator.op1buddy.data.project.ProjectRepository
 import org.jugregator.op1buddy.data.project.ProjectRepositoryImpl
 import org.jugregator.op1buddy.features.drumkit.DrumKitScreenViewModel
 import org.jugregator.op1buddy.features.drumkit.data.DrumkitRepository
+import org.jugregator.op1buddy.features.drumkit.data.DrumkitRepositoryImpl
 import org.jugregator.op1buddy.features.project.DrumkitListScreenViewModel
 import org.jugregator.op1buddy.features.project.ProjectScreenViewModel
 import org.jugregator.op1buddy.features.project.SynthListScreenViewModel
@@ -33,7 +34,7 @@ val appModule = module {
     single<ProjectsRepository> { ProjectsRepositoryImpl(androidContext()) }
 
     single<DrumkitRepository> {
-        DrumkitRepository(androidContext(), get())
+        DrumkitRepositoryImpl(androidContext(), get())
     }
 
     single<ProjectRepository> {
@@ -47,7 +48,7 @@ val appModule = module {
         }
     }
 
-    viewModel {
+    viewModel<OP1SyncViewModel> {
         OP1SyncViewModel(
             savedStateHandle = get(),
             usbFileRepository = get(),

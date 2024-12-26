@@ -2,20 +2,21 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.serialization)
-    id("com.vk.vkompose") version "0.6.2"
+    id("com.vk.vkompose") version "0.6.2-k2"
     alias(libs.plugins.baselineprofile)
+    alias(libs.plugins.compose.compiler)
     id("com.google.firebase.crashlytics")
     id("com.google.gms.google-services")
 }
 
 android {
     namespace = "org.jugregator.op1buddy"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "org.jugregator.op1buddy"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 4
         versionName = "0.0.4"
 
@@ -89,8 +90,8 @@ dependencies {
     implementation(platform(libs.koin.bom))
     implementation(libs.koin.core)
     implementation(libs.koin.android)
-    implementation(libs.insert.koin.koin.androidx.compose)
-    implementation(libs.insert.koin.koin.androidx.compose.navigation)
+    implementation(libs.koin.androidx.compose)
+    implementation(libs.koin.androidx.compose.navigation)
 
     implementation(libs.kotlinx.serialization)
     implementation(libs.androidx.profileinstaller)
@@ -107,6 +108,7 @@ dependencies {
     implementation(libs.androidx.material3.android)
 
     testImplementation(libs.junit)
+    testImplementation(libs.koin.test.junit4)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
@@ -114,4 +116,9 @@ dependencies {
     "baselineProfile"(project(":baselineprofile"))
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+}
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
 }
