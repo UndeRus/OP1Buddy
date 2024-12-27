@@ -23,7 +23,7 @@ class DrumkitListScreenViewModel(
     savedStateHandle: SavedStateHandle,
     private val projectsRepository: ProjectsRepository,
     private val projectRepository: ProjectRepository,
-): ViewModel() {
+) : ViewModel() {
 
     private var _mutableState = MutableStateFlow(DrumkitListScreenState(listOf()))
     val uiState: StateFlow<DrumkitListScreenState> = _mutableState
@@ -64,5 +64,5 @@ class DrumkitListScreenViewModel(
 
 @Immutable
 data class DrumkitListScreenState(
-    val drumkits: List<DrumkitInfo>
+    val drumkits: List<DrumkitInfo>,
 )
