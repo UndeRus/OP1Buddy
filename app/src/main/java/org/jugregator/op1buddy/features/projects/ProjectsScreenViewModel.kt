@@ -101,6 +101,12 @@ class ProjectsScreenViewModel(
             }
         }
     }
+
+
+    fun selectProject(index: Int?) {
+        _mutableUiState.update { it.copy(selectedProjectIndex = index) }
+    }
+
 }
 
 fun ContentResolver.queryFileName(uri: Uri): String? {
@@ -158,5 +164,6 @@ private fun <K, V> Map<K, V>.invert(): Map<V, K> {
 data class ProjectsScreenUiState(
     val projects: List<Project> = listOf(),
     val projectImporting: Boolean = false,
+    val selectedProjectIndex: Int? = null,
     val projectImportProgress: Float = 0f
 )

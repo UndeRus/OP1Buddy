@@ -129,39 +129,54 @@ fun ProjectsScreen(
                             project = project, onClick = {
                                 onProjectClicked(project)
                             }, onDeleteClicked = {
+                                viewModel.selectProject(index)
                                 deleteDialogOpened = true
                             }, onEditClicked = {
+                                viewModel.selectProject(index)
                                 editDialogOpened = true
                             })
-                        if (editDialogOpened) {
-                            ProjectSettingsDialog(
-                                projectTitle = project.title,
-                                onDismissRequest = {
-                                    editDialogOpened = false
-                                },
-                                onConfirmation = { title ->
-                                    viewModel.editProjectConfirmed(project, title)
-                                }
-                            )
-                        }
-                        if (deleteDialogOpened) {
-                            ProjectDeleteDialog(
-                                projectTitle = project.title,
-                                onDismissRequest = {
-                                    deleteDialogOpened = false
-                                },
-                                onConfirmation = {
-                                    viewModel.removeProjectConfirmed(project)
-                                }
-                            )
-                        }
                         if (index < projects.size) {
                             HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
                         }
                     }
                 }
             }
+
+            state.selectedProjectIndex?.let { selectedProjectIndex ->
+
+                val selectedProject = projects[selectedProjectIndex]
+
+                if (editDialogOpened) {
+                    ProjectSettingsDialog(
+                        projectTitle = selectedProject.title,
+                        onDismissRequest = {
+                            editDialogOpened = false
+                            viewModel.selectProject(null)
+                        },
+                        onConfirmation = { title ->
+                            viewModel.editProjectConfirmed(selectedProject, title)
+                            viewModel.selectProject(null)
+                        }
+                    )
+                }
+                if (deleteDialogOpened) {
+                    ProjectDeleteDialog(
+                        projectTitle = selectedProject.title,
+                        onDismissRequest = {
+                            deleteDialogOpened = false
+                            viewModel.selectProject(null)
+                        },
+                        onConfirmation = {
+                            viewModel.removeProjectConfirmed(selectedProject)
+                            viewModel.selectProject(null)
+                        }
+                    )
+                }
+            }
+
+
         }
+
     }
 
 }
