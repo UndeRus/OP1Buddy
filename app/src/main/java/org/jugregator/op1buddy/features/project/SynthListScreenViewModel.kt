@@ -33,7 +33,7 @@ class SynthListScreenViewModel(
     private var _mutableState = MutableStateFlow(SynthListScreenState(listOf()))
     val uiState: StateFlow<SynthListScreenState> = _mutableState
 
-    init {
+    fun loadSynths() {
         viewModelScope.launch {
             val project = withContext(Dispatchers.IO) {
                 loadProject()
@@ -56,7 +56,6 @@ class SynthListScreenViewModel(
     private suspend fun loadProject(): Project? {
         return projectsRepository.readProject(route.projectId)
     }
-
 }
 
 @Immutable

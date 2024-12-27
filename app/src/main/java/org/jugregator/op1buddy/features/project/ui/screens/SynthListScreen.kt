@@ -17,6 +17,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.LifecycleStartEffect
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import org.jugregator.op1buddy.R
 import org.jugregator.op1buddy.features.project.SynthListScreenViewModel
 import org.jugregator.op1buddy.features.project.ui.views.EmptySynthsView
@@ -37,6 +39,14 @@ fun SynthListScreen(
     LaunchedEffect(errorEvent) {
         if (errorEvent == 1) {
             onBackPressed()
+        }
+    }
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+    LifecycleStartEffect(viewModel, lifecycleOwner = lifecycleOwner) {
+        viewModel.loadSynths()
+        onStopOrDispose {
+
         }
     }
 

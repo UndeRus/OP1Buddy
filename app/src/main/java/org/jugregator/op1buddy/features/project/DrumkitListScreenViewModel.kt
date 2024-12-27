@@ -34,7 +34,7 @@ class DrumkitListScreenViewModel(
     private val _mutableErrorFinish = MutableSharedFlow<Int>()
     val errorFinish: SharedFlow<Int> = _mutableErrorFinish
 
-    init {
+    fun loadDrumkits() {
         viewModelScope.launch {
             val project = withContext(Dispatchers.IO) {
                 loadProject()
@@ -45,12 +45,15 @@ class DrumkitListScreenViewModel(
                 return@launch
             }
 
-            //TODO: export to separate function
-            val drumkits = withContext(Dispatchers.IO) {
-                projectRepository.readDrumKits(project)
-            }
-            _mutableState.update { it.copy(drumkits = drumkits) }
+            loadDrumkits(project)
         }
+    }
+
+    private suspend fun loadDrumkits(project: Project) {
+        val drumkits = withContext(Dispatchers.IO) {
+            projectRepository.readDrumKits(project)
+        }
+        _mutableState.update { it.copy(drumkits = drumkits) }
     }
 
     private suspend fun loadProject(): Project? {
