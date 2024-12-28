@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.jugregator.op1buddy.data.LCE
 import org.jugregator.op1buddy.data.ProjectsRepository
 import org.jugregator.op1buddy.data.project.Project
 import org.jugregator.op1buddy.data.project.ProjectRepository
@@ -42,9 +43,12 @@ class TapePlayerScreenViewModel(
 
     fun loadTapes() {
         viewModelScope.launch {
+            _mutableState.update { it.copy(data = LCE.Loading) }
+
             val projectInfo = projectsRepository.readProject(route.projectId)
             if (projectInfo == null) {
                 //TODO: rework, this is dirty hack to close screen
+                _mutableState.update { it.copy(data = LCE.Error) }
                 _mutableErrorFinish.emit(1)
                 return@launch
             }
@@ -56,20 +60,15 @@ class TapePlayerScreenViewModel(
                 tapes
             }
 
-            if (tapesData.isEmpty()) {
-                _mutableState.update {
-                    it.copy(isEmpty = true, isLoading = false)
-                }
-            } else {
-                val maxLength = withContext(Dispatchers.Default) {
-                    tapesData.map { it.second.regions.regions }
-                        .maxByOrNull { it.maxBy { it.second }.second }
-                        ?.maxByOrNull { it.second }?.second ?: 10L
-                }
-                _mutableState.update {
-                    it.copy(tapes = tapesData, maxLength = maxLength, isLoading = false)
-                }
+            val maxLength = withContext(Dispatchers.Default) {
+                tapesData.map { it.second.regions.regions }
+                    .maxByOrNull { it.maxBy { it.second }.second }
+                    ?.maxByOrNull { it.second }?.second ?: 10L
             }
+            _mutableState.update {
+                it.copy(data = LCE.Content(tapesData), maxLength = maxLength)
+            }
+
         }
     }
 
@@ -133,10 +132,8 @@ class TapePlayerScreenViewModel(
 private const val PROGRESS_TIMEOUT_MILLIS: Long = 100
 
 data class TapePlayerScreenState(
-    val tapes: List<Pair<InputStream, AiffTapeMetadata>> = listOf(),
     val position: Long = 0,
     val maxLength: Long = 0,
-    val isEmpty: Boolean = false,
-    val isLoading: Boolean = true,
+    val data: LCE<List<Pair<InputStream, AiffTapeMetadata>>> = LCE.Loading,
     val isPlaying: Boolean = false,
 )

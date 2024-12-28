@@ -20,9 +20,12 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import org.jugregator.op1buddy.R
+import org.jugregator.op1buddy.data.LCE
 import org.jugregator.op1buddy.features.project.SynthListScreenViewModel
 import org.jugregator.op1buddy.features.project.ui.views.EmptySynthsView
 import org.jugregator.op1buddy.features.project.ui.views.SynthResourceItem
+import org.jugregator.op1buddy.features.project.ui.views.SynthsLoadingView
+import org.jugregator.op1buddy.features.project.ui.views.TapesLoadingView
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -30,6 +33,7 @@ fun SynthListScreen(
     modifier: Modifier = Modifier,
     viewModel: SynthListScreenViewModel = koinViewModel(),
     onBackPressed: () -> Unit,
+    onSyncClick: () -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -46,23 +50,9 @@ fun SynthListScreen(
     LifecycleStartEffect(viewModel, lifecycleOwner = lifecycleOwner) {
         viewModel.loadSynths()
         onStopOrDispose {
-
         }
     }
 
-    val items: List<ProjectResource.Synth> by remember {
-        derivedStateOf {
-            uiState.synths.mapIndexed { index, synthInfo ->
-                ProjectResource.Synth(
-                    index = index,
-                    engine = synthInfo.synthEngine,
-                    filename = synthInfo.filename,
-                    name = synthInfo.name
-                )
-            }
-        }
-    }
-    val lazyColumnState = rememberLazyListState()
     Box(
         modifier = modifier.fillMaxSize()
     ) {
@@ -71,12 +61,36 @@ fun SynthListScreen(
             painter = painterResource(R.drawable.background_right),
             contentDescription = null,
         )
-        if (items.isEmpty()) {
-            EmptySynthsView(modifier = Modifier.padding(horizontal = 16.dp))
-        } else {
-            LazyColumn(state = lazyColumnState) {
-                items(items, key = { it.filename }) {
-                    SynthResourceItem(synth = it)
+
+        when(val data = uiState.data) {
+            LCE.Loading -> {
+                SynthsLoadingView()
+            }
+            LCE.Error -> {
+                //TODO: show error
+            }
+            is LCE.Content -> {
+                val items: List<ProjectResource.Synth> by remember {
+                    derivedStateOf {
+                        data.data.mapIndexed { index, synthInfo ->
+                            ProjectResource.Synth(
+                                index = index,
+                                engine = synthInfo.synthEngine,
+                                filename = synthInfo.filename,
+                                name = synthInfo.name
+                            )
+                        }
+                    }
+                }
+                if (items.isEmpty()) {
+                    EmptySynthsView(modifier = Modifier.padding(horizontal = 16.dp)) { onSyncClick() }
+                } else {
+                    val lazyColumnState = rememberLazyListState()
+                    LazyColumn(state = lazyColumnState) {
+                        items(items, key = { it.filename }) {
+                            SynthResourceItem(synth = it)
+                        }
+                    }
                 }
             }
         }

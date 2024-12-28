@@ -121,6 +121,8 @@ fun ProjectScreen(
             composable<ProjectSubRoute.SynthListRoute> {
                 SynthListScreen(onBackPressed = {
                     onBackClicked()
+                }, onSyncClick = {
+                    onSyncClicked(uiState.projectId)
                 })
             }
 
@@ -129,12 +131,16 @@ fun ProjectScreen(
                     onDrumKitSelected(projectId, drumkitIndex)
                 }, onBackPressed = {
                     onBackClicked()
+                }, onSyncClick = {
+                    onSyncClicked(uiState.projectId)
                 })
             }
 
             composable<ProjectSubRoute.TapePlayerRoute> {
                 TapePlayerScreen(onBackPressed = {
                     onBackClicked()
+                }, onSyncPressed = {
+                    onSyncClicked(uiState.projectId)
                 })
             }
         }

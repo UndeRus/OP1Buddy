@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import kotlinx.collections.immutable.toImmutableList
+import org.jugregator.op1buddy.data.LCE
 import org.jugregator.op1buddy.features.project.TapePlayerScreenViewModel
 import org.jugregator.op1buddy.features.project.ui.views.EmptyTapesView
 import org.jugregator.op1buddy.features.project.ui.views.MultiTrackPlayer
@@ -28,6 +29,7 @@ fun TapePlayerScreen(
     modifier: Modifier = Modifier,
     viewModel: TapePlayerScreenViewModel = koinViewModel(),
     onBackPressed: () -> Unit,
+    onSyncPressed: () -> Unit,
 ) {
     Column(
         modifier
@@ -51,52 +53,62 @@ fun TapePlayerScreen(
             }
         }
 
-        val tapeRanges by remember {
-            derivedStateOf {
-                uiState.tapes.map {
-                    it.second.regions.regions.toImmutableList()
+        when(val data = uiState.data) {
+            LCE.Loading -> {
+                TapesLoadingView()
+            }
+            LCE.Error -> {
+                //TODO: show error
+            }
+            is LCE.Content -> {
+                val tapeRanges by remember {
+                    derivedStateOf {
+                        data.data.map {
+                            it.second.regions.regions.toImmutableList()
+                        }
+                    }
+                }
+
+                if (tapeRanges.isEmpty()) {
+                    EmptyTapesView {
+                        onSyncPressed()
+                    }
+                } else {
+                    var value by remember { mutableIntStateOf(0) }
+
+                    val animatedSliderValue by animateIntAsState(
+                        targetValue = uiState.position.toInt(),
+                        label = "Slider Value"
+                    )
+
+                    MultiTrackPlayer(
+                        value = animatedSliderValue,
+                        onValueChanged = { newValue ->
+                            value = newValue
+                            viewModel.seekToSample(newValue.toLong(), false)
+                        },
+                        onValueChangeFinished = {
+                            viewModel.seekToSample(value.toLong(), true)
+                        },
+                        tapeRanges = tapeRanges.toImmutableList(),
+                        fromZero = true,
+                        isPlaying = uiState.isPlaying,
+                        onPlayClick = {
+                            viewModel.play()
+                        },
+                        onPauseClick = {
+                            viewModel.pause()
+                        },
+                        onStopClick = {
+                            viewModel.stop()
+                        },
+                        onTrackToggle = { index, checked ->
+                            viewModel.toggleTrack(index, checked)
+                        },
+                        trackColor = Color(0xFF1c1c1c)
+                    )
                 }
             }
-        }
-
-        var value by remember { mutableIntStateOf(0) }
-
-        val animatedSliderValue by animateIntAsState(
-            targetValue = uiState.position.toInt(),
-            label = "Slider Value"
-        )
-
-        if (uiState.isLoading) {
-            TapesLoadingView()
-        } else if (uiState.isEmpty) {
-            EmptyTapesView()
-        } else {
-            MultiTrackPlayer(
-                value = animatedSliderValue,
-                onValueChanged = { newValue ->
-                    value = newValue
-                    viewModel.seekToSample(newValue.toLong(), false)
-                },
-                onValueChangeFinished = {
-                    viewModel.seekToSample(value.toLong(), true)
-                },
-                tapeRanges = tapeRanges.toImmutableList(),
-                fromZero = true,
-                isPlaying = uiState.isPlaying,
-                onPlayClick = {
-                    viewModel.play()
-                },
-                onPauseClick = {
-                    viewModel.pause()
-                },
-                onStopClick = {
-                    viewModel.stop()
-                },
-                onTrackToggle = { index, checked ->
-                    viewModel.toggleTrack(index, checked)
-                },
-                trackColor = Color(0xFF1c1c1c)
-            )
         }
     }
 }

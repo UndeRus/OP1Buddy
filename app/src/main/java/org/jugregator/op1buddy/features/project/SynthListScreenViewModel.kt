@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.jugregator.op1buddy.data.LCE
 import org.jugregator.op1buddy.data.ProjectsRepository
 import org.jugregator.op1buddy.data.project.Project
 import org.jugregator.op1buddy.data.project.ProjectRepository
@@ -30,16 +31,18 @@ class SynthListScreenViewModel(
     private val _mutableErrorFinish = MutableSharedFlow<Int>()
     val errorFinish: SharedFlow<Int> = _mutableErrorFinish
 
-    private var _mutableState = MutableStateFlow(SynthListScreenState(listOf()))
+    private var _mutableState = MutableStateFlow(SynthListScreenState())
     val uiState: StateFlow<SynthListScreenState> = _mutableState
 
     fun loadSynths() {
         viewModelScope.launch {
+            _mutableState.update { it.copy(data = LCE.Loading) }
             val project = withContext(Dispatchers.IO) {
                 loadProject()
             }
             if (project == null) {
                 //TODO: rework, this is dirty hack to close screen
+                _mutableState.update { it.copy(data = LCE.Error) }
                 _mutableErrorFinish.emit(1)
                 return@launch
             }
@@ -48,7 +51,7 @@ class SynthListScreenViewModel(
             val synths = withContext(Dispatchers.IO) {
                 projectRepository.readSynths(project)
             }
-            _mutableState.update { it.copy(synths = synths) }
+            _mutableState.update { it.copy(data = LCE.Content(synths)) }
         }
     }
 
@@ -60,5 +63,5 @@ class SynthListScreenViewModel(
 
 @Immutable
 data class SynthListScreenState(
-    val synths: List<SynthInfo>
+    val data: LCE<List<SynthInfo>> = LCE.Loading
 )

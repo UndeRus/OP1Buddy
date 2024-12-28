@@ -20,8 +20,10 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import org.jugregator.op1buddy.R
+import org.jugregator.op1buddy.data.LCE
 import org.jugregator.op1buddy.data.drumkit.DrumkitType
 import org.jugregator.op1buddy.features.project.DrumkitListScreenViewModel
+import org.jugregator.op1buddy.features.project.ui.views.DrumkitLoadingView
 import org.jugregator.op1buddy.features.project.ui.views.DrumkitResourceItem
 import org.jugregator.op1buddy.features.project.ui.views.EmptyDrumkitsView
 import org.koin.androidx.compose.koinViewModel
@@ -32,6 +34,7 @@ fun DrumkitListScreen(
     viewModel: DrumkitListScreenViewModel = koinViewModel(),
     onDrumKitSelected: (String, Int) -> Unit,
     onBackPressed: () -> Unit,
+    onSyncClick: () -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -52,18 +55,7 @@ fun DrumkitListScreen(
         }
     }
 
-    val items: List<ProjectResource.Drumkit> by remember {
-        derivedStateOf {
-            uiState.drumkits.mapIndexed { index, drumkitInfo ->
-                ProjectResource.Drumkit(
-                    index = index,
-                    filename = drumkitInfo.filename,
-                    type = drumkitInfo.drumType,
-                    name = drumkitInfo.name
-                )
-            }
-        }
-    }
+
     val lazyColumnState = rememberLazyListState()
     Box(
         modifier = modifier.fillMaxSize()
@@ -73,18 +65,45 @@ fun DrumkitListScreen(
             painter = painterResource(R.drawable.background_right),
             contentDescription = null,
         )
-        if (items.isEmpty()) {
-            EmptyDrumkitsView(modifier = Modifier.padding(horizontal = 16.dp))
-        } else {
-            LazyColumn(state = lazyColumnState) {
-                items(items, key = { it.filename }) {
-                    DrumkitResourceItem(drumkit = it, onClick = {
-                        viewModel.onDrumKitSelected(it.index) { projectId, drumkitIndex ->
-                            if (it.type == DrumkitType.Sample) {
-                                onDrumKitSelected(projectId, drumkitIndex)
-                            }
+
+
+        when(val data = uiState.data) {
+            LCE.Loading -> {
+                DrumkitLoadingView()
+            }
+            LCE.Error -> {
+                //TODO: show error
+            }
+            is LCE.Content -> {
+                val items: List<ProjectResource.Drumkit> by remember {
+                    derivedStateOf {
+                        data.data.mapIndexed { index, drumkitInfo ->
+                            ProjectResource.Drumkit(
+                                index = index,
+                                filename = drumkitInfo.filename,
+                                type = drumkitInfo.drumType,
+                                name = drumkitInfo.name
+                            )
                         }
-                    })
+                    }
+                }
+
+                if (items.isEmpty()) {
+                    EmptyDrumkitsView(modifier = Modifier.padding(horizontal = 16.dp),) {
+                        onSyncClick()
+                    }
+                } else {
+                    LazyColumn(state = lazyColumnState) {
+                        items(items, key = { it.filename }) {
+                            DrumkitResourceItem(drumkit = it, onClick = {
+                                viewModel.onDrumKitSelected(it.index) { projectId, drumkitIndex ->
+                                    if (it.type == DrumkitType.Sample) {
+                                        onDrumKitSelected(projectId, drumkitIndex)
+                                    }
+                                }
+                            })
+                        }
+                    }
                 }
             }
         }

@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.jugregator.op1buddy.data.LCE
 import org.jugregator.op1buddy.data.ProjectsRepository
 import org.jugregator.op1buddy.data.drumkit.DrumkitInfo
 import org.jugregator.op1buddy.data.project.Project
@@ -25,7 +26,7 @@ class DrumkitListScreenViewModel(
     private val projectRepository: ProjectRepository,
 ) : ViewModel() {
 
-    private var _mutableState = MutableStateFlow(DrumkitListScreenState(listOf()))
+    private var _mutableState = MutableStateFlow(DrumkitListScreenState())
     val uiState: StateFlow<DrumkitListScreenState> = _mutableState
 
     private val route = savedStateHandle.toRoute<ProjectSubRoute.DrumkitListListRoute>()
@@ -36,11 +37,13 @@ class DrumkitListScreenViewModel(
 
     fun loadDrumkits() {
         viewModelScope.launch {
+            _mutableState.update { it.copy(data = LCE.Loading) }
             val project = withContext(Dispatchers.IO) {
                 loadProject()
             }
             if (project == null) {
                 //TODO: rework, this is dirty hack to close screen
+                _mutableState.update { it.copy(data = LCE.Error) }
                 _mutableErrorFinish.emit(1)
                 return@launch
             }
@@ -53,7 +56,7 @@ class DrumkitListScreenViewModel(
         val drumkits = withContext(Dispatchers.IO) {
             projectRepository.readDrumKits(project)
         }
-        _mutableState.update { it.copy(drumkits = drumkits) }
+        _mutableState.update { it.copy(data = LCE.Content(drumkits)) }
     }
 
     private suspend fun loadProject(): Project? {
@@ -67,5 +70,5 @@ class DrumkitListScreenViewModel(
 
 @Immutable
 data class DrumkitListScreenState(
-    val drumkits: List<DrumkitInfo>,
+    val data: LCE<List<DrumkitInfo>> = LCE.Loading
 )

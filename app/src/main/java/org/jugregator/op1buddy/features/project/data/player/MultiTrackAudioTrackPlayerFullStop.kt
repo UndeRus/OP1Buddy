@@ -281,7 +281,7 @@ private fun bytesToSamples(bytesOffset: Long): Long {
     return bytesOffset / BYTES_PER_SAMPLE
 }
 
-inline fun mixBuffers(resultBuffer: ByteArray, buffers: Array<ByteArray>, enabled: Array<Boolean>) {
+fun mixBuffers(resultBuffer: ByteArray, buffers: Array<ByteArray>, enabled: Array<Boolean>) {
     assert(buffers.all { it.size == resultBuffer.size })
     for (i in resultBuffer.indices step 2) {
         // Convert bytes to PCM samples
