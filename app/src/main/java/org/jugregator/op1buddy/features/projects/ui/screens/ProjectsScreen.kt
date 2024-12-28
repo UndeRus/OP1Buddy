@@ -120,7 +120,7 @@ fun ProjectsScreen(
             var deleteDialogOpened by remember { mutableStateOf(false) }
 
             if (state.projectImporting) {
-                ImportProgress()
+                ImportProgress(progress = state.projectImportProgress)
             } else {
                 LazyColumn {
                     itemsIndexed(projects, key = { index, project -> project.id }) { index, project ->
