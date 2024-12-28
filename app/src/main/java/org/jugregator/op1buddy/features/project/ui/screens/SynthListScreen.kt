@@ -25,7 +25,6 @@ import org.jugregator.op1buddy.features.project.SynthListScreenViewModel
 import org.jugregator.op1buddy.features.project.ui.views.EmptySynthsView
 import org.jugregator.op1buddy.features.project.ui.views.SynthResourceItem
 import org.jugregator.op1buddy.features.project.ui.views.SynthsLoadingView
-import org.jugregator.op1buddy.features.project.ui.views.TapesLoadingView
 import org.koin.androidx.compose.koinViewModel
 
 @Composable

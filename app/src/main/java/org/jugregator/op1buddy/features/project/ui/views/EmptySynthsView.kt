@@ -14,7 +14,7 @@ fun EmptySynthsView(modifier: Modifier = Modifier, onSyncClick: () -> Unit) {
 
 @Preview
 @Composable
-private fun EmptySynthsViewPreview() {
+fun EmptySynthsViewPreview() {
     AppTheme {
         EmptySynthsView {}
     }
