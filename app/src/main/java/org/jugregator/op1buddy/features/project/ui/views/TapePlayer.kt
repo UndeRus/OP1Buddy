@@ -278,7 +278,7 @@ fun MultiTrackPlayer(
                         }
                     }
 
-                    val maxRangeInMinutes by remember {
+                    val maxRangeInMinutes by remember(maxRangeValue) {
                         derivedStateOf {
                             max(ceil(maxRangeValue / (SAMPLE_RATE * MIN_TAPE_LENGTH_SECONDS.toFloat())).toLong(), 1)
                         }
@@ -354,7 +354,6 @@ fun SliderTrackBackground(
             .height(trackHeight)
             .fillMaxWidth()
             .drawBehind {
-
                 drawRect(
                     barColor,
                     topLeft = Offset(0f, ((trackHeight / 2) - (barHeight / 2)).toPx()),
@@ -386,7 +385,6 @@ fun SliderTrackBackground(
                         )
                     }
                 }
-
             }
     )
 }
