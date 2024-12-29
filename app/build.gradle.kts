@@ -87,6 +87,7 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.navigation.compose)
+    implementation(libs.androidx.compose.animation)
 
     // Koin
     implementation(platform(libs.koin.bom))

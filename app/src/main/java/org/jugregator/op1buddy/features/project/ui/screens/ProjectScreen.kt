@@ -34,6 +34,10 @@ import org.jugregator.op1buddy.features.project.ProjectScreenViewModel
 import org.jugregator.op1buddy.features.project.ui.views.ProjectBottomBar
 import org.jugregator.op1buddy.features.project.ui.views.ProjectSettingsDialog
 import org.jugregator.op1buddy.features.projects.ProjectSubRoute
+import org.jugregator.op1buddy.features.projects.ui.enterPop
+import org.jugregator.op1buddy.features.projects.ui.enterPush
+import org.jugregator.op1buddy.features.projects.ui.exitPop
+import org.jugregator.op1buddy.features.projects.ui.exitPush
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -115,7 +119,11 @@ fun ProjectScreen(
         NavHost(
             modifier = Modifier.padding(innerPadding),
             navController = navController,
-            startDestination = ProjectSubRoute.SynthListRoute(projectId = uiState.projectId)
+            startDestination = ProjectSubRoute.SynthListRoute(projectId = uiState.projectId),
+            enterTransition = enterPush,
+            exitTransition = exitPush,
+            popEnterTransition = enterPop,
+            popExitTransition = exitPop,
         ) {
 
             composable<ProjectSubRoute.SynthListRoute> {

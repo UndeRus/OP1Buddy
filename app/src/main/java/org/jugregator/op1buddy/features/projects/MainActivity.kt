@@ -15,6 +15,10 @@ import androidx.navigation.compose.rememberNavController
 import kotlinx.serialization.Serializable
 import org.jugregator.op1buddy.features.drumkit.ui.screen.DrumKitScreen
 import org.jugregator.op1buddy.features.project.ui.screens.ProjectScreen
+import org.jugregator.op1buddy.features.projects.ui.enterPop
+import org.jugregator.op1buddy.features.projects.ui.enterPush
+import org.jugregator.op1buddy.features.projects.ui.exitPop
+import org.jugregator.op1buddy.features.projects.ui.exitPush
 import org.jugregator.op1buddy.features.projects.ui.screens.ProjectsScreen
 import org.jugregator.op1buddy.features.sync.ui.screens.SyncScreen
 import org.jugregator.op1buddy.ui.theme.AppTheme
@@ -49,7 +53,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-
         enableEdgeToEdge()
         setContent {
             KoinContext {
@@ -59,6 +62,10 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier.windowInsetsPadding(WindowInsets.systemBars),
                         navController = navController,
                         startDestination = ProjectsRoute,
+                        enterTransition = enterPush,
+                        exitTransition = exitPush,
+                        popEnterTransition = enterPop,
+                        popExitTransition = exitPop,
                     ) {
                         composable<ProjectsRoute> {
                             ProjectsScreen(
