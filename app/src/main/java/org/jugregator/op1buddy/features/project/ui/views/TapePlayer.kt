@@ -128,7 +128,7 @@ fun MultiTrackPlayer(
 
     var canvasWidth by remember { mutableIntStateOf(-1) }
 
-    val leftColumnWeight = .9f
+    val leftColumnWeight = 1.5f
     val rightColumnWeight = .15f
     val barHeight = 4.dp
 
@@ -312,13 +312,13 @@ fun MultiTrackPlayer(
     }
 
     Row(horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()) {
-        IconButton(onClick = onPlayClick) {
+        IconButton(onClick = onPlayClick, modifier = Modifier.size(65.dp)) {
             Icon(painterResource(R.drawable.player_play), contentDescription = null)
         }
-        IconButton(onClick = onPauseClick) {
+        IconButton(onClick = onPauseClick, modifier = Modifier.size(65.dp)) {
             Icon(painterResource(R.drawable.player_pause), contentDescription = null)
         }
-        IconButton(onClick = onStopClick) {
+        IconButton(onClick = onStopClick, modifier = Modifier.size(65.dp)) {
             Icon(painterResource(R.drawable.player_stop), contentDescription = null)
         }
     }
@@ -479,5 +479,5 @@ private const val SAMPLE_RATE: Long = 44100
 private const val MIN_TAPE_LENGTH_SECONDS = 60
 private const val FRAMES_PER_SECOND = 24
 
-private const val FAST_REEL_DURATION_MILLIS = 2000
-private const val SLOW_REEL_DURATION_MILLIS = 4000
+private const val FAST_REEL_DURATION_MILLIS = 3000
+private const val SLOW_REEL_DURATION_MILLIS = 5000

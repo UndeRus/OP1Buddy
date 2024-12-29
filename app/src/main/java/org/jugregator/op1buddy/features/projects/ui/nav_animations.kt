@@ -12,7 +12,7 @@ import androidx.navigation.NavBackStackEntry
 val enterPush: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition = {
     fadeIn(
         animationSpec = tween(
-            ANIMATION_DURATION_SHORT_MILLIS, easing = LinearEasing
+            FADE_ANIMATION_DURATION_SHORT_MILLIS, easing = LinearEasing
         )
     ) + slideIntoContainer(
         animationSpec = tween(ANIMATION_DURATION_SHORT_MILLIS, easing = LinearEasing),
@@ -24,7 +24,7 @@ val enterPush: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTran
 val exitPush: AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition = {
     fadeOut(
         animationSpec = tween(
-            ANIMATION_DURATION_MILLIS, easing = LinearEasing
+            FADE_ANIMATION_DURATION_MILLIS, easing = LinearEasing
         )
     ) + slideOutOfContainer(
         animationSpec = tween(ANIMATION_DURATION_MILLIS, easing = LinearEasing),
@@ -35,7 +35,7 @@ val exitPush: AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransi
 val enterPop: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition = {
     fadeIn(
         animationSpec = tween(
-            ANIMATION_DURATION_MILLIS, easing = LinearEasing
+            FADE_ANIMATION_DURATION_MILLIS, easing = LinearEasing
         )
     ) + slideIntoContainer(
         animationSpec = tween(ANIMATION_DURATION_MILLIS, easing = LinearEasing),
@@ -46,7 +46,7 @@ val enterPop: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTrans
 val exitPop: AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition = {
     fadeOut(
         animationSpec = tween(
-            ANIMATION_DURATION_SHORT_MILLIS, easing = LinearEasing
+            FADE_ANIMATION_DURATION_SHORT_MILLIS, easing = LinearEasing
         )
     ) + slideOutOfContainer(
         animationSpec = tween(ANIMATION_DURATION_SHORT_MILLIS, easing = LinearEasing),
@@ -55,5 +55,7 @@ val exitPop: AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransit
     )
 }
 
-private const val ANIMATION_DURATION_MILLIS = 300
-private const val ANIMATION_DURATION_SHORT_MILLIS = 200
+private const val ANIMATION_DURATION_MILLIS = 370
+private const val FADE_ANIMATION_DURATION_MILLIS = 200
+private const val ANIMATION_DURATION_SHORT_MILLIS = 270
+private const val FADE_ANIMATION_DURATION_SHORT_MILLIS = 100

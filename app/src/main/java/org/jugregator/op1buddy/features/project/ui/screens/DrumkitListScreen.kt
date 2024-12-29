@@ -23,7 +23,6 @@ import org.jugregator.op1buddy.R
 import org.jugregator.op1buddy.data.LCE
 import org.jugregator.op1buddy.data.drumkit.DrumkitType
 import org.jugregator.op1buddy.features.project.DrumkitListScreenViewModel
-import org.jugregator.op1buddy.features.project.ui.views.DrumkitLoadingView
 import org.jugregator.op1buddy.features.project.ui.views.DrumkitResourceItem
 import org.jugregator.op1buddy.features.project.ui.views.EmptyDrumkitsView
 import org.koin.androidx.compose.koinViewModel
@@ -69,7 +68,8 @@ fun DrumkitListScreen(
 
         when(val data = uiState.data) {
             LCE.Loading -> {
-                DrumkitLoadingView()
+                //DrumkitLoadingView()
+                //TODO: show loading
             }
             LCE.Error -> {
                 //TODO: show error

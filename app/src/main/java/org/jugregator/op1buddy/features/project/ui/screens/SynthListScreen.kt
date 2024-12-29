@@ -24,7 +24,6 @@ import org.jugregator.op1buddy.data.LCE
 import org.jugregator.op1buddy.features.project.SynthListScreenViewModel
 import org.jugregator.op1buddy.features.project.ui.views.EmptySynthsView
 import org.jugregator.op1buddy.features.project.ui.views.SynthResourceItem
-import org.jugregator.op1buddy.features.project.ui.views.SynthsLoadingView
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -63,7 +62,8 @@ fun SynthListScreen(
 
         when(val data = uiState.data) {
             LCE.Loading -> {
-                SynthsLoadingView()
+                //SynthsLoadingView()
+                //TODO: show loading
             }
             LCE.Error -> {
                 //TODO: show error

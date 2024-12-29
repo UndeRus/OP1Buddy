@@ -21,7 +21,6 @@ import org.jugregator.op1buddy.data.LCE
 import org.jugregator.op1buddy.features.project.TapePlayerScreenViewModel
 import org.jugregator.op1buddy.features.project.ui.views.EmptyTapesView
 import org.jugregator.op1buddy.features.project.ui.views.MultiTrackPlayer
-import org.jugregator.op1buddy.features.project.ui.views.TapesLoadingView
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -55,7 +54,8 @@ fun TapePlayerScreen(
 
         when(val data = uiState.data) {
             LCE.Loading -> {
-                TapesLoadingView()
+                //TapesLoadingView()
+                //TODO: show loading
             }
             LCE.Error -> {
                 //TODO: show error
