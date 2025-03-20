@@ -122,8 +122,7 @@ class AumsUsbController(
             if (ACTION_USB_PERMISSION == action) {
                 synchronized(this) {
                     // After permission granted
-                    val device =
-                        intent.getParcelableExtra(UsbManager.EXTRA_DEVICE) as UsbDevice?
+                    val device = getUsbDevice(intent)
 
                     if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
                         device?.let {
@@ -133,11 +132,7 @@ class AumsUsbController(
                 }
             } else if (UsbManager.ACTION_USB_DEVICE_ATTACHED == action) {
                 // After device connected
-                val device = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    intent.getParcelableExtra(UsbManager.EXTRA_DEVICE, UsbDevice::class.java)
-                } else {
-                    intent.getParcelableExtra(UsbManager.EXTRA_DEVICE) as UsbDevice?
-                }
+                val device = getUsbDevice(intent)
                 Log.d(TAG, "USB device attached")
 
                 // determine if connected device is a mass storage devuce
@@ -146,11 +141,7 @@ class AumsUsbController(
                 }
             } else if (UsbManager.ACTION_USB_DEVICE_DETACHED == action) {
                 // After device disconnected
-                val device = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    intent.getParcelableExtra(UsbManager.EXTRA_DEVICE, UsbDevice::class.java)
-                } else {
-                    intent.getParcelableExtra(UsbManager.EXTRA_DEVICE) as UsbDevice?
-                }
+                val device = getUsbDevice(intent)
                 Log.d(TAG, "USB device detached")
 
                 // determine if connected device is a mass storage devuce
@@ -164,6 +155,14 @@ class AumsUsbController(
             }
         }
     }
+
+    @Suppress("DEPRECATION")
+    private fun getUsbDevice(intent: Intent) =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            intent.getParcelableExtra(UsbManager.EXTRA_DEVICE, UsbDevice::class.java)
+        } else {
+            intent.getParcelableExtra(UsbManager.EXTRA_DEVICE) as UsbDevice?
+        }
 }
 
 @Throws(IllegalStateException::class)
