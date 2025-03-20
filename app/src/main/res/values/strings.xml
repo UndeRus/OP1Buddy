@@ -1,4 +1,32 @@
 <resources>
-    <string name="app_name">OP1Buddy</string>
+    <string name="app_name">Sync for OP-1</string>
     <string name="sync_screen">Sync for OP-1</string>
+    <string name="faq1_description">Connect with USB cable</string>
+    <string name="faq2_description">Power on the synthesizer</string>
+    <string name="faq3_description">Press Shift + Com</string>
+    <string name="faq4_description">Press Tape 3</string>
+    <string name="faq5_description">Confirm permission on screen</string>
+    <string name="backup_tab_title">Backup</string>
+    <string name="restore_tab_title">Restore</string>
+    <string name="export_tab_title">Export</string>
+    <string name="backup_bottom_bar_tab">Backup</string>
+    <string name="restore_bottom_bar_tab">Restore</string>
+    <string name="export_bottombar_tab">Export</string>
+    <string name="restore_progress_title">NOW UPLOADING</string>
+    <string name="restore_screen_title">Choose items to upload to OP-1</string>
+    <string name="upload_button_title">Upload</string>
+    <string name="create_new_project_button_title">Create new project</string>
+    <string name="import_project_button_title">Import project</string>
+    <string name="projects_title">Projects</string>
+    <string name="project_dialog_title">Project name</string>
+    <string name="dismiss">Dismiss</string>
+    <string name="confirm">Confirm</string>
+    <string name="project_delete_dialog_title">Do you really want delete project?</string>
+    <string name="export_title">Export current backup</string>
+    <string name="export">Export</string>
+    <string name="progress_warning">Wait until 100% load</string>
+    <string name="backup_progress_title">NOW DOWNLOADING</string>
+    <string name="backup_screen_description">Choose current item to download from OP-1</string>
+    <string name="download">Download</string>
+    <string name="project_import_progress_title">Project importing</string>
 </resources>

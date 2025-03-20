@@ -3,15 +3,15 @@ package org.jugregator.op1buddy.features.sync
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import android.widget.Toast
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.toMutableStateList
 import androidx.documentfile.provider.DocumentFile
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.CreationExtras
+import androidx.navigation.toRoute
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -25,18 +25,24 @@ import me.jahnen.libaums.core.fs.FileSystem
 import me.jahnen.libaums.core.fs.UsbFile
 import org.jugregator.op1buddy.AumsUsbController
 import org.jugregator.op1buddy.OP1State
+import org.jugregator.op1buddy.data.ProjectsRepository
+import org.jugregator.op1buddy.data.project.LocalFileRepository
+import org.jugregator.op1buddy.features.projects.SyncRoute
+import org.jugregator.op1buddy.data.project.BackupRepository
+import org.jugregator.op1buddy.features.sync.data.UsbFileRepository
 import java.io.File
 import java.io.OutputStream
-import java.util.Arrays
-import java.util.Collections
 
 const val TAPES_COUNT = 4
 
 class OP1SyncViewModel(
+    savedStateHandle: SavedStateHandle,
     private val usbFileRepository: UsbFileRepository,
     private val backupRepository: BackupRepository,
     private val localFileRepository: LocalFileRepository,
+    private val projectsRepository: ProjectsRepository
 ) : ViewModel() {
+    private var backupDirPath: String = ""
     private lateinit var backupDir: File
     private var deviceState = DeviceState()
 
@@ -46,9 +52,12 @@ class OP1SyncViewModel(
     private val _restoreStateFlow = MutableStateFlow(RestoreScreenState())
     val restoreStateFlow: StateFlow<RestoreScreenState> = _restoreStateFlow
 
-    lateinit var aums: AumsUsbController
+    private lateinit var aums: AumsUsbController
+
+    private val route = savedStateHandle.toRoute<SyncRoute>()
 
     fun init(context: Context) {
+        Log.w("SYNC ROUTE", route.toString())
         aums = AumsUsbController(
             context,
             connectedCallback = { fs ->
@@ -74,17 +83,26 @@ class OP1SyncViewModel(
         )
         aums.initReceiver()
 
-        backupDir = File(context.filesDir, "op1backup")
-        if (!backupDir.exists()) {
-            backupDir.mkdirs()
-        }
 
-        refreshLocalBackupInfo()
+        viewModelScope.launch {
+            val project = projectsRepository.readProject(route.projectId)
+            backupDirPath = project?.backupDir ?: ""
+            backupDir = File(context.filesDir, "op1backup/${backupDirPath}")
+            if (!backupDir.exists()) {
+                backupDir.mkdirs()
+            }
+
+            refreshLocalBackupInfo()
+        }
+    }
+
+    fun deInit() {
+        aums.destroyReceiver()
+        aums.closeDevices()
     }
 
     private fun refreshLocalBackupInfo() {
-        //TODO: check current dir and load restore state
-        val savedBackupInfo = localFileRepository.readBackupInfo(backupDir)
+        val savedBackupInfo = localFileRepository.readBackupInfo(backupDirPath)
         _restoreStateFlow.update { it.copy(backupInfo = savedBackupInfo) }
     }
 
@@ -203,10 +221,6 @@ class OP1SyncViewModel(
         }
     }
 
-    fun chooseNewBackupFile() {
-
-    }
-
     private fun createBackupExport(filesDir: File, outputZipFileOutputStream: OutputStream) {
         _backupStateFlow.update { it.copy(nowCopying = true) }
         viewModelScope.launch {
@@ -215,12 +229,6 @@ class OP1SyncViewModel(
             }
         }
         _backupStateFlow.update { it.copy(nowCopying = false) }
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        aums.destroyReceiver()
-        aums.closeDevices()
     }
 
     fun updateBackupInfo(backupInfo: BackupInfo) {
@@ -245,30 +253,10 @@ class OP1SyncViewModel(
         }
 
         val writer = contentResolver.openOutputStream(selectedFile.uri, "wt")
-
         writer?.let { outputStream ->
             createBackupExport(backupDir, outputStream)
         }
     }
-
-    /*
-    companion object {
-
-        val Factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {
-            @Suppress("UNCHECKED_CAST")
-            override fun <T : ViewModel> create(
-                modelClass: Class<T>,
-                extras: CreationExtras
-            ): T {
-                return OP1SyncViewModel(
-                    UsbFileRepositoryImpl(),
-                    BackupRepositoryImpl(),
-                    LocalFileRepositoryImpl(),
-                ) as T
-            }
-        }
-    }
-    */
 }
 
 data class DeviceState(
@@ -278,11 +266,6 @@ data class DeviceState(
     val bytesWasReadPercent: Int = 0,
     val bytesWasWritePercent: Int = 0,
     val nowCopying: Boolean = false
-)
-
-data class SyncScreenState(
-    val backupScreenState: BackupScreenState,
-    val restoreScreenState: RestoreScreenState,
 )
 
 data class BackupScreenState(
@@ -307,39 +290,32 @@ enum class OP1ConnectionState {
     Connected
 }
 
+typealias TapeItem = Pair<OP1Resource.Tape, Boolean>
+
 data class BackupInfo(
-    val tapes: SnapshotStateList<Pair<OP1Resource.Tape, Boolean>> =
-        (0..<TAPES_COUNT).map { index -> OP1Resource.Tape(index = index, enabled = true) to false }.toList()
-            .toMutableStateList(),
+    val tapes: SnapshotStateList<TapeItem> =
+        (0..<TAPES_COUNT).map { index ->
+            OP1Resource.Tape(index = index, enabled = true) to false
+        }.toMutableStateList(),
     val synths: Boolean = false,
     val synthsEnabled: Boolean = true,
     val drumkits: Boolean = false,
     val drumkitsEnabled: Boolean = true,
-    val albums: SnapshotStateList<Pair<OP1Resource.Album, Boolean>> = mutableStateListOf(
-        OP1Resource.Album(AlbumSide.SideA) to false,
-        OP1Resource.Album(AlbumSide.SideB) to false,
-    )
 )
+
+fun BackupInfo.isEmpty(): Boolean {
+    return tapes.all { !it.first.enabled } && !synthsEnabled && !drumkitsEnabled
+}
 
 data class RestoreInfo(
     val tapes: SnapshotStateList<Pair<OP1Resource.Tape, Boolean>> =
         (0..<TAPES_COUNT).map { index -> OP1Resource.Tape(index) to false }.toList().toMutableStateList(),
     val synths: Boolean = false,
     val drumkits: Boolean = false,
-    val albums: SnapshotStateList<Pair<OP1Resource.Album, Boolean>> = mutableStateListOf(
-        OP1Resource.Album(AlbumSide.SideA) to false,
-        OP1Resource.Album(AlbumSide.SideB) to false,
-    )
 )
 
 sealed class OP1Resource {
     data class Tape(val index: Int, val enabled: Boolean = true) : OP1Resource()
     data class Synth(val index: Int) : OP1Resource()
     data class Drumkit(val index: Int) : OP1Resource()
-    data class Album(val side: AlbumSide) : OP1Resource()
-}
-
-enum class AlbumSide(index: Int) {
-    SideA(0),
-    SideB(1)
 }

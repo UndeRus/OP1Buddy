@@ -4,22 +4,18 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
@@ -39,9 +35,9 @@ fun DrumSelector(
     val background: Color by animateColorAsState(
         targetValue = if (enabled) {
             if (selected) {
-                MaterialTheme.colorScheme.secondary
+                MaterialTheme.colorScheme.primary
             } else {
-                MaterialTheme.colorScheme.surface
+                MaterialTheme.colorScheme.onPrimary
             }
         } else {
             MaterialTheme.colorScheme.surface.copy(alpha = 0.38f)
@@ -53,9 +49,9 @@ fun DrumSelector(
     val color: Color by animateColorAsState(
         targetValue = if (enabled) {
             if (selected) {
-                MaterialTheme.colorScheme.onSecondary
+                MaterialTheme.colorScheme.surface
             } else {
-                MaterialTheme.colorScheme.onSurface
+                MaterialTheme.colorScheme.primary
             }
         } else MaterialTheme.colorScheme.onSurface.copy(
             alpha = 0.38f
@@ -64,19 +60,14 @@ fun DrumSelector(
         label = "foregroundAnimation",
     )
 
-    Row(
-        modifier = modifier
-            .background(background, shape = RoundedCornerShape(16.dp))
-            .clip(RoundedCornerShape(16.dp))
-            .clickable(enabled = enabled, onClick = { onSelected.invoke(!selected) })
-            .padding(16.dp)
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.drum),
-            contentDescription = null,
-            modifier = Modifier.size(100.dp),
-            colorFilter = ColorFilter.tint(color)
-        )
+    OutlinedCard(onClick = { onSelected(!selected)}, enabled = enabled, modifier = modifier) {
+        Box(modifier = Modifier.size(78.dp).background(background), contentAlignment = Alignment.Center) {
+            Image(
+                painter = painterResource(id = R.drawable.drum_selector),
+                contentDescription = null,
+                colorFilter = ColorFilter.tint(color)
+            )
+        }
     }
 }
 

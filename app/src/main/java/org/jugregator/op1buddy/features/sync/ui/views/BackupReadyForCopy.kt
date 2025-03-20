@@ -1,11 +1,5 @@
 package org.jugregator.op1buddy.features.sync.ui.views
 
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,30 +7,23 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
-import androidx.compose.material3.Checkbox
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import org.jugregator.op1buddy.R
 import org.jugregator.op1buddy.features.sync.BackupInfo
 import org.jugregator.op1buddy.features.sync.BackupScreenState
-import org.jugregator.op1buddy.features.sync.TAPES_COUNT
 
 @Composable
 fun BackupReadyForCopy(
@@ -45,18 +32,20 @@ fun BackupReadyForCopy(
     onBackupClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Column(modifier = modifier) {
+    Column(modifier = modifier.fillMaxWidth()) {
         Text(
-            text = "Choose what to backup",
-            style = MaterialTheme.typography.titleLarge,
+            text = stringResource(R.string.backup_screen_description),
+            textAlign = TextAlign.Center,
             modifier = Modifier
                 .padding(10.dp)
                 .align(Alignment.CenterHorizontally)
         )
 
         Row(
-            modifier = Modifier.align(Alignment.CenterHorizontally),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .padding(top = 32.dp),
+            horizontalArrangement = Arrangement.spacedBy(60.dp)
         ) {
             for (tapeIndex in 0..1) {
                 TapeSelector(
@@ -69,11 +58,11 @@ fun BackupReadyForCopy(
             }
         }
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(18.dp))
 
         Row(
             modifier = Modifier.align(Alignment.CenterHorizontally),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(60.dp)
         ) {
             for (tapeIndex in 2..3) {
                 TapeSelector(
@@ -86,10 +75,10 @@ fun BackupReadyForCopy(
             }
         }
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(18.dp))
 
         Row(
-            horizontalArrangement = Arrangement.spacedBy(space = 8.dp, alignment = Alignment.CenterHorizontally),
+            horizontalArrangement = Arrangement.spacedBy(space = 60.dp, alignment = Alignment.CenterHorizontally),
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
                 .fillMaxWidth()
@@ -103,16 +92,25 @@ fun BackupReadyForCopy(
             })
         }
 
-        Spacer(modifier = Modifier.weight(1.0f))
+        Spacer(modifier = Modifier.height(40.dp))
 
         Button(
             onClick = onBackupClick,
             modifier = Modifier
-                .padding(8.dp)
                 .align(Alignment.CenterHorizontally),
+            shape = RoundedCornerShape(8.dp),
+            colors = ButtonColors(
+                containerColor = MaterialTheme.colorScheme.error,
+                contentColor = MaterialTheme.colorScheme.surface,
+                disabledContentColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.7f),
+                disabledContainerColor = MaterialTheme.colorScheme.error.copy(alpha = 0.7f)
+            ),
             enabled = !state.nowCopying
         ) {
-            Text(text = "Backup", style = MaterialTheme.typography.displayLarge)
+            Text(
+                text = stringResource(R.string.download),
+                style = MaterialTheme.typography.titleLarge.copy(fontSize = 16.sp, fontWeight = FontWeight.Black)
+            )
         }
     }
 }

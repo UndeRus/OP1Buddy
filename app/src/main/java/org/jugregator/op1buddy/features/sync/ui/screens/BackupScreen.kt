@@ -7,7 +7,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import org.jugregator.op1buddy.R
 import org.jugregator.op1buddy.features.sync.BackupInfo
 import org.jugregator.op1buddy.features.sync.BackupScreenState
 import org.jugregator.op1buddy.features.sync.ui.views.BackupReadyForCopy
@@ -21,10 +23,10 @@ fun BackupScreen(
     onBackupSelectionChanged: (BackupInfo) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    UsbConnectionWrapper(connectedState = state.connected, content = {
+    UsbConnectionWrapper(modifier = modifier, connectedState = state.connected, content = {
         if (state.nowCopying) {
             WakeLock()
-            DeviceCopyingProgress(state.progress, modifier)
+            DeviceCopyingProgress(stringResource(R.string.backup_progress_title), state.progress, modifier)
         } else {
             BackupReadyForCopy(
                 state = state,
@@ -36,7 +38,6 @@ fun BackupScreen(
     })
 
 }
-
 
 @Preview
 @Composable
