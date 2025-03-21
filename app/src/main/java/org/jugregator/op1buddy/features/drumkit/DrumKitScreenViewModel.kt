@@ -50,6 +50,7 @@ class DrumKitScreenViewModel(
             )
             .setTransferMode(AudioTrack.MODE_STREAM)
             .setBufferSizeInBytes(minBufferSize)
+        @Suppress("DEPRECATION")
         val track = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             builder
                 .setPerformanceMode(AudioTrack.PERFORMANCE_MODE_LOW_LATENCY)
