@@ -15,11 +15,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import org.jugregator.op1buddy.R
 import org.jugregator.op1buddy.data.LCE
 import org.jugregator.op1buddy.data.drumkit.DrumkitType
 import org.jugregator.op1buddy.features.project.DrumkitListScreenViewModel

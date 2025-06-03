@@ -19,10 +19,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import org.jugregator.op1buddy.R
 import org.jugregator.op1buddy.data.drumkit.DrumkitType
 import org.jugregator.op1buddy.data.synth.SynthEngine
 import org.jugregator.op1buddy.features.project.ui.screens.ProjectResource

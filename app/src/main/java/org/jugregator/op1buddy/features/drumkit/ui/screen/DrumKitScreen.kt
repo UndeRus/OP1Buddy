@@ -19,10 +19,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import org.jugregator.op1buddy.R
 import org.jugregator.op1buddy.features.drumkit.DrumKitScreenViewModel
 import org.jugregator.op1buddy.features.drumkit.ui.views.FourPianoKeys
 import org.jugregator.op1buddy.features.drumkit.ui.views.ThreePianoKeys

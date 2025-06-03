@@ -32,13 +32,12 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import org.jugregator.op1buddy.R
 import org.jugregator.op1buddy.features.project.ui.screens.ProjectTab
 import org.jugregator.op1buddy.ui.icons.Icons
-import org.jugregator.op1buddy.ui.icons.bottombar.Sync
-import org.jugregator.op1buddy.ui.icons.bottombar.Tape
 import org.jugregator.op1buddy.ui.icons.bottombar.Drumkit
+import org.jugregator.op1buddy.ui.icons.bottombar.Sync
 import org.jugregator.op1buddy.ui.icons.bottombar.Synth
+import org.jugregator.op1buddy.ui.icons.bottombar.Tape
 
 @Composable
 fun ProjectBottomBar(modifier: Modifier = Modifier, selectedTab: ProjectTab, onTabSelected: (ProjectTab) -> Unit) {

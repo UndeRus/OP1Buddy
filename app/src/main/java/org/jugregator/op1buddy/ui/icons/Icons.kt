@@ -22,4 +22,6 @@ object Icons {
     object Drum
 
     object Sync
+
+    object Fab
 }

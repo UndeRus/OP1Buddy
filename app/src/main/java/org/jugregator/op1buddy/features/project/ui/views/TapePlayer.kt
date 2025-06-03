@@ -43,16 +43,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastMapIndexed
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
-import org.jugregator.op1buddy.R
 import org.jugregator.op1buddy.ui.icons.Icons
-import org.jugregator.op1buddy.ui.icons.player.Play
 import org.jugregator.op1buddy.ui.icons.player.Pause
+import org.jugregator.op1buddy.ui.icons.player.Play
 import org.jugregator.op1buddy.ui.icons.player.Player
 import org.jugregator.op1buddy.ui.icons.player.Reel
 import org.jugregator.op1buddy.ui.icons.player.Stop
