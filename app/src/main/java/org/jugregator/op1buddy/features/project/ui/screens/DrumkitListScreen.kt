@@ -25,6 +25,8 @@ import org.jugregator.op1buddy.data.drumkit.DrumkitType
 import org.jugregator.op1buddy.features.project.DrumkitListScreenViewModel
 import org.jugregator.op1buddy.features.project.ui.views.DrumkitResourceItem
 import org.jugregator.op1buddy.features.project.ui.views.EmptyDrumkitsView
+import org.jugregator.op1buddy.ui.icons.Icons
+import org.jugregator.op1buddy.ui.icons.background.BackgroundRight
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -61,7 +63,7 @@ fun DrumkitListScreen(
     ) {
         Image(
             modifier = Modifier.align(Alignment.CenterEnd),
-            painter = painterResource(R.drawable.background_right),
+            imageVector = Icons.Background.BackgroundRight,
             contentDescription = null,
         )
 

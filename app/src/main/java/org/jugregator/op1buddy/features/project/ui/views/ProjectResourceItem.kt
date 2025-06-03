@@ -13,11 +13,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -25,6 +26,20 @@ import org.jugregator.op1buddy.R
 import org.jugregator.op1buddy.data.drumkit.DrumkitType
 import org.jugregator.op1buddy.data.synth.SynthEngine
 import org.jugregator.op1buddy.features.project.ui.screens.ProjectResource
+import org.jugregator.op1buddy.ui.icons.Icons
+import org.jugregator.op1buddy.ui.icons.sync.TapeSelector
+import org.jugregator.op1buddy.ui.icons.synth.Cluster
+import org.jugregator.op1buddy.ui.icons.synth.Digital
+import org.jugregator.op1buddy.ui.icons.synth.Dna
+import org.jugregator.op1buddy.ui.icons.synth.Drwave
+import org.jugregator.op1buddy.ui.icons.synth.Dsynth
+import org.jugregator.op1buddy.ui.icons.synth.Fm
+import org.jugregator.op1buddy.ui.icons.synth.Phase
+import org.jugregator.op1buddy.ui.icons.synth.Pulse
+import org.jugregator.op1buddy.ui.icons.synth.Sampler
+import org.jugregator.op1buddy.ui.icons.synth.String
+import org.jugregator.op1buddy.ui.icons.synth.Synth
+import org.jugregator.op1buddy.ui.icons.synth.Voltage
 import org.jugregator.op1buddy.ui.theme.AppTheme
 
 @Composable
@@ -120,27 +135,27 @@ fun DrumkitResourceItemPreview() {
 @Composable
 fun SynthIcon(modifier: Modifier = Modifier, engine: SynthEngine) {
     val icon by remember {
-        mutableIntStateOf(
+        mutableStateOf(
             when (engine) {
-                is SynthEngine.Cluster -> R.drawable.synth_cluster
-                is SynthEngine.DNA -> R.drawable.synth_dna
-                is SynthEngine.DSynth -> R.drawable.synth_dsynth
-                is SynthEngine.Digital -> R.drawable.synth_digital
-                is SynthEngine.DrWave -> R.drawable.synth_drwave
-                is SynthEngine.FM -> R.drawable.synth_fm
-                is SynthEngine.Iter -> R.drawable.synth_cluster
-                is SynthEngine.Phase -> R.drawable.synth_phase
-                is SynthEngine.Pulse -> R.drawable.synth_pulse
-                is SynthEngine.Sampler -> R.drawable.synth_sampler
-                is SynthEngine.String -> R.drawable.synth_string
-                is SynthEngine.Voltage -> R.drawable.synth_voltage
-                is SynthEngine.Undefined -> R.drawable.synth
+                is SynthEngine.Cluster -> Icons.Synth.Cluster
+                is SynthEngine.DNA -> Icons.Synth.Dna
+                is SynthEngine.DSynth -> Icons.Synth.Dsynth
+                is SynthEngine.Digital -> Icons.Synth.Digital
+                is SynthEngine.DrWave -> Icons.Synth.Drwave
+                is SynthEngine.FM -> Icons.Synth.Fm
+                is SynthEngine.Iter -> Icons.Synth.Cluster
+                is SynthEngine.Phase -> Icons.Synth.Phase
+                is SynthEngine.Pulse -> Icons.Synth.Pulse
+                is SynthEngine.Sampler -> Icons.Synth.Sampler
+                is SynthEngine.String -> Icons.Synth.String
+                is SynthEngine.Voltage -> Icons.Synth.Voltage
+                is SynthEngine.Undefined -> Icons.Synth.Synth
             }
         )
     }
 
     Icon(
-        painter = painterResource(id = icon),
+        imageVector = icon,
         contentDescription = null,
         modifier = modifier,
     )
@@ -149,7 +164,7 @@ fun SynthIcon(modifier: Modifier = Modifier, engine: SynthEngine) {
 @Composable
 fun TapeIcon(modifier: Modifier = Modifier) {
     Icon(
-        painter = painterResource(id = R.drawable.tape_selector),
+        painter = rememberVectorPainter(Icons.Sync.TapeSelector),
         contentDescription = null,
         modifier = modifier,
     )

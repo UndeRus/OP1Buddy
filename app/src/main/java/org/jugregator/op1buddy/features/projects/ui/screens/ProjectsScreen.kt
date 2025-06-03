@@ -54,6 +54,10 @@ import org.jugregator.op1buddy.features.project.ui.views.ProjectDeleteDialog
 import org.jugregator.op1buddy.features.project.ui.views.ProjectSettingsDialog
 import org.jugregator.op1buddy.features.projects.ProjectsScreenViewModel
 import org.jugregator.op1buddy.features.projects.ui.views.ProjectItem
+import org.jugregator.op1buddy.ui.icons.Icons
+import org.jugregator.op1buddy.ui.icons.appbar.ActionSearch
+import org.jugregator.op1buddy.ui.icons.appbar.Back
+import org.jugregator.op1buddy.ui.icons.background.Bottom
 import org.jugregator.op1buddy.ui.theme.AppTheme
 import org.koin.androidx.compose.koinViewModel
 
@@ -112,7 +116,7 @@ fun ProjectsScreen(
             val projects by remember { derivedStateOf { state.projects } }
             Image(
                 modifier = Modifier.align(Alignment.BottomCenter),
-                painter = painterResource(R.drawable.background_bottom),
+                imageVector = Icons.Background.Bottom,
                 contentDescription = null
             )
 
@@ -215,7 +219,7 @@ fun ProjectsAppBar(modifier: Modifier = Modifier, onBackClicked: () -> Unit, onS
                 Icon(
                     modifier = Modifier
                         .size(20.dp),
-                    painter = painterResource(R.drawable.appbar_back),
+                    imageVector = Icons.AppBar.Back,
                     tint = MaterialTheme.colorScheme.onSurface,
                     contentDescription = null
                 )
@@ -229,7 +233,8 @@ fun ProjectsAppBar(modifier: Modifier = Modifier, onBackClicked: () -> Unit, onS
                 Icon(
                     modifier = Modifier
                         .size(20.dp),
-                    painter = painterResource(R.drawable.appbar_action_search),
+                    imageVector = Icons.AppBar.ActionSearch,
+                    //painter = painterResource(R.drawable.appbar_action_search),
                     tint = MaterialTheme.colorScheme.onSurface,
                     contentDescription = null
                 )

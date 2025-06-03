@@ -1,6 +1,5 @@
 package org.jugregator.op1buddy.features.project.ui.views
 
-import androidx.annotation.DrawableRes
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.BorderStroke
@@ -29,12 +28,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import org.jugregator.op1buddy.R
 import org.jugregator.op1buddy.features.project.ui.screens.ProjectTab
+import org.jugregator.op1buddy.ui.icons.Icons
+import org.jugregator.op1buddy.ui.icons.bottombar.Sync
+import org.jugregator.op1buddy.ui.icons.bottombar.Tape
+import org.jugregator.op1buddy.ui.icons.bottombar.Drumkit
+import org.jugregator.op1buddy.ui.icons.bottombar.Synth
 
 @Composable
 fun ProjectBottomBar(modifier: Modifier = Modifier, selectedTab: ProjectTab, onTabSelected: (ProjectTab) -> Unit) {
@@ -44,7 +48,8 @@ fun ProjectBottomBar(modifier: Modifier = Modifier, selectedTab: ProjectTab, onT
             selected = selectedTab == ProjectTab.Synth,
             modifier = Modifier
                 .height(100.dp)
-                .weight(0.25f), icon = R.drawable.bb_synth
+                .weight(0.25f),
+            icon = Icons.BottomBar.Synth,
         ) {
             onTabSelected(ProjectTab.Synth)
         }
@@ -54,7 +59,7 @@ fun ProjectBottomBar(modifier: Modifier = Modifier, selectedTab: ProjectTab, onT
             selected = selectedTab == ProjectTab.Drumkit,
             modifier = Modifier
                 .height(100.dp)
-                .weight(0.25f), icon = R.drawable.bb_drumkit
+                .weight(0.25f), icon = Icons.BottomBar.Drumkit,
         ) {
             onTabSelected(ProjectTab.Drumkit)
         }
@@ -64,7 +69,8 @@ fun ProjectBottomBar(modifier: Modifier = Modifier, selectedTab: ProjectTab, onT
             selected = selectedTab == ProjectTab.Tape,
             modifier = Modifier
                 .height(100.dp)
-                .weight(0.25f), icon = R.drawable.bb_tape
+                .weight(0.25f),
+            icon = Icons.BottomBar.Tape,
         ) {
             onTabSelected(ProjectTab.Tape)
         }
@@ -74,7 +80,7 @@ fun ProjectBottomBar(modifier: Modifier = Modifier, selectedTab: ProjectTab, onT
             selected = false,
             modifier = Modifier
                 .height(100.dp)
-                .weight(0.25f), icon = R.drawable.bb_sync
+                .weight(0.25f), icon = Icons.BottomBar.Sync,
         ) {
             onTabSelected(ProjectTab.Sync)
         }
@@ -96,7 +102,7 @@ fun Modifier.selected(condition: Boolean): Modifier {
 }
 
 @Composable
-fun BottomBarButton(modifier: Modifier = Modifier, @DrawableRes icon: Int, selected: Boolean, onClick: () -> Unit) {
+fun BottomBarButton(modifier: Modifier = Modifier, icon: ImageVector, selected: Boolean, onClick: () -> Unit) {
 
     val animatedOffset by animateDpAsState(if (selected) 2.dp else 20.dp, label = "BottomBarButton shift")
     val animatedColorBg by animateColorAsState(
@@ -131,7 +137,7 @@ fun BottomBarButton(modifier: Modifier = Modifier, @DrawableRes icon: Int, selec
                 modifier = Modifier
                     .size(36.dp)
                     .align(Alignment.Center),
-                painter = painterResource(icon),
+                imageVector = icon,
                 tint = animatedTint,
                 contentDescription = null
             )
@@ -148,7 +154,7 @@ fun BottomBarButtonPreview() {
 
         BottomBarButton(
             modifier = Modifier.size(86.dp, 100.dp),
-            icon = R.drawable.bb_sync, selected = selected, onClick = {
+            icon = Icons.BottomBar.Sync, selected = selected, onClick = {
                 selected = !selected
             }
         )

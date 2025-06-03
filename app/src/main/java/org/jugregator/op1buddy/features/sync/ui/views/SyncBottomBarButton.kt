@@ -1,6 +1,5 @@
 package org.jugregator.op1buddy.features.sync.ui.views
 
-import androidx.annotation.DrawableRes
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
@@ -23,17 +22,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import org.jugregator.op1buddy.R
+import org.jugregator.op1buddy.ui.icons.Icons
+import org.jugregator.op1buddy.ui.icons.bottombar.Backup
 
 @Composable
 fun SyncBottomBarButton(
     modifier: Modifier = Modifier,
     title: String,
-    @DrawableRes icon: Int,
+    icon: ImageVector,
     selected: Boolean,
     enabled: Boolean,
     onClick: () -> Unit,
@@ -70,7 +70,8 @@ fun SyncBottomBarButton(
                 Icon(
                     modifier = Modifier
                         .size(48.dp),
-                    painter = painterResource(icon),
+                    imageVector = icon,
+//                    painter = painterResource(icon),
                     tint = animatedTint,
                     contentDescription = null
                 )
@@ -90,7 +91,7 @@ fun SyncBottomBarButtonPreview() {
         SyncBottomBarButton(
             modifier = Modifier.size(86.dp, 118.dp),
             title = "Backup",
-            icon = R.drawable.bb_backup, selected = selected, enabled = true, onClick = {
+            icon = Icons.BottomBar.Backup, selected = selected, enabled = true, onClick = {
                 selected = !selected
             }
         )

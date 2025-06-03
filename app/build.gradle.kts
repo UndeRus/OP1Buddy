@@ -2,11 +2,12 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.serialization)
-    id("com.vk.vkompose") version "0.6.2-k2"
+    alias(libs.plugins.vkompose)
     alias(libs.plugins.baselineprofile)
     alias(libs.plugins.compose.compiler)
-    id("com.google.firebase.crashlytics")
-    id("com.google.gms.google-services")
+    alias(libs.plugins.crashlytics)
+    alias(libs.plugins.google.services)
+    alias(libs.plugins.paparazzi)
 }
 
 android {
