@@ -19,14 +19,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import org.jugregator.op1buddy.R
 import org.jugregator.op1buddy.features.drumkit.DrumKitScreenViewModel
 import org.jugregator.op1buddy.features.drumkit.ui.views.FourPianoKeys
 import org.jugregator.op1buddy.features.drumkit.ui.views.ThreePianoKeys
-import org.jugregator.op1buddy.features.project.ui.screens.ProjectAppBar
+import org.jugregator.op1buddy.ui.icons.Icons
+import org.jugregator.op1buddy.ui.icons.appbar.Back
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -163,7 +162,7 @@ fun DrumkitAppBar(modifier: Modifier = Modifier, title: String, onBackClicked: (
                 Icon(
                     modifier = Modifier
                         .size(20.dp),
-                    painter = painterResource(R.drawable.appbar_back),
+                    imageVector = Icons.AppBar.Back,
                     tint = MaterialTheme.colorScheme.onSurface,
                     contentDescription = null
                 )

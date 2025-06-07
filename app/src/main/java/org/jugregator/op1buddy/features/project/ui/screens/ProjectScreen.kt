@@ -14,7 +14,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -27,7 +26,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import org.jugregator.op1buddy.R
 import org.jugregator.op1buddy.data.drumkit.DrumkitType
 import org.jugregator.op1buddy.data.synth.SynthEngine
 import org.jugregator.op1buddy.features.project.ProjectScreenViewModel
@@ -38,6 +36,9 @@ import org.jugregator.op1buddy.features.projects.ui.enterPop
 import org.jugregator.op1buddy.features.projects.ui.enterPush
 import org.jugregator.op1buddy.features.projects.ui.exitPop
 import org.jugregator.op1buddy.features.projects.ui.exitPush
+import org.jugregator.op1buddy.ui.icons.Icons
+import org.jugregator.op1buddy.ui.icons.appbar.More
+import org.jugregator.op1buddy.ui.icons.appbar.Back
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -221,7 +222,7 @@ fun ProjectAppBar(modifier: Modifier = Modifier, title: String, onBackClicked: (
                 Icon(
                     modifier = Modifier
                         .size(20.dp),
-                    painter = painterResource(R.drawable.appbar_back),
+                    imageVector = Icons.AppBar.Back,
                     tint = MaterialTheme.colorScheme.onSurface,
                     contentDescription = null
                 )
@@ -235,7 +236,7 @@ fun ProjectAppBar(modifier: Modifier = Modifier, title: String, onBackClicked: (
                 Icon(
                     modifier = Modifier
                         .size(20.dp),
-                    painter = painterResource(R.drawable.appbar_more),
+                    imageVector = Icons.AppBar.More,
                     tint = MaterialTheme.colorScheme.onSurface,
                     contentDescription = null
                 )

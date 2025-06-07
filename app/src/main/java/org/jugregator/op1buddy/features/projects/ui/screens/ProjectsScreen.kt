@@ -40,8 +40,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -54,6 +54,12 @@ import org.jugregator.op1buddy.features.project.ui.views.ProjectDeleteDialog
 import org.jugregator.op1buddy.features.project.ui.views.ProjectSettingsDialog
 import org.jugregator.op1buddy.features.projects.ProjectsScreenViewModel
 import org.jugregator.op1buddy.features.projects.ui.views.ProjectItem
+import org.jugregator.op1buddy.ui.icons.Icons
+import org.jugregator.op1buddy.ui.icons.appbar.ActionSearch
+import org.jugregator.op1buddy.ui.icons.appbar.Back
+import org.jugregator.op1buddy.ui.icons.background.Bottom
+import org.jugregator.op1buddy.ui.icons.fab.FabImport
+import org.jugregator.op1buddy.ui.icons.fab.FabPlus
 import org.jugregator.op1buddy.ui.theme.AppTheme
 import org.koin.androidx.compose.koinViewModel
 
@@ -75,7 +81,8 @@ fun ProjectsScreen(
     }
 
     val state by viewModel.uiState.collectAsState()
-    Scaffold(modifier = modifier,
+    Scaffold(
+        modifier = modifier,
         topBar = {
             ProjectsAppBar(onBackClicked = onBackClicked, onSearchClicked = { })
         },
@@ -87,7 +94,10 @@ fun ProjectsScreen(
                     elevation = FloatingActionButtonDefaults.elevation(0.dp),
                     containerColor = MaterialTheme.colorScheme.error
                 ) {
-                    Icon(painterResource(R.drawable.fab_import), stringResource(R.string.import_project_button_title))
+                    Icon(
+                        rememberVectorPainter(Icons.Fab.FabImport),
+                        stringResource(R.string.import_project_button_title)
+                    )
                 }
 
                 Spacer(Modifier.width(8.dp))
@@ -98,7 +108,10 @@ fun ProjectsScreen(
                     elevation = FloatingActionButtonDefaults.elevation(0.dp),
                     containerColor = MaterialTheme.colorScheme.error
                 ) {
-                    Icon(painterResource(R.drawable.fab_plus), stringResource(R.string.create_new_project_button_title))
+                    Icon(
+                        rememberVectorPainter(Icons.Fab.FabPlus),
+                        stringResource(R.string.create_new_project_button_title),
+                    )
                 }
             }
 
@@ -112,7 +125,7 @@ fun ProjectsScreen(
             val projects by remember { derivedStateOf { state.projects } }
             Image(
                 modifier = Modifier.align(Alignment.BottomCenter),
-                painter = painterResource(R.drawable.background_bottom),
+                imageVector = Icons.Background.Bottom,
                 contentDescription = null
             )
 
@@ -174,7 +187,6 @@ fun ProjectsScreen(
                 }
             }
 
-
         }
 
     }
@@ -215,7 +227,7 @@ fun ProjectsAppBar(modifier: Modifier = Modifier, onBackClicked: () -> Unit, onS
                 Icon(
                     modifier = Modifier
                         .size(20.dp),
-                    painter = painterResource(R.drawable.appbar_back),
+                    imageVector = Icons.AppBar.Back,
                     tint = MaterialTheme.colorScheme.onSurface,
                     contentDescription = null
                 )
@@ -229,7 +241,8 @@ fun ProjectsAppBar(modifier: Modifier = Modifier, onBackClicked: () -> Unit, onS
                 Icon(
                     modifier = Modifier
                         .size(20.dp),
-                    painter = painterResource(R.drawable.appbar_action_search),
+                    imageVector = Icons.AppBar.ActionSearch,
+                    //painter = painterResource(R.drawable.appbar_action_search),
                     tint = MaterialTheme.colorScheme.onSurface,
                     contentDescription = null
                 )

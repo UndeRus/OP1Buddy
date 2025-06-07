@@ -17,6 +17,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.jugregator.op1buddy.R
+import org.jugregator.op1buddy.ui.icons.Icons
+import org.jugregator.op1buddy.ui.icons.bottombar.Backup
+import org.jugregator.op1buddy.ui.icons.bottombar.Export
+import org.jugregator.op1buddy.ui.icons.bottombar.Recover
 
 @Composable
 fun SyncBottomBar(
@@ -34,7 +38,7 @@ fun SyncBottomBar(
             modifier = Modifier
                 .height(118.dp)
                 .width(76.dp),
-            icon = R.drawable.bb_backup,
+            icon = Icons.BottomBar.Backup,
             enabled = enabled,
         ) {
             onTabSelected(SyncTab.Backup)
@@ -48,7 +52,7 @@ fun SyncBottomBar(
             modifier = Modifier
                 .height(118.dp)
                 .width(76.dp),
-            icon = R.drawable.bb_recover,
+            icon = Icons.BottomBar.Recover,
             enabled = enabled,
         ) {
             onTabSelected(SyncTab.Restore)
@@ -62,7 +66,7 @@ fun SyncBottomBar(
             modifier = Modifier
                 .height(118.dp)
                 .width(76.dp),
-            icon = R.drawable.bb_export,
+            icon = Icons.BottomBar.Export,
             enabled = enabled,
         ) {
             onTabSelected(SyncTab.Export)

@@ -41,14 +41,19 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastMapIndexed
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
-import org.jugregator.op1buddy.R
+import org.jugregator.op1buddy.ui.icons.Icons
+import org.jugregator.op1buddy.ui.icons.player.Pause
+import org.jugregator.op1buddy.ui.icons.player.Play
+import org.jugregator.op1buddy.ui.icons.player.Player
+import org.jugregator.op1buddy.ui.icons.player.Reel
+import org.jugregator.op1buddy.ui.icons.player.Stop
 import org.jugregator.op1buddy.ui.theme.AppTheme
 import java.text.DecimalFormat
 import java.text.NumberFormat
@@ -139,7 +144,8 @@ fun MultiTrackPlayer(
                 .padding(bottom = 28.dp), contentAlignment = Alignment.TopCenter
         ) {
             Image(
-                painter = painterResource(R.drawable.player_player), contentDescription = null
+                painter = rememberVectorPainter(Icons.Player.Player),
+                contentDescription = null
             )
 
             val f: NumberFormat = DecimalFormat("00")
@@ -177,14 +183,16 @@ fun MultiTrackPlayer(
                 modifier = Modifier
                     .align(Alignment.TopStart)
                     .graphicsLayer(rotationZ = if (isPlaying) leftAngle else 0f),
-                painter = painterResource(R.drawable.reel), contentDescription = null
+                painter = rememberVectorPainter(Icons.Player.Reel),
+                contentDescription = null,
             )
 
             Image(
                 modifier = Modifier
                     .align(Alignment.TopEnd)
                     .graphicsLayer(rotationZ = if (isPlaying) rightAngle else 0f),
-                painter = painterResource(R.drawable.reel), contentDescription = null
+                painter = rememberVectorPainter(Icons.Player.Reel),
+                contentDescription = null,
             )
         }
 
@@ -313,13 +321,13 @@ fun MultiTrackPlayer(
 
     Row(horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()) {
         IconButton(onClick = onPlayClick, modifier = Modifier.size(65.dp)) {
-            Icon(painterResource(R.drawable.player_play), contentDescription = null)
+            Icon(Icons.Player.Play, contentDescription = null)
         }
         IconButton(onClick = onPauseClick, modifier = Modifier.size(65.dp)) {
-            Icon(painterResource(R.drawable.player_pause), contentDescription = null)
+            Icon(Icons.Player.Pause, contentDescription = null)
         }
         IconButton(onClick = onStopClick, modifier = Modifier.size(65.dp)) {
-            Icon(painterResource(R.drawable.player_stop), contentDescription = null)
+            Icon(Icons.Player.Stop, contentDescription = null)
         }
     }
 

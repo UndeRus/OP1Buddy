@@ -21,7 +21,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -31,6 +30,10 @@ import org.jugregator.op1buddy.R
 import org.jugregator.op1buddy.features.sync.OP1SyncViewModel
 import org.jugregator.op1buddy.features.sync.ui.views.SyncBottomBar
 import org.jugregator.op1buddy.features.sync.ui.views.SyncTab
+import org.jugregator.op1buddy.ui.icons.Icons
+import org.jugregator.op1buddy.ui.icons.appbar.Back
+import org.jugregator.op1buddy.ui.icons.background.RightTop
+import org.jugregator.op1buddy.ui.icons.background.LeftBottom
 import org.jugregator.op1buddy.ui.theme.AppTheme
 import org.koin.androidx.compose.koinViewModel
 
@@ -84,13 +87,14 @@ fun SyncScreen(
     ) { innerPadding ->
         Box(modifier = Modifier.padding(innerPadding)) {
             Image(
-                painterResource(R.drawable.background_left_bottom),
+                imageVector = Icons.Background.LeftBottom,
                 modifier = Modifier.align(Alignment.BottomStart),
                 contentDescription = null,
             )
 
             Image(
-                painterResource(R.drawable.background_right_top),
+                imageVector = Icons.Background.RightTop,
+//                painterResource(R.drawable.background_right_top),
                 modifier = Modifier.align(Alignment.TopEnd),
                 contentDescription = null,
             )
@@ -162,7 +166,7 @@ fun SyncAppBar(modifier: Modifier = Modifier, title: String, enabled: Boolean, o
                 Icon(
                     modifier = Modifier
                         .size(20.dp),
-                    painter = painterResource(R.drawable.appbar_back),
+                    imageVector = Icons.AppBar.Back,
                     tint = MaterialTheme.colorScheme.onSurface,
                     contentDescription = null
                 )

@@ -18,10 +18,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import org.jugregator.op1buddy.R
+import org.jugregator.op1buddy.ui.icons.Icons
+import org.jugregator.op1buddy.ui.icons.sync.SynthSelector
 
 @Composable
 fun SynthSelector(
@@ -63,7 +64,7 @@ fun SynthSelector(
     OutlinedCard(onClick = { onSelected(!selected)}, enabled = enabled, modifier = modifier) {
         Box(modifier = Modifier.size(78.dp).background(background), contentAlignment = Alignment.Center) {
             Image(
-                painter = painterResource(id = R.drawable.synth_selector),
+                painter = rememberVectorPainter(Icons.Sync.SynthSelector),
                 contentDescription = null,
                 colorFilter = ColorFilter.tint(color)
             )

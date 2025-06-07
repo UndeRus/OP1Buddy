@@ -15,15 +15,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import org.jugregator.op1buddy.R
 import org.jugregator.op1buddy.data.LCE
 import org.jugregator.op1buddy.features.project.SynthListScreenViewModel
 import org.jugregator.op1buddy.features.project.ui.views.EmptySynthsView
 import org.jugregator.op1buddy.features.project.ui.views.SynthResourceItem
+import org.jugregator.op1buddy.ui.icons.Icons
+import org.jugregator.op1buddy.ui.icons.background.BackgroundRight
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -56,7 +56,7 @@ fun SynthListScreen(
     ) {
         Image(
             modifier = Modifier.align(Alignment.CenterEnd),
-            painter = painterResource(R.drawable.background_right),
+            imageVector = Icons.Background.BackgroundRight,
             contentDescription = null,
         )
 

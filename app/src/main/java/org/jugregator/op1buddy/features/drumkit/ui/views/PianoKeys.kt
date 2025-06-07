@@ -174,7 +174,7 @@ fun FourPianoKeys(
 
 @Preview(showBackground = true)
 @Composable
-private fun FourPianoKeysPreview() {
+fun FourPianoKeysPreview() {
     AppTheme {
         FourPianoKeys(
             fTitle = "Kick",
